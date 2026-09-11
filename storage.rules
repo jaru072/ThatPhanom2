@@ -1,0 +1,62 @@
+// สำหรับ Firebase Console → Storage → Rules เท่านั้น
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function signedIn() {
+      return request.auth != null;
+    }
+    function isDefaultAdmin() {
+      return signedIn()
+        && request.auth.token.email == 'jaru072@gmail.com'
+        && request.auth.token.email_verified == true;
+    }
+    function isGlobalAdmin() {
+      return isDefaultAdmin()
+        || (signedIn()
+          && firestore.exists(/databases/(default)/documents/users/$(request.auth.uid))
+          && firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.globalRole == 'admin');
+    }
+    function role(projectId) {
+      return isGlobalAdmin() ? 'admin'
+        : signedIn() && firestore.exists(/databases/(default)/documents/projects/$(projectId)/members/$(request.auth.uid))
+          ? firestore.get(/databases/(default)/documents/projects/$(projectId)/members/$(request.auth.uid)).data.role
+          : 'guest';
+    }
+    function isAdmin(projectId) {
+      return role(projectId) == 'admin';
+    }
+    function isStaff(projectId) {
+      return role(projectId) in ['admin', 'manager'];
+    }
+    function validMedia() {
+      return (request.resource.contentType.matches('image/(jpeg|png|webp)')
+          && request.resource.size <= 10 * 1024 * 1024)
+        || (request.resource.contentType.matches('video/(mp4|webm)')
+          && request.resource.size <= 100 * 1024 * 1024);
+    }
+    function validContentFile() {
+      return (request.resource.contentType.matches('image/(jpeg|png|webp)')
+          && request.resource.size <= 10 * 1024 * 1024)
+        || (request.resource.contentType == 'application/pdf'
+          && request.resource.size <= 20 * 1024 * 1024);
+    }
+
+    match /projects/{projectId}/media/{userId}/{fileName} {
+      allow read: if true;
+      allow create: if isAdmin(projectId) && request.auth.uid == userId && validMedia();
+      allow update: if isAdmin(projectId) && validMedia();
+      allow delete: if isAdmin(projectId);
+    }
+
+    match /projects/{projectId}/content/{userId}/{fileName} {
+      allow read: if true;
+      allow create: if isAdmin(projectId) && request.auth.uid == userId && validContentFile();
+      allow update: if isAdmin(projectId) && validContentFile();
+      allow delete: if isAdmin(projectId);
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

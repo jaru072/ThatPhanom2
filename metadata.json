@@ -1,0 +1,6 @@
+{
+  "name": "พระธาตุพนม สู่มรดกโลก",
+  "description": "เว็บไซต์โครงการพระธาตุพนม สู่มรดกโลก - Google AI Studio compatible wrapper for v32",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
