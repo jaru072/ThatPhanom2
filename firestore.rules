@@ -105,6 +105,12 @@ service cloud.firestore {
         allow create, update, delete: if isAdmin(projectId);
       }
 
+      // หัวข้อแถบซ้าย (Left Sidebar Items)
+      match /sidebarItems/{itemId} {
+        allow read: if true;
+        allow create, update, delete: if isAdmin(projectId);
+      }
+
       // ผังโครงการ: บุคคลทั่วไปอ่านได้เฉพาะหัวข้อที่เปิดเผยแพร่
       match /siteNodes/{nodeId} {
         allow read: if isAdmin(projectId) || resource.data.published == true;
@@ -162,6 +168,16 @@ service cloud.firestore {
           allow delete: if isAdmin(projectId);
         }
       }
+    }
+
+    match /sidebarItems/{itemId} {
+      allow read: if true;
+      allow create, update, delete: if isGlobalAdmin();
+    }
+
+    match /railCards/{cardId} {
+      allow read: if true;
+      allow create, update, delete: if isGlobalAdmin();
     }
 
     match /{document=**} {

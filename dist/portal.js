@@ -219,6 +219,59 @@ const RAIL_TEMPLATES = {
   }
 };
 
+const SIDEBAR_TEMPLATES = {
+  custom: {
+    title: "หัวข้อกำหนดเอง", title_lo: "", title_en: "",
+    description: "รายละเอียดหัวข้อ", description_lo: "", description_en: "",
+    icon: "📌", url: "#", theme: "standard"
+  },
+  nav: {
+    title: "สารบัญและทางลัด", title_lo: "ສາຣະບານ ແລະທາງລັດ", title_en: "Navigation & Shortcuts",
+    description: "ทางลัดเข้าถึงส่วนต่างๆ ของเว็บไซต์", description_lo: "ທາງລັດເຂົ້າເຖິງພາກສ່ວນຕ່າງໆ ຂອງເວັບໄຊ", description_en: "Quick links to main sections",
+    icon: "✦", url: "#history", theme: "standard"
+  },
+  history: {
+    title: "ประวัติความเป็นมา", title_lo: "ປະຫວັດຄວາມເປັນມາ", title_en: "Historical Background",
+    description: "มรดกสองฝั่งโขง อารยธรรมฟากฟ้า", description_lo: "ມໍລະດົກສອງຝັ່ງຂອງ ອາຣະຍະທຳຟາກຟ້າ", description_en: "Heritage of the Mekong Basin",
+    icon: "🏛", url: "#history", theme: "gold"
+  },
+  worldheritage: {
+    title: "สู่มรดกโลกยูเนสโก", title_lo: "ສູ່ມໍລະດົກໂລກຢູເນສໂກ", title_en: "UNESCO World Heritage",
+    description: "เกณฑ์ความโดดเด่นสากล (OUV)", description_lo: "ເກນຄວາມໂດດເດັ່ນສາກົນ (OUV)", description_en: "Outstanding Universal Value",
+    icon: "📜", url: "#world-heritage", theme: "gold"
+  },
+  muchalinda: {
+    title: "สระพญามุจลินท์", title_lo: "ສະພະຍາມຸຈລິນ", title_en: "Muchalinda Sacred Pond",
+    description: "แหล่งน้ำศักดิ์สิทธิ์และงานบูรณะ", description_lo: "ແຫຼ່ງນ້ຳສັກສິດ ແລະງານບູຣະນະ", description_en: "Sacred Water & Restoration",
+    icon: "💧", url: "#muchalinda-project", theme: "maroon"
+  },
+  milestones: {
+    title: "หมุดหมายและไทม์ไลน์", title_lo: "ໝຸດໝາຍ ແລະໄທມ໌ໄລນ໌", title_en: "Milestones & Timeline",
+    description: "ลำดับขั้นตอนและการดำเนินงาน", description_lo: "ລຳດັບຂັ້ນຕອນ ແລະການດຳເນີນງານ", description_en: "Key stages and progress timeline",
+    icon: "📅", url: "#milestones", theme: "standard"
+  },
+  news: {
+    title: "ข่าวสารและกิจกรรม", title_lo: "ຂ່າວສານ ແລະກິດຈະກຳ", title_en: "News & Activities",
+    description: "ความเคลื่อนไหวและประชาสัมพันธ์", description_lo: "ຄວາມເຄື່ອນໄຫວ ແລະປະຊາສຳພັນ", description_en: "Latest updates and announcements",
+    icon: "📢", url: "#news-events", theme: "standard"
+  },
+  document: {
+    title: "คลังเอกสารและรายงาน", title_lo: "ຄັງເອກະສານ ແລະລາຍງານ", title_en: "Document Archive",
+    description: "ดาวน์โหลดเอกสารวิชาการ", description_lo: "ດາວໂຫຼດເອກະສານວິຊາການ", description_en: "Download research & official files",
+    icon: "📄", url: "#documents", theme: "standard"
+  },
+  donation: {
+    title: "ช่องทางร่วมทำบุญ", title_lo: "ຊ່ອງທາງຮ່ວມເຮັດບຸນ", title_en: "Donations & Merit",
+    description: "ร่วมสมทบทุนกองทุนสืบสานมรดก", description_lo: "ຮ່ວມສົມທົບທຶນກອງທຶນສືບສານມໍລະດົກ", description_en: "Contribute to heritage foundation",
+    icon: "♥", url: "#donation", theme: "maroon"
+  },
+  contact: {
+    title: "ติดต่อเรา / สื่อสังคม", title_lo: "ຕິດຕໍ່ພວກເຮົາ / ສື່ສັງຄົມ", title_en: "Contact & Social Media",
+    description: "ช่องทางสื่อสารทางการ", description_lo: "ຊ່ອງທາງສື່ສານທາງການ", description_en: "Official communication channels",
+    icon: "facebook", url: "https://facebook.com", theme: "dark"
+  }
+};
+
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
@@ -228,6 +281,7 @@ const contentCollection = collection(projectRef, "content");
 const mediaCollection = collection(projectRef, "media");
 const siteNodesCollection = collection(projectRef, "siteNodes");
 const railCardsCollection = collection(projectRef, "railCards");
+const sidebarItemsCollection = collection(projectRef, "sidebarItems");
 
 const portal = {
   user: null,
@@ -236,14 +290,17 @@ const portal = {
   media: [],
   nodes: [],
   railCards: [],
+  sidebarItems: [],
   mediaFilter: "all",
   manageKind: "media",
   editingItem: null,
   editingRailCard: null,
+  editingSidebarItem: null,
   unsubContent: null,
   unsubNodes: null,
   unsubMedia: null,
-  unsubRailCards: null
+  unsubRailCards: null,
+  unsubSidebarItems: null
 };
 
 const $ = selector => document.querySelector(selector);
@@ -715,11 +772,12 @@ function renderPortal() {
   renderMediaLibrary();
   renderContentLists();
   renderRightRail();
+  renderLeftSidebarCustom();
   if ($("#contentManageDialog")?.open) renderManageDialog();
 }
 
 function stopListeners() {
-  ["unsubContent", "unsubNodes", "unsubMedia", "unsubRailCards"].forEach(key => {
+  ["unsubContent", "unsubNodes", "unsubMedia", "unsubRailCards", "unsubSidebarItems"].forEach(key => {
     if (portal[key]) portal[key]();
     portal[key] = null;
   });
@@ -751,7 +809,7 @@ function listenPortalData() {
     renderMediaLibrary();
   }, error => console.warn("Media library unavailable", error.code));
 
-  const railQuery = isAdmin() ? query(railCardsCollection, orderBy("order", "asc")) : query(railCardsCollection, where("published", "==", true));
+  const railQuery = isAdmin() ? railCardsCollection : query(railCardsCollection, where("published", "==", true));
   portal.unsubRailCards = onSnapshot(railQuery, snapshot => {
     portal.railCards = snapshot.docs.map(record => ({ id: record.id, ...record.data() }));
     renderRightRail();
@@ -759,6 +817,16 @@ function listenPortalData() {
     console.warn("Rail cards unavailable", error.code);
     portal.railCards = [];
     renderRightRail();
+  });
+
+  const sidebarQuery = isAdmin() ? sidebarItemsCollection : query(sidebarItemsCollection, where("published", "==", true));
+  portal.unsubSidebarItems = onSnapshot(sidebarQuery, snapshot => {
+    portal.sidebarItems = snapshot.docs.map(record => ({ id: record.id, ...record.data() }));
+    renderLeftSidebarCustom();
+  }, error => {
+    console.warn("Sidebar items unavailable", error.code);
+    portal.sidebarItems = [];
+    renderLeftSidebarCustom();
   });
 }
 
@@ -1001,7 +1069,7 @@ function formatThaiDateTimeBE(dateInput) {
   return `${day} ${month} ${yearBE} เวลา ${hours}:${minutes} น.`;
 }
 
-function confirmRailAction(title, message, action) {
+function confirmRailAction(title, message, action, confirmText = "ยืนยัน") {
   const root = $("#confirmDialog");
   if (!root) {
     if (window.confirm(`${title}\n${message}`)) action();
@@ -1009,6 +1077,8 @@ function confirmRailAction(title, message, action) {
   }
   $("#confirmTitle").textContent = title;
   $("#confirmMessage").textContent = message;
+  const okBtn = $("#confirmOk");
+  if (okBtn) okBtn.textContent = confirmText;
   if (root.open) root.close();
   root.showModal();
   const close = () => { if (root.open) root.close(); };
@@ -1036,7 +1106,20 @@ function getLocalizedField(card, field, lang) {
 }
 
 function getSortedRailCards() {
-  const firestoreCards = portal.railCards || [];
+  const firestoreCards = (portal.railCards || []).map(card => {
+    const defaultCard = DEFAULT_RAIL_CARDS.find(def => def.id === card.id);
+    if (defaultCard) {
+      return {
+        ...defaultCard,
+        ...card,
+        title: card.title || defaultCard.title,
+        description: card.description || defaultCard.description,
+        kicker: card.kicker || defaultCard.kicker,
+        buttonText: card.buttonText || defaultCard.buttonText
+      };
+    }
+    return card;
+  });
   const existingIds = new Set(firestoreCards.map(c => c.id));
   const activeDefaultCards = DEFAULT_RAIL_CARDS.filter(def => !existingIds.has(def.id));
   const allCards = [...firestoreCards, ...activeDefaultCards];
@@ -1341,6 +1424,74 @@ function queueAutoTranslate() {
   if (autoTranslateTimer) clearTimeout(autoTranslateTimer);
   autoTranslateTimer = setTimeout(() => {
     autoTranslateRailFields(false);
+  }, 750);
+}
+
+let autoTranslateSidebarTimer = null;
+let isTranslatingSidebar = false;
+
+async function autoTranslateSidebarFields(force = false) {
+  if (isTranslatingSidebar) return;
+
+  const titleTh = $("#sidebarItemTitleTh")?.value.trim() || "";
+  const descTh = $("#sidebarItemDescTh")?.value.trim() || "";
+
+  if (!titleTh && !descTh) return;
+
+  const statusWrap = $("#sidebarTranslateStatus");
+  const statusText = $("#sidebarTranslateStatusText");
+  const translateBtn = $("#sidebarAutoTranslateBtn");
+
+  if (statusWrap && statusText) {
+    statusWrap.hidden = false;
+    statusText.textContent = "⚡ กำลังแปลภาษาลาวและอังกฤษอัตโนมัติ...";
+  }
+  if (translateBtn) translateBtn.disabled = true;
+  isTranslatingSidebar = true;
+
+  try {
+    const [titleLo, titleEn, descLo, descEn] = await Promise.all([
+      titleTh ? translateThaiToLao(titleTh) : Promise.resolve(""),
+      titleTh ? translateThaiToEnglish(titleTh) : Promise.resolve(""),
+      descTh ? translateThaiToLao(descTh) : Promise.resolve(""),
+      descTh ? translateThaiToEnglish(descTh) : Promise.resolve("")
+    ]);
+
+    const titleLoEl = $("#sidebarItemTitleLo");
+    const descLoEl = $("#sidebarItemDescLo");
+    const titleEnEl = $("#sidebarItemTitleEn");
+    const descEnEl = $("#sidebarItemDescEn");
+
+    if (titleLoEl && (force || !titleLoEl.dataset.customized)) titleLoEl.value = titleLo;
+    if (descLoEl && (force || !descLoEl.dataset.customized)) descLoEl.value = descLo;
+
+    if (titleEnEl && (force || !titleEnEl.dataset.customized)) titleEnEl.value = titleEn;
+    if (descEnEl && (force || !descEnEl.dataset.customized)) descEnEl.value = descEn;
+
+    if (statusText) {
+      statusText.textContent = "✓ แปลภาษาลาวและอังกฤษอัตโนมัติสำเร็จ";
+      setTimeout(() => {
+        if (statusWrap) statusWrap.hidden = true;
+      }, 3500);
+    }
+  } catch (err) {
+    console.error("Auto-translate sidebar fields error:", err);
+    if (statusText) {
+      statusText.textContent = "ระบบแปลภาษาอัตโนมัติพร้อมใช้งาน";
+      setTimeout(() => {
+        if (statusWrap) statusWrap.hidden = true;
+      }, 3000);
+    }
+  } finally {
+    isTranslatingSidebar = false;
+    if (translateBtn) translateBtn.disabled = false;
+  }
+}
+
+function queueAutoTranslateSidebar() {
+  if (autoTranslateSidebarTimer) clearTimeout(autoTranslateSidebarTimer);
+  autoTranslateSidebarTimer = setTimeout(() => {
+    autoTranslateSidebarFields(false);
   }, 750);
 }
 
@@ -1783,22 +1934,32 @@ function trashRailCard() {
   const cardId = $("#railCardId").value;
   if (!cardId || cardId === "new") return;
 
+  const currentCards = getSortedRailCards();
+  const targetCard = currentCards.find(c => c.id === cardId) || DEFAULT_RAIL_CARDS.find(c => c.id === cardId);
+  const cardTitle = targetCard?.title || "หัวข้อนี้";
+
   confirmRailAction(
     "ยืนยันการย้ายไปถังพัก",
-    "ต้องการย้ายหัวข้อนี้ไปยังถังพักหรือไม่? (รายการจะไม่แสดงบนหน้าเว็บ แต่ท่านสามารถกู้คืนได้ทุกเมื่อ)",
+    `ต้องการย้าย “${cardTitle}” ไปยังถังพักหรือไม่? (รายการจะไม่แสดงบนหน้าเว็บ แต่ท่านสามารถเปิดดูและกู้คืนได้ทุกเมื่อจากปุ่มถังพัก)`,
     async () => {
       try {
-        await setDoc(doc(railCardsCollection, cardId), {
+        const payload = {
+          ...(targetCard || {}),
+          id: cardId,
+          order: Number(targetCard?.order) || 10,
           deletedAt: serverTimestamp(),
-          published: false
-        }, { merge: true });
+          published: false,
+          updatedAt: serverTimestamp()
+        };
+        await setDoc(doc(railCardsCollection, cardId), payload, { merge: true });
         $("#railCardDialog").close();
-        showToast("ย้ายหัวข้อไปยังถังพักเรียบร้อยแล้ว");
+        showToast(`ย้าย “${cardTitle}” ไปยังถังพักเรียบร้อยแล้ว`);
       } catch (error) {
         console.error("Trash rail card error:", error);
         showToast("ไม่สามารถย้ายไปยังถังพักได้", "error");
       }
-    }
+    },
+    "ย้ายไปถังพัก"
   );
 }
 
@@ -1808,7 +1969,7 @@ function openRailTrashDialog() {
   const listEl = $("#railTrashList");
   if (!dialog || !listEl) return;
 
-  const allCards = portal.railCards || [];
+  const allCards = getSortedRailCards();
   const trashed = allCards.filter(c => Boolean(c.deletedAt));
 
   listEl.innerHTML = "";
@@ -1821,7 +1982,7 @@ function openRailTrashDialog() {
       row.innerHTML = `
         <div class="rail-trash-meta">
           <strong>${escapeHtml(item.title || 'ไม่มีชื่อหัวข้อ')}</strong>
-          <span>ย้ายเมื่อ: ${formatThaiDateTimeBE(item.deletedAt) || 'เร็วๆ นี้'}</span>
+          <span>ย้ายเมื่อ: ${formatThaiDateTimeBE(item.deletedAt) || 'เมื่อสักครู่'}</span>
         </div>
         <button type="button" class="button secondary small rail-restore-btn">กู้คืน</button>
         <button type="button" class="button danger small rail-perm-btn">ลบถาวร</button>
@@ -1839,10 +2000,16 @@ function openRailTrashDialog() {
 async function restoreRailCard(cardId) {
   if (!isAdmin()) return;
   try {
-    await updateDoc(doc(railCardsCollection, cardId), {
+    const defaultCard = DEFAULT_RAIL_CARDS.find(def => def.id === cardId);
+    const existingCard = (portal.railCards || []).find(c => c.id === cardId);
+    const patch = {
+      ...(defaultCard || {}),
+      ...(existingCard || {}),
       deletedAt: null,
-      published: true
-    });
+      published: true,
+      updatedAt: serverTimestamp()
+    };
+    await setDoc(doc(railCardsCollection, cardId), patch, { merge: true });
     showToast("กู้คืนหัวข้อเรียบร้อยแล้ว");
     openRailTrashDialog();
   } catch (error) {
@@ -1865,7 +2032,8 @@ function permDeleteRailCard(cardId, title) {
         console.error("Perm delete rail card error:", error);
         showToast("ลบรายการไม่สำเร็จ", "error");
       }
-    }
+    },
+    "ลบถาวร"
   );
 }
 
@@ -1920,6 +2088,502 @@ async function moveRailCardStep(direction) {
   showToast("ปรับลำดับหัวข้อเรียบร้อยแล้ว");
 }
 
+function getSortedSidebarItems() {
+  return (portal.sidebarItems || []).slice().sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+}
+
+function applySidebarTemplatePreset(presetKey) {
+  const preset = SIDEBAR_TEMPLATES[presetKey];
+  if (!preset) return;
+  if ($("#sidebarItemVisualTheme")) $("#sidebarItemVisualTheme").value = preset.theme || "standard";
+  if ($("#sidebarItemTitleTh")) $("#sidebarItemTitleTh").value = preset.title || "";
+  if ($("#sidebarItemTitleLo")) $("#sidebarItemTitleLo").value = preset.title_lo || "";
+  if ($("#sidebarItemTitleEn")) $("#sidebarItemTitleEn").value = preset.title_en || "";
+  if ($("#sidebarItemDescTh")) $("#sidebarItemDescTh").value = preset.description || "";
+  if ($("#sidebarItemDescLo")) $("#sidebarItemDescLo").value = preset.description_lo || "";
+  if ($("#sidebarItemDescEn")) $("#sidebarItemDescEn").value = preset.description_en || "";
+  if ($("#sidebarItemIcon")) $("#sidebarItemIcon").value = preset.icon || "📌";
+  if ($("#sidebarItemUrl")) $("#sidebarItemUrl").value = preset.url || "";
+  if ($("#sidebarItemOpenExternal")) {
+    $("#sidebarItemOpenExternal").value = preset.url?.startsWith("http") ? "true" : "false";
+  }
+}
+
+function renderLeftSidebarCustom() {
+  const container = $("#sidebarItemsContainer");
+  if (!container) return;
+
+  const currentLang = document.documentElement.lang || "th";
+  const isMuchalinda = location.hash === "#muchalinda-project" || location.hash.startsWith("#muchalinda-");
+  const activeProjectSlug = isMuchalinda ? "muchalinda-restoration" : "world-heritage";
+
+  const allItems = getSortedSidebarItems();
+  const trashedItems = allItems.filter(item => Boolean(item.deletedAt));
+  const trashCountEl = $("#sidebarTrashCount");
+  if (trashCountEl) trashCountEl.textContent = String(trashedItems.length);
+
+  const toolbar = $("#sidebarAdminToolbar");
+  if (toolbar) toolbar.hidden = !isAdmin();
+
+  const now = new Date();
+  const visibleItems = allItems
+    .filter(item => !item.deletedAt)
+    .filter(item => {
+      if (isAdmin()) return true;
+      if (item.published === false) return false;
+      if (item.projectScope && item.projectScope !== "all" && item.projectScope !== activeProjectSlug) return false;
+      if (item.scheduled) {
+        if (item.startDate && new Date(item.startDate) > now) return false;
+        if (item.endDate && new Date(item.endDate) < now) return false;
+      }
+      return true;
+    });
+
+  container.innerHTML = "";
+
+  visibleItems.forEach(item => {
+    const rawUrl = (item.url || "").trim();
+    const hasLink = Boolean(rawUrl && rawUrl !== "#");
+    const el = document.createElement(hasLink ? "a" : "div");
+    const themeClass = item.theme && item.theme !== "standard" ? `theme-${item.theme}` : "";
+    el.className = `sidebar-item ${themeClass}`.trim();
+    if (hasLink) {
+      el.href = rawUrl;
+      if (item.openExternal) {
+        el.target = "_blank";
+        el.rel = "noopener noreferrer";
+      }
+    } else {
+      el.style.cursor = "default";
+    }
+    el.dataset.sidebarId = item.id;
+
+    if (isAdmin()) {
+      el.classList.add("is-admin-draggable");
+      el.setAttribute("draggable", "true");
+
+      el.addEventListener("dragstart", e => {
+        e.dataTransfer.setData("text/plain", item.id);
+        el.classList.add("is-dragging");
+      });
+      el.addEventListener("dragend", () => {
+        el.classList.remove("is-dragging");
+        $$(".sidebar-item").forEach(i => i.classList.remove("drag-over"));
+      });
+      el.addEventListener("dragover", e => {
+        e.preventDefault();
+        el.classList.add("drag-over");
+      });
+      el.addEventListener("dragleave", () => {
+        el.classList.remove("drag-over");
+      });
+      el.addEventListener("drop", e => {
+        e.preventDefault();
+        el.classList.remove("drag-over");
+        const draggedId = e.dataTransfer.getData("text/plain");
+        if (draggedId && draggedId !== item.id) {
+          reorderSidebarItems(draggedId, item.id);
+        }
+      });
+    }
+
+    const iconSpan = document.createElement("span");
+    const iconKey = String(item.icon || "").toLowerCase().trim();
+    const social = SOCIAL_ICONS[iconKey];
+    if (social) {
+      iconSpan.className = `sidebar-item-icon ${social.className}`;
+      iconSpan.innerHTML = social.svg;
+    } else {
+      iconSpan.className = "sidebar-item-icon";
+      iconSpan.textContent = item.icon || "📌";
+    }
+
+    const copySpan = document.createElement("span");
+    copySpan.className = "sidebar-item-copy";
+
+    const title = getLocalizedField(item, "title", currentLang) || item.title || "ไม่มีชื่อหัวข้อ";
+    const desc = getLocalizedField(item, "description", currentLang) || item.description || "";
+
+    const titleStrong = document.createElement("strong");
+    titleStrong.className = "sidebar-item-title";
+    titleStrong.textContent = title;
+    copySpan.appendChild(titleStrong);
+
+    if (desc) {
+      const descSmall = document.createElement("small");
+      descSmall.className = "sidebar-item-desc";
+      descSmall.textContent = desc;
+      copySpan.appendChild(descSmall);
+    }
+
+    if (isAdmin()) {
+      if (item.published === false) {
+        const draftBadge = document.createElement("span");
+        draftBadge.className = "sidebar-item-status-badge status-draft";
+        draftBadge.textContent = "ฉบับร่าง";
+        copySpan.appendChild(draftBadge);
+      } else if (item.scheduled) {
+        const badge = document.createElement("span");
+        const isUpcoming = item.startDate && new Date(item.startDate) > now;
+        const isExpired = item.endDate && new Date(item.endDate) < now;
+        if (isUpcoming) {
+          badge.className = "sidebar-item-status-badge status-scheduled";
+          badge.textContent = `รอเริ่ม: ${formatThaiDateTimeBE(item.startDate)}`;
+        } else if (isExpired) {
+          badge.className = "sidebar-item-status-badge status-expired";
+          badge.textContent = `หมดเวลา: ${formatThaiDateTimeBE(item.endDate)}`;
+        } else {
+          badge.className = "sidebar-item-status-badge status-scheduled";
+          badge.textContent = "กำลังแสดงผลตามเวลา";
+        }
+        copySpan.appendChild(badge);
+      }
+    }
+
+    el.appendChild(iconSpan);
+    el.appendChild(copySpan);
+
+    if (isAdmin()) {
+      const gearBtn = document.createElement("button");
+      gearBtn.type = "button";
+      gearBtn.className = "sidebar-item-gear";
+      gearBtn.title = "จัดการหัวข้อนี้";
+      gearBtn.setAttribute("aria-label", "จัดการหัวข้อนี้");
+      gearBtn.textContent = "⚙";
+      gearBtn.addEventListener("click", e => {
+        e.preventDefault();
+        e.stopPropagation();
+        openSidebarItemEditor(item.id);
+      });
+      el.appendChild(gearBtn);
+    }
+
+    container.appendChild(el);
+  });
+}
+
+function openSidebarItemEditor(itemId) {
+  if (!isAdmin()) return;
+  portal.editingSidebarItem = itemId;
+  const dialog = $("#sidebarItemDialog");
+  const form = $("#sidebarItemForm");
+  if (!dialog || !form) return;
+
+  const isNew = !itemId || itemId === "new";
+  const titleHeader = $("#sidebarItemDialogTitle");
+  if (titleHeader) titleHeader.textContent = isNew ? "เพิ่มหัวข้อใหม่ (แถบซ้าย)" : "จัดการหัวข้อนี้ (แถบซ้าย)";
+
+  $$(".sidebar-lang-tab").forEach(tab => tab.classList.toggle("active", tab.dataset.sidebarTab === "th"));
+  $("#sidebarPaneTh").hidden = false;
+  $("#sidebarPaneTh").classList.add("active");
+  $("#sidebarPaneLo").hidden = true;
+  $("#sidebarPaneLo").classList.remove("active");
+  $("#sidebarPaneEn").hidden = true;
+  $("#sidebarPaneEn").classList.remove("active");
+
+  const items = getSortedSidebarItems().filter(i => !i.deletedAt);
+  const item = isNew ? null : (items.find(i => i.id === itemId) || (portal.sidebarItems || []).find(i => i.id === itemId) || null);
+
+  $("#sidebarItemId").value = isNew ? "new" : (item?.id || itemId);
+  $("#sidebarItemOrder").value = isNew ? (items.length + 1) * 10 : (item?.order || 10);
+  const currentIdx = isNew ? items.length : items.findIndex(i => i.id === itemId);
+  $("#sidebarItemOrderDisplay").textContent = `ลำดับที่ ${currentIdx + 1} จาก ${isNew ? items.length + 1 : items.length}`;
+
+  $("#sidebarItemTemplateSelect").value = item?.template || "custom";
+  $("#sidebarItemVisualTheme").value = item?.theme || "standard";
+
+  $("#sidebarItemTitleTh").value = item?.title_th || item?.title || "";
+  $("#sidebarItemTitleLo").value = item?.title_lo || "";
+  $("#sidebarItemTitleEn").value = item?.title_en || "";
+
+  $("#sidebarItemDescTh").value = item?.description_th || item?.description || "";
+  $("#sidebarItemDescLo").value = item?.description_lo || "";
+  $("#sidebarItemDescEn").value = item?.description_en || "";
+
+  ["TitleLo", "TitleEn", "DescLo", "DescEn"].forEach(key => {
+    const el = $(`#sidebarItem${key}`);
+    if (el) {
+      if (isNew || !el.value) {
+        delete el.dataset.customized;
+      } else {
+        el.dataset.customized = "true";
+      }
+    }
+  });
+
+  const translateStatus = $("#sidebarTranslateStatus");
+  if (translateStatus) translateStatus.hidden = true;
+
+  $("#sidebarItemIcon").value = item?.icon || "📌";
+  $("#sidebarItemUrl").value = item?.url || "";
+  $("#sidebarItemOpenExternal").value = item?.openExternal ? "true" : "false";
+  $("#sidebarItemProjectScope").value = item?.projectScope || "all";
+  $("#sidebarItemPublished").checked = item ? (item.published !== false) : true;
+
+  const isScheduled = Boolean(item?.scheduled);
+  $("#sidebarItemScheduled").checked = isScheduled;
+  $("#sidebarScheduleFields").hidden = !isScheduled;
+  $("#sidebarItemStartDate").value = item?.startDate || "";
+  $("#sidebarItemEndDate").value = item?.endDate || "";
+
+  $("#sidebarItemDeleteBtn").hidden = isNew;
+  $("#sidebarItemMoveUpBtn").disabled = isNew || currentIdx <= 0;
+  $("#sidebarItemMoveDownBtn").disabled = isNew || currentIdx >= items.length - 1;
+  $("#sidebarItemStatus").hidden = true;
+
+  if (dialog.open) dialog.close();
+  dialog.showModal();
+}
+
+async function saveSidebarItem(event) {
+  event.preventDefault();
+  if (!isAdmin()) {
+    showToast("ต้องเข้าสู่ระบบในฐานะผู้ดูแลระบบเพื่อบันทึกข้อมูล", "error");
+    return;
+  }
+
+  const saveBtn = $("#saveSidebarItemButton");
+  const statusEl = $("#sidebarItemStatus");
+  const itemId = $("#sidebarItemId").value;
+
+  if (!portal.user) {
+    statusEl.textContent = "กรุณาเข้าสู่ระบบด้วยบัญชีผู้ดูแลก่อนบันทึกข้อมูล";
+    statusEl.hidden = false;
+    return;
+  }
+
+  const titleTh = $("#sidebarItemTitleTh")?.value?.trim() || "";
+  const descTh = $("#sidebarItemDescTh")?.value?.trim() || "";
+
+  if (!titleTh) {
+    statusEl.textContent = "กรุณากรอกชื่อหัวข้อภาษาไทย";
+    statusEl.hidden = false;
+    return;
+  }
+
+  try {
+    saveBtn.disabled = true;
+    statusEl.textContent = "กำลังตรวจสอบและบันทึกข้อมูล...";
+    statusEl.hidden = false;
+
+    let titleLo = $("#sidebarItemTitleLo")?.value?.trim() || "";
+    let titleEn = $("#sidebarItemTitleEn")?.value?.trim() || "";
+    let descLo = $("#sidebarItemDescLo")?.value?.trim() || "";
+    let descEn = $("#sidebarItemDescEn")?.value?.trim() || "";
+
+    try {
+      if (!titleLo && titleTh) titleLo = await translateThaiToLao(titleTh);
+      if (!titleEn && titleTh) titleEn = await translateThaiToEnglish(titleTh);
+      if (!descLo && descTh) descLo = await translateThaiToLao(descTh);
+      if (!descEn && descTh) descEn = await translateThaiToEnglish(descTh);
+    } catch (_) {}
+
+    const rawUrl = $("#sidebarItemUrl")?.value?.trim() || "";
+    const payload = {
+      template: $("#sidebarItemTemplateSelect")?.value || "custom",
+      theme: $("#sidebarItemVisualTheme")?.value || "standard",
+      title: titleTh,
+      title_th: titleTh,
+      title_lo: titleLo,
+      title_en: titleEn,
+      description: descTh,
+      description_th: descTh,
+      description_lo: descLo,
+      description_en: descEn,
+      url: rawUrl,
+      openExternal: Boolean($("#sidebarItemOpenExternal")?.value === "true" && rawUrl),
+      icon: $("#sidebarItemIcon")?.value?.trim() || "📌",
+      projectScope: $("#sidebarItemProjectScope")?.value || "all",
+      published: Boolean($("#sidebarItemPublished")?.checked),
+      scheduled: Boolean($("#sidebarItemScheduled")?.checked),
+      startDate: $("#sidebarItemStartDate")?.value || "",
+      endDate: $("#sidebarItemEndDate")?.value || "",
+      order: Number($("#sidebarItemOrder")?.value) || 10,
+      updatedAt: serverTimestamp(),
+      deletedAt: null
+    };
+
+    if (itemId === "new") {
+      payload.createdAt = serverTimestamp();
+      payload.createdBy = portal.user?.uid || "admin";
+      payload.createdByEmail = portal.user?.email || "";
+      await addDoc(sidebarItemsCollection, payload);
+      showToast("เพิ่มหัวข้อแถบซ้ายเรียบร้อยแล้ว");
+    } else {
+      await setDoc(doc(sidebarItemsCollection, itemId), payload, { merge: true });
+      showToast("บันทึกข้อมูลหัวข้อแถบซ้ายเรียบร้อยแล้ว");
+    }
+
+    $("#sidebarItemDialog").close();
+  } catch (error) {
+    console.error("Save sidebar item error:", error);
+    const isPermission = error?.code === "permission-denied";
+    statusEl.textContent = isPermission
+      ? "ไม่มีสิทธิ์บันทึกข้อมูล (Permission Denied) กรุณาตรวจสอบสถานะผู้ดูแลระบบ"
+      : (error?.message || "เกิดข้อผิดพลาดในการบันทึก กรุณาลองใหม่อีกครั้ง");
+    statusEl.hidden = false;
+  } finally {
+    saveBtn.disabled = false;
+  }
+}
+
+function trashSidebarItem() {
+  if (!isAdmin()) return;
+  const itemId = $("#sidebarItemId").value;
+  if (!itemId || itemId === "new") return;
+
+  const currentItems = getSortedSidebarItems();
+  const targetItem = currentItems.find(i => i.id === itemId);
+  const itemTitle = targetItem?.title || "หัวข้อนี้";
+
+  confirmRailAction(
+    "ยืนยันการย้ายไปถังพัก",
+    `ต้องการย้าย “${itemTitle}” ไปยังถังพักหรือไม่? (รายการจะไม่แสดงบนหน้าเว็บ แต่ท่านสามารถเปิดดูและกู้คืนได้ทุกเมื่อจากปุ่มถังพัก)`,
+    async () => {
+      try {
+        const payload = {
+          ...(targetItem || {}),
+          id: itemId,
+          order: Number(targetItem?.order) || 10,
+          deletedAt: serverTimestamp(),
+          published: false,
+          updatedAt: serverTimestamp()
+        };
+        await setDoc(doc(sidebarItemsCollection, itemId), payload, { merge: true });
+        $("#sidebarItemDialog").close();
+        showToast(`ย้าย “${itemTitle}” ไปยังถังพักเรียบร้อยแล้ว`);
+      } catch (error) {
+        console.error("Trash sidebar item error:", error);
+        showToast("ไม่สามารถย้ายไปยังถังพักได้", "error");
+      }
+    },
+    "ย้ายไปถังพัก"
+  );
+}
+
+function openSidebarTrashDialog() {
+  if (!isAdmin()) return;
+  const dialog = $("#sidebarTrashDialog");
+  const listEl = $("#sidebarTrashList");
+  if (!dialog || !listEl) return;
+
+  const allItems = getSortedSidebarItems();
+  const trashed = allItems.filter(i => Boolean(i.deletedAt));
+
+  listEl.innerHTML = "";
+  if (trashed.length === 0) {
+    listEl.innerHTML = `<p class="resource-empty">ไม่มีรายการในถังพัก</p>`;
+  } else {
+    trashed.forEach(item => {
+      const row = document.createElement("div");
+      row.className = "rail-trash-row";
+      row.innerHTML = `
+        <div class="rail-trash-meta">
+          <strong>${escapeHtml(item.title || 'ไม่มีชื่อหัวข้อ')}</strong>
+          <span>ย้ายเมื่อ: ${formatThaiDateTimeBE(item.deletedAt) || 'เมื่อสักครู่'}</span>
+        </div>
+        <button type="button" class="button secondary small sidebar-restore-btn">กู้คืน</button>
+        <button type="button" class="button danger small sidebar-perm-btn">ลบถาวร</button>
+      `;
+      row.querySelector(".sidebar-restore-btn").addEventListener("click", () => restoreSidebarItem(item.id));
+      row.querySelector(".sidebar-perm-btn").addEventListener("click", () => permDeleteSidebarItem(item.id, item.title));
+      listEl.appendChild(row);
+    });
+  }
+
+  if (dialog.open) dialog.close();
+  dialog.showModal();
+}
+
+async function restoreSidebarItem(itemId) {
+  if (!isAdmin()) return;
+  try {
+    const existing = (portal.sidebarItems || []).find(i => i.id === itemId);
+    const patch = {
+      ...(existing || {}),
+      deletedAt: null,
+      published: true,
+      updatedAt: serverTimestamp()
+    };
+    await setDoc(doc(sidebarItemsCollection, itemId), patch, { merge: true });
+    showToast("กู้คืนหัวข้อเรียบร้อยแล้ว");
+    openSidebarTrashDialog();
+  } catch (error) {
+    console.error("Restore sidebar item error:", error);
+    showToast("กู้คืนรายการไม่สำเร็จ", "error");
+  }
+}
+
+function permDeleteSidebarItem(itemId, title) {
+  if (!isAdmin()) return;
+  confirmRailAction(
+    "ยืนยันการลบถาวร",
+    `ต้องการลบหัวข้อ “${title || 'หัวข้อนี้'}” อย่างถาวรใช่หรือไม่? เมื่อลบแล้วจะไม่สามารถกู้คืนได้อีก`,
+    async () => {
+      try {
+        await deleteDoc(doc(sidebarItemsCollection, itemId));
+        showToast("ลบหัวข้ออย่างถาวรแล้ว");
+        openSidebarTrashDialog();
+      } catch (error) {
+        console.error("Perm delete sidebar item error:", error);
+        showToast("ลบรายการไม่สำเร็จ", "error");
+      }
+    },
+    "ลบถาวร"
+  );
+}
+
+async function reorderSidebarItems(sourceId, targetId) {
+  if (!isAdmin()) return;
+  const items = getSortedSidebarItems().filter(i => !i.deletedAt);
+  const sourceIndex = items.findIndex(i => i.id === sourceId);
+  const targetIndex = items.findIndex(i => i.id === targetId);
+  if (sourceIndex === -1 || targetIndex === -1 || sourceIndex === targetIndex) return;
+
+  const [moved] = items.splice(sourceIndex, 1);
+  items.splice(targetIndex, 0, moved);
+
+  for (let i = 0; i < items.length; i++) {
+    const item = items[i];
+    const newOrder = (i + 1) * 10;
+    item.order = newOrder;
+    await setDoc(doc(sidebarItemsCollection, item.id), {
+      ...item,
+      order: newOrder,
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  }
+  showToast("จัดเรียงลำดับหัวข้อเรียบร้อยแล้ว");
+}
+
+async function moveSidebarItemStep(direction) {
+  if (!isAdmin()) return;
+  const itemId = $("#sidebarItemId").value;
+  if (!itemId || itemId === "new") return;
+  const items = getSortedSidebarItems().filter(i => !i.deletedAt);
+  const idx = items.findIndex(i => i.id === itemId);
+  if (idx === -1) return;
+  const targetIdx = direction === "up" ? idx - 1 : idx + 1;
+  if (targetIdx < 0 || targetIdx >= items.length) {
+    showToast(direction === "up" ? "อยู่อันดับแรกแล้ว" : "อยู่อันดับสุดท้ายแล้ว");
+    return;
+  }
+  const currentItem = items[idx];
+  const targetItem = items[targetIdx];
+  const currentOrder = currentItem.order || (idx + 1) * 10;
+  const targetOrder = targetItem.order || (targetIdx + 1) * 10;
+
+  currentItem.order = targetOrder;
+  targetItem.order = currentOrder;
+
+  await setDoc(doc(sidebarItemsCollection, currentItem.id), { ...currentItem, order: targetOrder, updatedAt: serverTimestamp() }, { merge: true });
+  await setDoc(doc(sidebarItemsCollection, targetItem.id), { ...targetItem, order: currentOrder, updatedAt: serverTimestamp() }, { merge: true });
+
+  $("#sidebarItemOrder").value = targetOrder;
+  $("#sidebarItemOrderDisplay").textContent = `ลำดับที่ ${targetIdx + 1} จาก ${items.length}`;
+  showToast("ปรับลำดับหัวข้อเรียบร้อยแล้ว");
+}
+
 function setupPortalEvents() {
   $("#manageProjectsButton")?.addEventListener("click", () => $("#treeMenuButton")?.click());
   $("#closeSelectedProjectDetail")?.addEventListener("click", () => { $("#selectedProjectDetail").hidden = true; });
@@ -1947,6 +2611,90 @@ function setupPortalEvents() {
   $("#closeContentEditButton").addEventListener("click", () => $("#contentEditDialog").close());
   $("#cancelContentEditButton").addEventListener("click", () => $("#contentEditDialog").close());
   $("#contentEditorForm").addEventListener("submit", saveContentItem);
+
+  // Left Sidebar Event Listeners
+  $("#sidebarAddButton")?.addEventListener("click", () => openSidebarItemEditor("new"));
+  $("#sidebarTrashButton")?.addEventListener("click", openSidebarTrashDialog);
+  $("#closeSidebarTrashDialogButton")?.addEventListener("click", () => $("#sidebarTrashDialog")?.close());
+  $("#closeSidebarItemDialogButton")?.addEventListener("click", () => $("#sidebarItemDialog")?.close());
+  $("#cancelSidebarItemButton")?.addEventListener("click", () => $("#sidebarItemDialog")?.close());
+  $("#sidebarItemForm")?.addEventListener("submit", saveSidebarItem);
+  $("#sidebarItemDeleteBtn")?.addEventListener("click", trashSidebarItem);
+  $("#sidebarItemMoveUpBtn")?.addEventListener("click", () => moveSidebarItemStep("up"));
+  $("#sidebarItemMoveDownBtn")?.addEventListener("click", () => moveSidebarItemStep("down"));
+  $("#sidebarItemScheduled")?.addEventListener("change", e => {
+    $("#sidebarScheduleFields").hidden = !e.target.checked;
+  });
+  $("#sidebarItemTemplateSelect")?.addEventListener("change", e => {
+    applySidebarTemplatePreset(e.target.value);
+  });
+  $$("#sidebarIconChips .rail-chip").forEach(chip => {
+    chip.addEventListener("click", () => {
+      const iconKey = chip.dataset.icon;
+      $("#sidebarItemIcon").value = iconKey;
+
+      if (["facebook", "line", "tiktok", "instagram", "youtube"].includes(iconKey)) {
+        $("#sidebarItemOpenExternal").value = "true";
+
+        const titleEl = $("#sidebarItemTitleTh");
+        const descEl = $("#sidebarItemDescTh");
+
+        if (!titleEl.value.trim()) {
+          if (iconKey === "facebook") titleEl.value = "เฟซบุ๊กทางการ";
+          else if (iconKey === "line") titleEl.value = "ไลน์ออฟฟิเชียล";
+          else if (iconKey === "tiktok") titleEl.value = "ติ๊กต็อก";
+          else if (iconKey === "instagram") titleEl.value = "อินสตาแกรม";
+          else if (iconKey === "youtube") titleEl.value = "ยูทูบทางการ";
+        }
+
+        if (!descEl.value.trim()) {
+          if (iconKey === "facebook") descEl.value = "ติดตามข่าวสารและกิจกรรมทาง Facebook";
+          else if (iconKey === "line") descEl.value = "สอบถามข้อมูลและรับการแจ้งเตือนทาง LINE";
+          else if (iconKey === "tiktok") descEl.value = "ชมคลิปสั้นและไฮไลท์บรรยากาศทาง TikTok";
+          else if (iconKey === "instagram") descEl.value = "ชมภาพประทับใจทาง Instagram";
+          else if (iconKey === "youtube") descEl.value = "ชมคลิปบันทึกและถ่ายทอดสดทาง YouTube";
+        }
+
+        queueAutoTranslateSidebar();
+      }
+    });
+  });
+
+  // Track manual changes in Lao and English fields for Left Sidebar
+  ["TitleLo", "TitleEn", "DescLo", "DescEn"].forEach(key => {
+    $(`#sidebarItem${key}`)?.addEventListener("input", e => {
+      if (e.target.value.trim()) {
+        e.target.dataset.customized = "true";
+      } else {
+        delete e.target.dataset.customized;
+      }
+    });
+  });
+
+  // Real-time auto-translation from Thai (master language) for Left Sidebar
+  ["TitleTh", "DescTh"].forEach(key => {
+    $(`#sidebarItem${key}`)?.addEventListener("input", () => {
+      queueAutoTranslateSidebar();
+    });
+  });
+
+  // Explicit Auto-Translate button click for Left Sidebar
+  $("#sidebarAutoTranslateBtn")?.addEventListener("click", () => {
+    autoTranslateSidebarFields(true);
+  });
+
+  $$(".sidebar-lang-tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      const target = tab.dataset.sidebarTab;
+      $$(".sidebar-lang-tab").forEach(t => t.classList.toggle("active", t === tab));
+      $("#sidebarPaneTh").hidden = target !== "th";
+      $("#sidebarPaneTh").classList.toggle("active", target === "th");
+      $("#sidebarPaneLo").hidden = target !== "lo";
+      $("#sidebarPaneLo").classList.toggle("active", target === "lo");
+      $("#sidebarPaneEn").hidden = target !== "en";
+      $("#sidebarPaneEn").classList.toggle("active", target === "en");
+    });
+  });
 
   // Right Rail Event Listeners
   $("#railAddButton")?.addEventListener("click", () => openRailCardEditor("new"));
@@ -2039,6 +2787,7 @@ function setupPortalEvents() {
     renderMediaLibrary();
     renderContentLists();
     renderRightRail();
+    renderLeftSidebarCustom();
   }, 0)));
   window.addEventListener("open-portal-manager", event => {
     const kind = event.detail?.kind;
@@ -2057,6 +2806,7 @@ window.addEventListener("hashchange", () => {
   const supportHash = location.hash === "#muchalinda-project" || location.hash.startsWith("#muchalinda-");
   if (!supportHash) setSupportProjectMode(false);
   renderRightRail();
+  renderLeftSidebarCustom();
 });
 renderPortal();
 onAuthStateChanged(auth, async user => {
