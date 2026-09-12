@@ -844,8 +844,36 @@ function setupSliderInteraction(root, stage, section, total) {
 
 function changeSlide(section, direction, total, userInitiated = false) {
   if (userInitiated) stopAutoSlide(section);
+
+  const root = document.querySelector(`[data-slider="${section}"]`);
+  if (!root) return;
+
+  const slides = root.querySelectorAll('.media-slide');
+  if (slides.length === 0) return;
+
+  // 1. ดึง class 'active' ออกจากสไลด์ปัจจุบัน (ซ่อนรูปเดิม)
+  if (slides[state.slideIndex[section]]) {
+    slides[state.slideIndex[section]].classList.remove('active');
+  }
+
+  // 2. คำนวณหาลำดับรูปภาพถัดไป
   state.slideIndex[section] = (state.slideIndex[section] + direction + total) % total;
-  renderSlider(section);
+
+  // 3. ใส่ class 'active' ให้สไลด์ใหม่ (แสดงรูปใหม่)
+  if (slides[state.slideIndex[section]]) {
+    slides[state.slideIndex[section]].classList.add('active');
+  }
+
+  // 4. อัปเดตตัวเลขแสดงลำดับภาพ (เช่น 1 / 4)
+  const counter = root.querySelector('.slider-counter');
+  if (counter) {
+    counter.textContent = `${state.slideIndex[section] + 1} / ${total}`;
+  }
+
+  // 5. ตั้งเวลาสำหรับสไลด์ถัดไป (ถ้าไม่ได้ใช้มือกด)
+  if (!userInitiated) {
+    scheduleAutoSlide(section, total);
+  }
 }
 
 function openImageLightbox(item) {

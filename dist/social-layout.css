@@ -548,11 +548,15 @@ body.support-project-open .projects-hub-head,body.support-project-open .project-
 .rail-lang-note{margin:-4px 0 14px;font-size:.76rem;color:var(--muted);background:#fbf8f1;padding:6px 10px;border-radius:4px;border-left:3px solid var(--gold)}
 .rail-lang-pane{display:grid;gap:12px}
 .rail-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.rail-icon-picker-group{display:grid;gap:8px}
-.rail-icon-chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
-.rail-chip{border:1px solid rgba(23,19,41,.15);background:#fff;border-radius:6px;padding:4px 9px;font-size:1rem;cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:transform .12s,background .12s,border-color .12s}
-.rail-chip:hover{background:var(--gold-light);transform:scale(1.05);border-color:var(--gold)}
+.rail-icon-picker-group{display:grid;gap:10px}
+.rail-icon-chips{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:12px;background:linear-gradient(180deg,#faf8f5,#f4efe4);border:1px solid rgba(189,138,39,.22);border-radius:10px;box-shadow:inset 0 1px 2px rgba(23,19,41,.03)}
+.rail-chip{border:1px solid rgba(23,19,41,.12);background:#fff;border-radius:8px;min-width:38px;height:38px;padding:0 8px;font-size:1.2rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;transition:all .18s cubic-bezier(0.4,0,0.2,1);box-shadow:0 1px 3px rgba(23,19,41,.06);user-select:none}
+.rail-chip:hover{background:#fffdf9;transform:translateY(-2px);border-color:var(--gold,#bd8a27);box-shadow:0 3px 8px rgba(189,138,39,.25)}
+.rail-chip:active{transform:scale(.95)}
+.rail-chip.active{background:linear-gradient(135deg,#bd8a27,#8b231f);color:#fff;border-color:#8b231f;box-shadow:0 3px 10px rgba(139,35,31,.28);transform:scale(1.08)}
 .rail-chip-social{font-size:.78rem;font-weight:600;padding:4px 10px;border-radius:6px;color:#fff}
+.rail-chip-phone{background:#16a34a;border-color:#15803d;color:#fff}
+.rail-chip-phone:hover{background:#15803d}
 .rail-chip-fb{background:#1877f2;border-color:#1465cc}
 .rail-chip-fb:hover{background:#1465cc}
 .rail-chip-line{background:#06c755;border-color:#05a947}
@@ -598,14 +602,27 @@ body.support-project-open .projects-hub-head,body.support-project-open .project-
 .sidebar-item.theme-dark{background:linear-gradient(135deg,#1f1a35,#141026);border-color:rgba(239,217,142,.3);color:#fff}
 .sidebar-item.theme-dark .sidebar-item-title{color:var(--gold-light)}
 .sidebar-item.theme-dark .sidebar-item-desc{color:#b3aebf}
-.sidebar-item-icon{display:grid;place-items:center;width:28px;height:28px;border:1px solid rgba(124,38,55,.16);border-radius:8px;background:#faf8f5;color:var(--social-red);font:700 .8rem/1 "Noto Sans Thai",sans-serif;flex-shrink:0}
-.sidebar-item-icon svg{display:block;width:16px;height:16px;fill:currentColor}
-.sidebar-item-icon.badge-facebook{background:#1877f2;color:#fff;border-color:#1465cc}
-.sidebar-item-icon.badge-line{background:#06c755;color:#fff;border-color:#05a947}
-.sidebar-item-icon.badge-tiktok{background:#010101;color:#fff;border-color:#222}
-.sidebar-item-icon.badge-instagram{background:radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285aeb 90%);color:#fff;border-color:#b91d87}
-.sidebar-item-icon.badge-youtube{background:#ff0000;color:#fff;border-color:#cc0000}
-.sidebar-item.theme-dark .sidebar-item-icon{background:rgba(255,255,255,.1);color:var(--gold)}
+.sidebar-item-icon{display:grid;place-items:center;width:32px;height:32px;border:1px solid rgba(124,38,55,.16);border-radius:8px;background:#faf8f5;color:var(--social-red);font:700 .85rem/1 "Noto Sans Thai",sans-serif;flex-shrink:0}
+.sidebar-item-icon svg{display:block;width:18px;height:18px;fill:currentColor}
+.sidebar-item-icon.badge-facebook{background:#1877f2 !important;color:#fff !important;border-color:#1465cc !important}
+.sidebar-item-icon.badge-line{background:#06c755 !important;color:#fff !important;border-color:#05a947 !important}
+.sidebar-item-icon.badge-tiktok{background:#010101 !important;color:#fff !important;border-color:#222 !important}
+.sidebar-item-icon.badge-instagram{background:radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285aeb 90%) !important;color:#fff !important;border-color:#b91d87 !important}
+.sidebar-item-icon.badge-youtube{background:#ff0000 !important;color:#fff !important;border-color:#cc0000 !important}
+.sidebar-item-icon.badge-link{background:#2563eb !important;color:#fff !important;border-color:#1d4ed8 !important}
+.sidebar-item-icon.badge-phone{background:#16a34a !important;color:#fff !important;border-color:#15803d !important}
+.sidebar-item.theme-dark .sidebar-item-icon:not([class*="badge-"]){background:rgba(255,255,255,.1);color:var(--gold)}
+.social-mini-link{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:8px;box-shadow:0 2px 5px rgba(0,0,0,.22);transition:all .2s ease;text-decoration:none;flex-shrink:0}
+.social-mini-link:hover{transform:translateY(-2px);filter:brightness(1.15);box-shadow:0 4px 10px rgba(0,0,0,.35)}
+.social-mini-link svg{width:18px;height:18px;fill:currentColor;display:block}
+.sidebar-social-links-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:6px}
+.social-mini-link.badge-facebook{background:#1877f2 !important;color:#fff !important}
+.social-mini-link.badge-line{background:#06c755 !important;color:#fff !important}
+.social-mini-link.badge-tiktok{background:#010101 !important;color:#fff !important}
+.social-mini-link.badge-instagram{background:radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%,#d6249f 60%,#285aeb 90%) !important;color:#fff !important}
+.social-mini-link.badge-youtube{background:#ff0000 !important;color:#fff !important}
+.social-mini-link.badge-link{background:#2563eb !important;color:#fff !important}
+.social-mini-link.badge-phone{background:#16a34a !important;color:#fff !important}
 .sidebar-item-copy{display:grid;min-width:0;line-height:1.35}
 .sidebar-item-title{font-weight:600;font-size:.84rem;color:inherit;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sidebar-item-desc{font-size:.72rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}

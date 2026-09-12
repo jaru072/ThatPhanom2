@@ -137,7 +137,7 @@ const DEFAULT_RAIL_CARDS = [
     title_lo: "ຮ່ວມສືບສານມໍລະດົກແຫ່ງສັດທາ",
     title_en: "Support the Sacred Heritage",
     description: "ร่วมทำบุญสมทบทุนเพื่อบูรณะและผลักดันพระธาตุพนมขึ้นทะเบียนเป็นมรดกโลก",
-    description_lo: "ຮ່ວມເຮັດບຸນສົມທົບທຶນເພື່ອບູລະນະ ແລະຜັກດັນພະທາດພະນົມຂຶ້ນທະບຽນเป็นมรดกโลก",
+    description_lo: "ຮ່ວມເຮັດບຸນສົມທົບທຶນເພື່ອບູລະນະ ແລະຜັກດັນພະທາດພະນົມຂຶ້ນທະບຽນເປັນມໍລະດົກໂລກ",
     description_en: "Participate in merit-making and supporting conservation efforts transparently.",
     buttonText: "ดูรายละเอียด",
     buttonText_lo: "ເບິ່ງລາຍລະອຽດ",
@@ -276,12 +276,14 @@ const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
+
+// 🌟 แก้ไข Path ให้ตรงกับ Security Rules 🌟
 const projectRef = doc(db, "projects", PROJECT_KEY);
 const contentCollection = collection(projectRef, "content");
 const mediaCollection = collection(projectRef, "media");
 const siteNodesCollection = collection(projectRef, "siteNodes");
-const railCardsCollection = collection(projectRef, "railCards");
-const sidebarItemsCollection = collection(projectRef, "sidebarItems");
+const railCardsCollection = collection(db, "railCards");
+const sidebarItemsCollection = collection(db, "sidebarItems");
 
 const portal = {
   user: null,
@@ -1151,6 +1153,16 @@ const SOCIAL_ICONS = {
     name: "ยูทูบ",
     className: "badge-youtube",
     svg: `<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`
+  },
+  link: {
+    name: "เว็บไซต์",
+    className: "badge-link",
+    svg: `<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M3.9 12c0-1.71 1.39-3.1 3.1-3.1h4V7H7c-2.76 0-5 2.24-5 5s2.24 5 5 5h4v-1.9H7c-1.71 0-3.1-1.39-3.1-3.1zM8 13h8v-2H8v2zm9-6h-4v1.9h4c1.71 0 3.1 1.39 3.1 3.1s-1.39 3.1-3.1 3.1h-4V17h4c2.76 0 5-2.24 5-5s-2.24-5-5-5z"/></svg>`
+  },
+  phone: {
+    name: "โทรศัพท์",
+    className: "badge-phone",
+    svg: `<svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M6.62 10.79a15.053 15.053 0 0 0 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>`
   }
 };
 
@@ -1861,7 +1873,6 @@ async function saveRailCard(event) {
     let btnLo = $("#railCardBtnLo").value.trim();
     let btnEn = $("#railCardBtnEn").value.trim();
 
-    // Multilingual: Use Thai as master and auto-translate Lao & English if empty (with fallback)
     try {
       if (!titleLo && titleTh) titleLo = await translateThaiToLao(titleTh);
       if (!titleEn && titleTh) titleEn = await translateThaiToEnglish(titleTh);
@@ -2107,6 +2118,311 @@ function applySidebarTemplatePreset(presetKey) {
   if ($("#sidebarItemOpenExternal")) {
     $("#sidebarItemOpenExternal").value = preset.url?.startsWith("http") ? "true" : "false";
   }
+  updateSidebarIconPreview(preset.icon || "📌");
+}
+
+function updateSidebarIconPreview(iconVal) {
+  const preview = $("#sidebarItemIconPreview");
+  if (!preview) return;
+  const key = String(iconVal || "").toLowerCase().trim();
+  const social = SOCIAL_ICONS[key];
+  if (social) {
+    preview.className = `sidebar-item-icon ${social.className}`;
+    preview.innerHTML = social.svg;
+    preview.style.color = "#fff";
+    preview.style.fontSize = "";
+    const svg = preview.querySelector("svg");
+    if (svg) {
+      svg.style.width = "20px";
+      svg.style.height = "20px";
+    }
+  } else {
+    preview.className = "sidebar-item-icon";
+    preview.innerHTML = "";
+    preview.textContent = iconVal || "📌";
+    preview.style.color = "var(--gold)";
+    preview.style.fontSize = "1.3rem";
+  }
+
+  $$("#sidebarIconChips .rail-chip").forEach(chip => {
+    chip.classList.toggle("active", chip.dataset.icon === key || chip.dataset.icon === iconVal);
+  });
+}
+
+const SOCIAL_PLATFORM_CONFIG = {
+  phone: { name: "โทรศัพท์", placeholder: "วางเบอร์โทรศัพท์ เช่น tel:042-xxx-xxx หรือ 042-xxx-xxx" },
+  facebook: { name: "เฟซบุ๊ก", placeholder: "วางลิงก์เฟซบุ๊ก เช่น https://facebook.com/..." },
+  line: { name: "ไลน์", placeholder: "วางลิงก์ไลน์ เช่น https://line.me/... หรือ https://lin.ee/..." },
+  tiktok: { name: "ติ๊กต็อก", placeholder: "วางลิงก์ติ๊กต็อก เช่น https://www.tiktok.com/@..." },
+  instagram: { name: "อินสตาแกรม", placeholder: "วางลิงก์อินสตาแกรม เช่น https://instagram.com/..." },
+  youtube: { name: "ยูทูบ", placeholder: "วางลิงก์ยูทูบ เช่น https://youtube.com/..." },
+  link: { name: "เว็บไซต์", placeholder: "วางลิงก์เว็บไซต์ เช่น https://..." }
+};
+
+function createSocialLinkInput(icon = "facebook", url = "") {
+  const wrapper = document.createElement("div");
+  wrapper.className = "social-link-row";
+  wrapper.style.display = "flex";
+  wrapper.style.gap = "8px";
+  wrapper.style.alignItems = "center";
+  wrapper.style.marginBottom = "8px";
+
+  const badgePreview = document.createElement("span");
+  badgePreview.className = "sidebar-item-icon";
+  badgePreview.style.width = "36px";
+  badgePreview.style.height = "36px";
+  badgePreview.style.borderRadius = "8px";
+  badgePreview.style.flexShrink = "0";
+  badgePreview.style.boxShadow = "0 2px 5px rgba(0,0,0,0.12)";
+
+  function updateRowBadge(val) {
+    const key = String(val || "facebook").toLowerCase().trim();
+    const social = SOCIAL_ICONS[key];
+    if (social) {
+      badgePreview.className = `sidebar-item-icon ${social.className}`;
+      badgePreview.innerHTML = social.svg;
+      badgePreview.style.color = "#fff";
+      badgePreview.style.fontSize = "";
+      const svg = badgePreview.querySelector("svg");
+      if (svg) {
+        svg.style.width = "20px";
+        svg.style.height = "20px";
+      }
+    } else {
+      badgePreview.className = "sidebar-item-icon";
+      badgePreview.innerHTML = "";
+      badgePreview.textContent = val || "🔗";
+      badgePreview.style.color = "var(--gold)";
+      badgePreview.style.fontSize = "1.2rem";
+    }
+  }
+  updateRowBadge(icon);
+
+  const select = document.createElement("select");
+  select.className = "social-icon-select";
+  select.style.padding = "9px 12px";
+  select.style.border = "1px solid rgba(23,19,41,.18)";
+  select.style.borderRadius = "4px";
+  select.style.background = "#fff";
+  select.style.flex = "0 0 140px";
+  
+  const options = [
+    { value: "phone", text: "📞 เบอร์โทรศัพท์" },
+    { value: "facebook", text: "เฟซบุ๊ก" },
+    { value: "line", text: "ไลน์" },
+    { value: "tiktok", text: "ติ๊กต็อก" },
+    { value: "instagram", text: "อินสตาแกรม" },
+    { value: "youtube", text: "ยูทูบ" },
+    { value: "link", text: "เว็บไซต์ทั่วไป" }
+  ];
+  
+  options.forEach(opt => {
+    const option = document.createElement("option");
+    option.value = opt.value;
+    option.textContent = opt.text;
+    if (opt.value === icon) option.selected = true;
+    select.appendChild(option);
+  });
+
+  const input = document.createElement("input");
+  input.type = "url";
+  input.className = "social-url-input";
+  const cfg = SOCIAL_PLATFORM_CONFIG[icon] || SOCIAL_PLATFORM_CONFIG.facebook;
+  input.placeholder = cfg.placeholder;
+  input.value = url;
+  input.style.flex = "1";
+  input.style.padding = "9px 12px";
+  input.style.border = "1px solid rgba(23,19,41,.18)";
+  input.style.borderRadius = "4px";
+
+  select.addEventListener("change", () => {
+    updateRowBadge(select.value);
+    const newCfg = SOCIAL_PLATFORM_CONFIG[select.value] || SOCIAL_PLATFORM_CONFIG.link;
+    input.placeholder = newCfg.placeholder;
+  });
+
+  input.addEventListener("input", () => {
+    const currentIcon = String($("#sidebarItemIcon")?.value || "").toLowerCase().trim();
+    if (select.value === currentIcon || !$("#sidebarItemUrl")?.value) {
+      if ($("#sidebarItemUrl")) $("#sidebarItemUrl").value = input.value;
+    }
+  });
+
+  const delBtn = document.createElement("button");
+  delBtn.type = "button";
+  delBtn.className = "button danger";
+  delBtn.textContent = "ลบ";
+  delBtn.style.padding = "9px 14px";
+  delBtn.onclick = () => wrapper.remove();
+
+  wrapper.appendChild(badgePreview);
+  wrapper.appendChild(select);
+  wrapper.appendChild(input);
+  wrapper.appendChild(delBtn);
+
+  return wrapper;
+}
+
+function activateSocialLinkInput(iconKey) {
+  const normalizedKey = String(iconKey || "").toLowerCase().trim();
+  if (!SOCIAL_PLATFORM_CONFIG[normalizedKey]) return;
+
+  const cfg = SOCIAL_PLATFORM_CONFIG[normalizedKey];
+
+  // 1. อัปเดตฟิลด์ URL หลักให้ตรงกับแพลตฟอร์มที่เลือก
+  const urlLabel = $("#sidebarItemUrlLabel");
+  if (urlLabel && urlLabel.childNodes && urlLabel.childNodes[0]) {
+    urlLabel.childNodes[0].textContent = `ลิงก์${cfg.name} (URL) `;
+  }
+  const urlInput = $("#sidebarItemUrl");
+  if (urlInput) {
+    urlInput.placeholder = cfg.placeholder;
+  }
+  const openExt = $("#sidebarItemOpenExternal");
+  if (openExt) openExt.value = "true";
+
+  // 2. ปรับเปลี่ยนหรือเปิดช่องกรอกลิงก์ของแพลตฟอร์มนั้นทันที (ไม่ต้องคลิกเพิ่มลิงก์)
+  const wrapper = $("#sidebarSocialLinksWrapper");
+  if (wrapper) {
+    let targetRow = null;
+    const existingRows = wrapper.querySelectorAll(".social-link-row");
+    existingRows.forEach(row => {
+      const sel = row.querySelector(".social-icon-select");
+      if (sel && sel.value === normalizedKey) {
+        targetRow = row;
+      }
+    });
+
+    if (!targetRow) {
+      targetRow = createSocialLinkInput(normalizedKey, urlInput?.value?.trim() || "");
+      wrapper.appendChild(targetRow);
+    }
+
+    const inputEl = targetRow.querySelector(".social-url-input");
+    if (inputEl) {
+      inputEl.focus();
+      inputEl.style.transition = "box-shadow 0.3s, border-color 0.3s";
+      inputEl.style.borderColor = "var(--gold)";
+      inputEl.style.boxShadow = "0 0 0 3px rgba(203,166,75,0.35)";
+      setTimeout(() => {
+        inputEl.style.borderColor = "";
+        inputEl.style.boxShadow = "";
+      }, 1400);
+    }
+  }
+}
+
+function createImageUrlInput(url = "") {
+  const wrapper = document.createElement("div");
+  wrapper.className = "image-url-row";
+  wrapper.style.display = "flex";
+  wrapper.style.gap = "8px";
+  wrapper.style.alignItems = "center";
+  wrapper.style.marginBottom = "8px";
+
+  const preview = document.createElement("img");
+  preview.style.width = "40px";
+  preview.style.height = "40px";
+  preview.style.objectFit = "cover";
+  preview.style.borderRadius = "4px";
+  preview.style.border = "1px solid rgba(23,19,41,.15)";
+  preview.style.background = "#f4f4f5";
+  preview.style.flexShrink = "0";
+  const cleanUrl = (url || "").trim();
+  preview.style.display = cleanUrl ? "block" : "none";
+  if (cleanUrl) preview.src = cleanUrl;
+  preview.onerror = () => { preview.style.display = "none"; };
+
+  const input = document.createElement("input");
+  input.type = "url";
+  input.className = "sidebar-image-url-input";
+  input.placeholder = "วางลิงก์รูปภาพประกอบ (https://...)";
+  input.value = cleanUrl;
+  input.style.flex = "1";
+  input.style.padding = "9px 12px";
+  input.style.border = "1px solid rgba(23,19,41,.18)";
+  input.style.borderRadius = "4px";
+
+  input.addEventListener("input", () => {
+    const val = input.value.trim();
+    if (val) {
+      preview.src = val;
+      preview.style.display = "block";
+    } else {
+      preview.style.display = "none";
+    }
+  });
+
+  const delBtn = document.createElement("button");
+  delBtn.type = "button";
+  delBtn.className = "button danger";
+  delBtn.textContent = "ลบ";
+  delBtn.style.padding = "9px 14px";
+  delBtn.onclick = () => wrapper.remove();
+
+  wrapper.appendChild(preview);
+  wrapper.appendChild(input);
+  wrapper.appendChild(delBtn);
+
+  return wrapper;
+}
+
+function setupSocialLinksUI() {
+  const addSocialBtn = $("#addSidebarSocialLinkBtn");
+  if (addSocialBtn && !addSocialBtn.dataset.bound) {
+    addSocialBtn.dataset.bound = "true";
+    addSocialBtn.addEventListener("click", () => {
+      const wrapper = $("#sidebarSocialLinksWrapper");
+      if (wrapper) {
+        const row = createSocialLinkInput();
+        wrapper.appendChild(row);
+        row.querySelector(".social-url-input")?.focus();
+      }
+    });
+  }
+
+  // ผูกปุ่มลัดเลือกโซเชียลมีเดียในส่วนของโซเชียลมีเดีย
+  $$("#sidebarSocialQuickChips button").forEach(btn => {
+    if (!btn.dataset.bound) {
+      btn.dataset.bound = "true";
+      btn.addEventListener("click", () => {
+        const socialKey = btn.dataset.social;
+        if (socialKey) {
+          $("#sidebarItemIcon").value = socialKey;
+          updateSidebarIconPreview(socialKey);
+          activateSocialLinkInput(socialKey);
+        }
+      });
+    }
+  });
+
+  // ซิงค์การพิมพ์ในช่อง URL หลักกับช่องโซเชียลมีเดียที่ตรงกัน
+  const urlInput = $("#sidebarItemUrl");
+  if (urlInput && !urlInput.dataset.bound) {
+    urlInput.dataset.bound = "true";
+    urlInput.addEventListener("input", e => {
+      const val = e.target.value.trim();
+      const currentIcon = String($("#sidebarItemIcon")?.value || "").toLowerCase().trim();
+      if (SOCIAL_PLATFORM_CONFIG[currentIcon]) {
+        const matchingRow = Array.from($$("#sidebarSocialLinksWrapper .social-link-row")).find(r => {
+          return r.querySelector(".social-icon-select")?.value === currentIcon;
+        });
+        if (matchingRow) {
+          const inp = matchingRow.querySelector(".social-url-input");
+          if (inp && inp.value !== val) inp.value = val;
+        }
+      }
+    });
+  }
+
+  const addImageBtn = $("#addSidebarImageUrlBtn");
+  if (addImageBtn && !addImageBtn.dataset.bound) {
+    addImageBtn.dataset.bound = "true";
+    addImageBtn.addEventListener("click", () => {
+      const wrapper = $("#sidebarImageUrlsWrapper");
+      if (wrapper) wrapper.appendChild(createImageUrlInput());
+    });
+  }
 }
 
 function renderLeftSidebarCustom() {
@@ -2141,21 +2457,42 @@ function renderLeftSidebarCustom() {
 
   container.innerHTML = "";
 
+  if (visibleItems.length === 0) {
+    if (isAdmin()) {
+      container.innerHTML = `<p class="resource-empty" style="padding:20px 8px;text-align:center;color:#8f899b;border:1px dashed rgba(255,255,255,0.2);border-radius:8px;font-size:0.85rem;margin:10px 0;">ยังไม่มีหัวข้อแถบซ้าย กด “เพิ่มหัวข้อใหม่” ด้านล่างเพื่อเริ่มสร้าง</p>`;
+    }
+    return;
+  }
+
   visibleItems.forEach(item => {
     const rawUrl = (item.url || "").trim();
     const hasLink = Boolean(rawUrl && rawUrl !== "#");
-    const el = document.createElement(hasLink ? "a" : "div");
+
+    const el = document.createElement("div");
     const themeClass = item.theme && item.theme !== "standard" ? `theme-${item.theme}` : "";
     el.className = `sidebar-item ${themeClass}`.trim();
+
+    el.style.display = "flex";
+    el.style.flexDirection = "column";
+    el.style.gap = "6px";
+    el.style.width = "100%";
+    el.style.padding = "16px 8px"; 
+    el.style.borderBottom = "1px solid rgba(255,255,255,0.06)";
+    el.style.color = "#fff";
+    el.style.textAlign = "left";
+    el.style.transition = "background 0.2s";
+
     if (hasLink) {
-      el.href = rawUrl;
-      if (item.openExternal) {
-        el.target = "_blank";
-        el.rel = "noopener noreferrer";
-      }
-    } else {
-      el.style.cursor = "default";
+      el.style.cursor = "pointer";
+      el.onmouseenter = () => el.style.background = "rgba(255,255,255,0.06)";
+      el.onmouseleave = () => el.style.background = "transparent";
+      el.onclick = (e) => {
+        if (e.target.closest('.sidebar-item-gear') || e.target.closest('.social-mini-link')) return;
+        if (item.openExternal) window.open(rawUrl, "_blank");
+        else window.location.href = rawUrl;
+      };
     }
+
     el.dataset.sidebarId = item.id;
 
     if (isAdmin()) {
@@ -2164,22 +2501,22 @@ function renderLeftSidebarCustom() {
 
       el.addEventListener("dragstart", e => {
         e.dataTransfer.setData("text/plain", item.id);
-        el.classList.add("is-dragging");
+        el.style.opacity = "0.4";
       });
       el.addEventListener("dragend", () => {
-        el.classList.remove("is-dragging");
-        $$(".sidebar-item").forEach(i => i.classList.remove("drag-over"));
+        el.style.opacity = "1";
+        document.querySelectorAll(".sidebar-item").forEach(i => i.style.borderTop = "");
       });
       el.addEventListener("dragover", e => {
         e.preventDefault();
-        el.classList.add("drag-over");
+        el.style.borderTop = "2px solid var(--gold)";
       });
       el.addEventListener("dragleave", () => {
-        el.classList.remove("drag-over");
+        el.style.borderTop = "";
       });
       el.addEventListener("drop", e => {
         e.preventDefault();
-        el.classList.remove("drag-over");
+        el.style.borderTop = "";
         const draggedId = e.dataTransfer.getData("text/plain");
         if (draggedId && draggedId !== item.id) {
           reorderSidebarItems(draggedId, item.id);
@@ -2187,75 +2524,269 @@ function renderLeftSidebarCustom() {
       });
     }
 
+    const topRow = document.createElement("div");
+    topRow.style.display = "flex";
+    topRow.style.alignItems = "flex-start";
+    topRow.style.gap = "12px";
+    topRow.style.width = "100%";
+
     const iconSpan = document.createElement("span");
     const iconKey = String(item.icon || "").toLowerCase().trim();
     const social = SOCIAL_ICONS[iconKey];
     if (social) {
       iconSpan.className = `sidebar-item-icon ${social.className}`;
       iconSpan.innerHTML = social.svg;
+      iconSpan.style.flex = "0 0 32px";
+      iconSpan.style.width = "32px";
+      iconSpan.style.height = "32px";
+      iconSpan.style.borderRadius = "8px";
+      iconSpan.style.display = "grid";
+      iconSpan.style.placeItems = "center";
+      iconSpan.style.marginTop = "2px";
+      iconSpan.style.boxShadow = "0 2px 6px rgba(0,0,0,0.25)";
+      const svg = iconSpan.querySelector("svg");
+      if (svg) {
+        svg.style.width = "18px";
+        svg.style.height = "18px";
+      }
     } else {
       iconSpan.className = "sidebar-item-icon";
       iconSpan.textContent = item.icon || "📌";
+      iconSpan.style.flex = "0 0 32px";
+      iconSpan.style.width = "32px";
+      iconSpan.style.height = "32px";
+      iconSpan.style.display = "flex";
+      iconSpan.style.alignItems = "center";
+      iconSpan.style.justifyContent = "center";
+      iconSpan.style.color = "var(--gold)";
+      iconSpan.style.fontSize = "1.4rem";
+      iconSpan.style.marginTop = "2px";
     }
 
-    const copySpan = document.createElement("span");
-    copySpan.className = "sidebar-item-copy";
-
     const title = getLocalizedField(item, "title", currentLang) || item.title || "ไม่มีชื่อหัวข้อ";
-    const desc = getLocalizedField(item, "description", currentLang) || item.description || "";
-
     const titleStrong = document.createElement("strong");
     titleStrong.className = "sidebar-item-title";
     titleStrong.textContent = title;
-    copySpan.appendChild(titleStrong);
+    titleStrong.style.flex = "1 1 auto"; 
+    titleStrong.style.fontSize = "1.05rem";
+    titleStrong.style.fontWeight = "600";
+    titleStrong.style.lineHeight = "1.4";
+    titleStrong.style.whiteSpace = "normal"; 
+    titleStrong.style.wordBreak = "break-word";
 
-    if (desc) {
-      const descSmall = document.createElement("small");
-      descSmall.className = "sidebar-item-desc";
-      descSmall.textContent = desc;
-      copySpan.appendChild(descSmall);
-    }
-
-    if (isAdmin()) {
-      if (item.published === false) {
-        const draftBadge = document.createElement("span");
-        draftBadge.className = "sidebar-item-status-badge status-draft";
-        draftBadge.textContent = "ฉบับร่าง";
-        copySpan.appendChild(draftBadge);
-      } else if (item.scheduled) {
-        const badge = document.createElement("span");
-        const isUpcoming = item.startDate && new Date(item.startDate) > now;
-        const isExpired = item.endDate && new Date(item.endDate) < now;
-        if (isUpcoming) {
-          badge.className = "sidebar-item-status-badge status-scheduled";
-          badge.textContent = `รอเริ่ม: ${formatThaiDateTimeBE(item.startDate)}`;
-        } else if (isExpired) {
-          badge.className = "sidebar-item-status-badge status-expired";
-          badge.textContent = `หมดเวลา: ${formatThaiDateTimeBE(item.endDate)}`;
-        } else {
-          badge.className = "sidebar-item-status-badge status-scheduled";
-          badge.textContent = "กำลังแสดงผลตามเวลา";
-        }
-        copySpan.appendChild(badge);
-      }
-    }
-
-    el.appendChild(iconSpan);
-    el.appendChild(copySpan);
+    topRow.appendChild(iconSpan);
+    topRow.appendChild(titleStrong);
 
     if (isAdmin()) {
       const gearBtn = document.createElement("button");
       gearBtn.type = "button";
-      gearBtn.className = "sidebar-item-gear";
+      gearBtn.className = "sidebar-item-gear icon-button";
       gearBtn.title = "จัดการหัวข้อนี้";
       gearBtn.setAttribute("aria-label", "จัดการหัวข้อนี้");
       gearBtn.textContent = "⚙";
+      gearBtn.style.flex = "0 0 38px";
+      gearBtn.style.width = "38px";
+      gearBtn.style.height = "38px";
+      gearBtn.style.fontSize = "1.2rem";
+      gearBtn.style.background = "rgba(255,255,255,0.08)";
+      gearBtn.style.color = "#fff";
+      gearBtn.style.border = "none";
+      gearBtn.style.borderRadius = "50%";
+      gearBtn.style.cursor = "pointer";
+      gearBtn.style.display = "grid";
+      gearBtn.style.placeItems = "center";
       gearBtn.addEventListener("click", e => {
         e.preventDefault();
         e.stopPropagation();
         openSidebarItemEditor(item.id);
       });
-      el.appendChild(gearBtn);
+      topRow.appendChild(gearBtn);
+    }
+
+    el.appendChild(topRow);
+
+    const desc = getLocalizedField(item, "description", currentLang) || item.description || "";
+    if (desc) {
+      const descSmall = document.createElement("small");
+      descSmall.className = "sidebar-item-desc";
+      descSmall.textContent = desc;
+      descSmall.style.display = "block";
+      descSmall.style.color = "var(--gold-light)";
+      descSmall.style.fontSize = "0.85rem";
+      descSmall.style.lineHeight = "1.5";
+      descSmall.style.whiteSpace = "normal"; 
+      descSmall.style.wordBreak = "break-word";
+      el.appendChild(descSmall);
+    }
+
+    // แสดงรูปภาพประกอบ (รองรับหลายรูปภาพ)
+    const rawImages = Array.isArray(item.imageUrls) && item.imageUrls.length > 0
+      ? item.imageUrls
+      : (item.imageUrl ? [item.imageUrl] : []);
+    const validImages = rawImages
+      .map(u => typeof u === "string" ? u.trim() : "")
+      .filter(Boolean);
+
+    if (validImages.length === 1) {
+      const imgBox = document.createElement("div");
+      imgBox.className = "sidebar-item-image-box";
+      imgBox.style.marginTop = "8px";
+      imgBox.style.width = "100%";
+      imgBox.style.borderRadius = "8px";
+      imgBox.style.overflow = "hidden";
+      imgBox.style.border = "1px solid rgba(255,255,255,0.15)";
+      imgBox.style.background = "rgba(0,0,0,0.25)";
+
+      const img = document.createElement("img");
+      img.src = safeUrl(validImages[0]);
+      img.alt = title;
+      img.loading = "lazy";
+      img.style.display = "block";
+      img.style.width = "100%";
+      img.style.maxHeight = "190px";
+      img.style.objectFit = "cover";
+      img.onerror = () => { imgBox.style.display = "none"; };
+      imgBox.appendChild(img);
+      el.appendChild(imgBox);
+    } else if (validImages.length > 1) {
+      const grid = document.createElement("div");
+      grid.className = "sidebar-item-image-grid";
+      grid.style.marginTop = "8px";
+      grid.style.display = "grid";
+      grid.style.gridTemplateColumns = validImages.length === 2 ? "repeat(2, 1fr)" : "repeat(auto-fit, minmax(75px, 1fr))";
+      grid.style.gap = "6px";
+      grid.style.width = "100%";
+
+      validImages.forEach((url, idx) => {
+        const itemBox = document.createElement("div");
+        itemBox.style.borderRadius = "6px";
+        itemBox.style.overflow = "hidden";
+        itemBox.style.border = "1px solid rgba(255,255,255,0.15)";
+        itemBox.style.background = "rgba(0,0,0,0.25)";
+        itemBox.style.aspectRatio = "4/3";
+
+        const img = document.createElement("img");
+        img.src = safeUrl(url);
+        img.alt = `${title} - ภาพที่ ${idx + 1}`;
+        img.loading = "lazy";
+        img.style.display = "block";
+        img.style.width = "100%";
+        img.style.height = "100%";
+        img.style.objectFit = "cover";
+        img.onerror = () => { itemBox.style.display = "none"; };
+        itemBox.appendChild(img);
+        grid.appendChild(itemBox);
+      });
+      el.appendChild(grid);
+    }
+
+    // รวบรวมลิงก์โซเชียลมีเดียทั้งหมดของหัวข้อนี้เพื่อแสดงผลเรียงติดกัน
+    const allSocials = [];
+    const seenSocialIcons = new Set();
+
+    if (item.socialLinks && Array.isArray(item.socialLinks)) {
+      item.socialLinks.forEach(link => {
+        if (link && link.url && typeof link.url === "string" && link.url.trim()) {
+          const k = String(link.icon || "facebook").toLowerCase().trim();
+          if (!seenSocialIcons.has(k)) {
+            allSocials.push({ icon: k, url: link.url.trim() });
+            seenSocialIcons.add(k);
+          }
+        }
+      });
+    }
+
+    const currentIconKey = String(item.icon || "").toLowerCase().trim();
+    if (SOCIAL_ICONS[currentIconKey] && rawUrl && !seenSocialIcons.has(currentIconKey)) {
+      allSocials.unshift({ icon: currentIconKey, url: rawUrl });
+      seenSocialIcons.add(currentIconKey);
+    }
+
+    if (allSocials.length > 0) {
+      const socialRow = document.createElement("div");
+      socialRow.className = "sidebar-social-links-row";
+      socialRow.style.display = "flex";
+      socialRow.style.flexWrap = "wrap";
+      socialRow.style.alignItems = "center";
+      socialRow.style.gap = "6px";
+      socialRow.style.marginTop = "8px";
+      
+      allSocials.forEach(link => {
+        const sLink = document.createElement("a");
+        sLink.href = safeUrl(link.url) || "#";
+        sLink.target = "_blank";
+        sLink.rel = "noopener noreferrer";
+        
+        const iconKey = String(link.icon || "facebook").toLowerCase().trim();
+        const socialIcon = SOCIAL_ICONS[iconKey];
+        if (socialIcon) {
+          sLink.className = `social-mini-link ${socialIcon.className}`;
+          sLink.title = socialIcon.name || iconKey;
+          sLink.innerHTML = socialIcon.svg;
+          const svg = sLink.querySelector("svg");
+          if (svg) {
+            svg.style.width = "18px";
+            svg.style.height = "18px";
+          }
+        } else {
+          sLink.className = "social-mini-link badge-link";
+          sLink.title = "ลิงก์ภายนอก";
+          sLink.textContent = "🔗";
+          sLink.style.fontSize = "14px";
+        }
+
+        sLink.style.display = "inline-flex";
+        sLink.style.alignItems = "center";
+        sLink.style.justifyContent = "center";
+        sLink.style.width = "32px";
+        sLink.style.height = "32px";
+        sLink.style.borderRadius = "8px";
+        sLink.style.boxShadow = "0 2px 5px rgba(0,0,0,0.25)";
+        sLink.style.transition = "transform 0.2s, filter 0.2s, box-shadow 0.2s";
+        
+        sLink.onmouseenter = () => {
+          sLink.style.filter = "brightness(1.15)";
+          sLink.style.transform = "translateY(-2px)";
+          sLink.style.boxShadow = "0 4px 10px rgba(0,0,0,0.4)";
+        };
+        sLink.onmouseleave = () => {
+          sLink.style.filter = "none";
+          sLink.style.transform = "none";
+          sLink.style.boxShadow = "0 2px 5px rgba(0,0,0,0.25)";
+        };
+        
+        sLink.addEventListener("click", e => e.stopPropagation());
+        socialRow.appendChild(sLink);
+      });
+
+      if (socialRow.children.length > 0) {
+        el.appendChild(socialRow);
+      }
+    }
+
+    if (isAdmin()) {
+      const badgeStyle = "display:inline-block; align-self:flex-start; padding:4px 8px; border-radius:4px; font-size:0.75rem; margin-top:4px; font-weight:600;";
+      if (item.published === false) {
+        const draftBadge = document.createElement("span");
+        draftBadge.textContent = "ฉบับร่าง ยังไม่เผยแพร่";
+        draftBadge.style.cssText = badgeStyle + "background:rgba(255,255,255,0.1); color:#cfcad7;";
+        el.appendChild(draftBadge);
+      } else if (item.scheduled) {
+        const badge = document.createElement("span");
+        const isUpcoming = item.startDate && new Date(item.startDate) > now;
+        const isExpired = item.endDate && new Date(item.endDate) < now;
+        if (isUpcoming) {
+          badge.textContent = `รอเริ่ม: ${formatThaiDateTimeBE(item.startDate)}`;
+          badge.style.cssText = badgeStyle + "background:rgba(255,193,7,0.15); color:#ffd54f;";
+        } else if (isExpired) {
+          badge.textContent = `หมดเวลา: ${formatThaiDateTimeBE(item.endDate)}`;
+          badge.style.cssText = badgeStyle + "background:rgba(244,67,54,0.15); color:#ef9a9a;";
+        } else {
+          badge.textContent = "กำลังแสดงผลตามเวลา";
+          badge.style.cssText = badgeStyle + "background:rgba(76,175,80,0.15); color:#a5d6a7;";
+        }
+        el.appendChild(badge);
+      }
     }
 
     container.appendChild(el);
@@ -2268,6 +2799,8 @@ function openSidebarItemEditor(itemId) {
   const dialog = $("#sidebarItemDialog");
   const form = $("#sidebarItemForm");
   if (!dialog || !form) return;
+
+  setupSocialLinksUI();
 
   const isNew = !itemId || itemId === "new";
   const titleHeader = $("#sidebarItemDialogTitle");
@@ -2314,9 +2847,26 @@ function openSidebarItemEditor(itemId) {
   const translateStatus = $("#sidebarTranslateStatus");
   if (translateStatus) translateStatus.hidden = true;
 
+  const currentIconKey = String(item?.icon || "📌").toLowerCase().trim();
   $("#sidebarItemIcon").value = item?.icon || "📌";
+  updateSidebarIconPreview($("#sidebarItemIcon").value);
   $("#sidebarItemUrl").value = item?.url || "";
   $("#sidebarItemOpenExternal").value = item?.openExternal ? "true" : "false";
+
+  const urlLabel = $("#sidebarItemUrlLabel");
+  const platformCfg = SOCIAL_PLATFORM_CONFIG[currentIconKey];
+  if (platformCfg) {
+    if (urlLabel && urlLabel.childNodes && urlLabel.childNodes[0]) {
+      urlLabel.childNodes[0].textContent = `ลิงก์${platformCfg.name} (URL) `;
+    }
+    if ($("#sidebarItemUrl")) $("#sidebarItemUrl").placeholder = platformCfg.placeholder;
+  } else {
+    if (urlLabel && urlLabel.childNodes && urlLabel.childNodes[0]) {
+      urlLabel.childNodes[0].textContent = "ลิงก์ปลายทาง (URL หรือ #anchor ภายในเว็บ) ";
+    }
+    if ($("#sidebarItemUrl")) $("#sidebarItemUrl").placeholder = "เช่น #history, #milestones, หรือ https://...";
+  }
+
   $("#sidebarItemProjectScope").value = item?.projectScope || "all";
   $("#sidebarItemPublished").checked = item ? (item.published !== false) : true;
 
@@ -2330,6 +2880,38 @@ function openSidebarItemEditor(itemId) {
   $("#sidebarItemMoveUpBtn").disabled = isNew || currentIdx <= 0;
   $("#sidebarItemMoveDownBtn").disabled = isNew || currentIdx >= items.length - 1;
   $("#sidebarItemStatus").hidden = true;
+
+  const socialWrapper = $("#sidebarSocialLinksWrapper");
+  if (socialWrapper) {
+    socialWrapper.innerHTML = "";
+    let hasLoadedSocials = false;
+    if (item?.socialLinks && Array.isArray(item.socialLinks) && item.socialLinks.length > 0) {
+      item.socialLinks.forEach(link => {
+        if (link && (link.url || link.icon)) {
+          socialWrapper.appendChild(createSocialLinkInput(link.icon || "facebook", link.url || ""));
+          hasLoadedSocials = true;
+        }
+      });
+    }
+    // หากมี URL และไอคอนหลักเป็นโซเชียลมีเดีย แต่ยังไม่มีใน socialLinks ให้สร้างให้อัตโนมัติ
+    if (!hasLoadedSocials && platformCfg && item?.url) {
+      socialWrapper.appendChild(createSocialLinkInput(currentIconKey, item.url));
+    }
+  }
+
+  const imageWrapper = $("#sidebarImageUrlsWrapper");
+  if (imageWrapper) {
+    imageWrapper.innerHTML = "";
+    const rawExisting = Array.isArray(item?.imageUrls) && item.imageUrls.length > 0
+      ? item.imageUrls
+      : (item?.imageUrl ? [item.imageUrl] : []);
+    const validExisting = rawExisting.map(u => typeof u === "string" ? u.trim() : "").filter(Boolean);
+    if (validExisting.length > 0) {
+      validExisting.forEach(imgUrl => {
+        imageWrapper.appendChild(createImageUrlInput(imgUrl));
+      });
+    }
+  }
 
   if (dialog.open) dialog.close();
   dialog.showModal();
@@ -2379,6 +2961,42 @@ async function saveSidebarItem(event) {
     } catch (_) {}
 
     const rawUrl = $("#sidebarItemUrl")?.value?.trim() || "";
+
+    const socialLinks = [];
+    const seenSocialKeys = new Set();
+    const socialRows = document.querySelectorAll("#sidebarSocialLinksWrapper .social-link-row");
+    socialRows.forEach(row => {
+      const select = row.querySelector(".social-icon-select");
+      const input = row.querySelector(".social-url-input");
+      const icon = select ? select.value : "facebook";
+      const url = input ? input.value.trim() : "";
+      if (url) {
+        socialLinks.push({ icon, url });
+        seenSocialKeys.add(icon);
+      }
+    });
+
+    const currentMainIcon = String($("#sidebarItemIcon")?.value || "").toLowerCase().trim();
+    if (rawUrl && SOCIAL_PLATFORM_CONFIG[currentMainIcon] && !seenSocialKeys.has(currentMainIcon)) {
+      socialLinks.unshift({ icon: currentMainIcon, url: rawUrl });
+      seenSocialKeys.add(currentMainIcon);
+    }
+
+    let finalUrl = rawUrl;
+    if (!finalUrl && socialLinks.length > 0) {
+      finalUrl = socialLinks[0].url;
+    }
+
+    const imageUrls = [];
+    const imageRows = document.querySelectorAll("#sidebarImageUrlsWrapper .image-url-row");
+    imageRows.forEach(row => {
+      const input = row.querySelector(".sidebar-image-url-input");
+      const url = input ? input.value.trim() : "";
+      if (url) {
+        imageUrls.push(url);
+      }
+    });
+
     const payload = {
       template: $("#sidebarItemTemplateSelect")?.value || "custom",
       theme: $("#sidebarItemVisualTheme")?.value || "standard",
@@ -2390,8 +3008,11 @@ async function saveSidebarItem(event) {
       description_th: descTh,
       description_lo: descLo,
       description_en: descEn,
-      url: rawUrl,
-      openExternal: Boolean($("#sidebarItemOpenExternal")?.value === "true" && rawUrl),
+      url: finalUrl,
+      imageUrls: imageUrls,
+      imageUrl: imageUrls[0] || "",
+      socialLinks: socialLinks,
+      openExternal: Boolean($("#sidebarItemOpenExternal")?.value === "true" || (socialLinks.length > 0 && finalUrl.startsWith("http"))),
       icon: $("#sidebarItemIcon")?.value?.trim() || "📌",
       projectScope: $("#sidebarItemProjectScope")?.value || "all",
       published: Boolean($("#sidebarItemPublished")?.checked),
@@ -2614,6 +3235,12 @@ function setupPortalEvents() {
 
   // Left Sidebar Event Listeners
   $("#sidebarAddButton")?.addEventListener("click", () => openSidebarItemEditor("new"));
+  $("#addSidebarSocialLinkBtn")?.addEventListener("click", () => {
+    $("#sidebarSocialLinksWrapper")?.appendChild(createSocialLinkInput());
+  });
+  $("#addSidebarImageUrlBtn")?.addEventListener("click", () => {
+    $("#sidebarImageUrlsWrapper")?.appendChild(createImageUrlInput());
+  });
   $("#sidebarTrashButton")?.addEventListener("click", openSidebarTrashDialog);
   $("#closeSidebarTrashDialogButton")?.addEventListener("click", () => $("#sidebarTrashDialog")?.close());
   $("#closeSidebarItemDialogButton")?.addEventListener("click", () => $("#sidebarItemDialog")?.close());
@@ -2628,12 +3255,37 @@ function setupPortalEvents() {
   $("#sidebarItemTemplateSelect")?.addEventListener("change", e => {
     applySidebarTemplatePreset(e.target.value);
   });
+  $("#sidebarItemIcon")?.addEventListener("input", e => {
+    updateSidebarIconPreview(e.target.value);
+  });
   $$("#sidebarIconChips .rail-chip").forEach(chip => {
     chip.addEventListener("click", () => {
       const iconKey = chip.dataset.icon;
       $("#sidebarItemIcon").value = iconKey;
+      updateSidebarIconPreview(iconKey);
 
-      if (["facebook", "line", "tiktok", "instagram", "youtube"].includes(iconKey)) {
+      $$("#sidebarIconChips .rail-chip").forEach(c => {
+        c.classList.toggle("active", c === chip);
+      });
+
+      if (iconKey === "📞" || iconKey === "☎️" || iconKey === "📱" || iconKey === "phone") {
+        const titleEl = $("#sidebarItemTitleTh");
+        const descEl = $("#sidebarItemDescTh");
+        if (!titleEl.value.trim()) {
+          titleEl.value = "ติดต่อสอบถาม";
+        }
+        if (!descEl.value.trim()) {
+          descEl.value = "ติดต่อสอบถามข้อมูลทางโทรศัพท์";
+        }
+        const urlInput = $("#sidebarItemUrl");
+        if (urlInput && !urlInput.value.trim()) {
+          urlInput.placeholder = "เช่น tel:042-xxx-xxx หรือ 042-xxx-xxx";
+        }
+        queueAutoTranslateSidebar();
+        if (iconKey === "phone") {
+          activateSocialLinkInput("phone");
+        }
+      } else if (["facebook", "line", "tiktok", "instagram", "youtube", "link"].includes(iconKey)) {
         $("#sidebarItemOpenExternal").value = "true";
 
         const titleEl = $("#sidebarItemTitleTh");
@@ -2645,17 +3297,20 @@ function setupPortalEvents() {
           else if (iconKey === "tiktok") titleEl.value = "ติ๊กต็อก";
           else if (iconKey === "instagram") titleEl.value = "อินสตาแกรม";
           else if (iconKey === "youtube") titleEl.value = "ยูทูบทางการ";
+          else if (iconKey === "link") titleEl.value = "เว็บไซต์ทางการ";
         }
 
         if (!descEl.value.trim()) {
-          if (iconKey === "facebook") descEl.value = "ติดตามข่าวสารและกิจกรรมทาง Facebook";
-          else if (iconKey === "line") descEl.value = "สอบถามข้อมูลและรับการแจ้งเตือนทาง LINE";
-          else if (iconKey === "tiktok") descEl.value = "ชมคลิปสั้นและไฮไลท์บรรยากาศทาง TikTok";
-          else if (iconKey === "instagram") descEl.value = "ชมภาพประทับใจทาง Instagram";
-          else if (iconKey === "youtube") descEl.value = "ชมคลิปบันทึกและถ่ายทอดสดทาง YouTube";
+          if (iconKey === "facebook") descEl.value = "ติดตามข่าวสารและกิจกรรมทางเฟซบุ๊ก";
+          else if (iconKey === "line") descEl.value = "สอบถามข้อมูลและรับการแจ้งเตือนทางไลน์";
+          else if (iconKey === "tiktok") descEl.value = "ชมคลิปสั้นและไฮไลท์บรรยากาศทางติ๊กต็อก";
+          else if (iconKey === "instagram") descEl.value = "ชมภาพประทับใจทางอินสตาแกรม";
+          else if (iconKey === "youtube") descEl.value = "ชมคลิปบันทึกและถ่ายทอดสดทางยูทูบ";
+          else if (iconKey === "link") descEl.value = "เข้าชมเว็บไซต์ข้อมูลทางการ";
         }
 
         queueAutoTranslateSidebar();
+        activateSocialLinkInput(iconKey);
       }
     });
   });
