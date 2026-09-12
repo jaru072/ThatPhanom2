@@ -643,8 +643,6 @@ async function startManualDriveSync() {
 function renderSlider(section) {
   const root = document.querySelector(`[data-slider="${section}"]`);
   if (!root) return;
-  clearSlideTimer(section);
-  root.onkeydown = null;
   const storedItems = state.media.filter(item => mediaSectionKey(item) === section && item.enabled !== false && item.published !== false);
   const fallbackItems = {
     hero: [DEFAULT_HERO_MEDIA],
@@ -667,6 +665,16 @@ function renderSlider(section) {
   };
   const items = (!storedItems.length && fallbackItems[section] ? fallbackItems[section] : storedItems)
     .sort((a, b) => (a.order || 0) - (b.order || 0));
+
+  const itemsSig = JSON.stringify(items.map(it => [it.id, it.url, it.title, it.type, it.order]));
+  const existingSlides = root.querySelectorAll(".media-slide");
+  if (root.dataset.renderedSig === itemsSig && existingSlides.length === items.length && items.length > 0) {
+    return;
+  }
+  root.dataset.renderedSig = itemsSig;
+
+  clearSlideTimer(section);
+  root.onkeydown = null;
   const stage = $(".media-stage", root);
   stage.replaceChildren();
   if (!items.length) {

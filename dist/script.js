@@ -232,6 +232,9 @@ if(scrollToTopButton&&scrollToBottomButton){
 
   function renderTopTabs(tabs=worldTabs){
     activeTabs=tabs;
+    const sig = tabs.map(t=>t.join(":")).join("|");
+    if(topNav.dataset.renderedSig === sig && topNav.children.length > 0) return;
+    topNav.dataset.renderedSig = sig;
     topNav.replaceChildren();
     topNav.classList.add("project-node-tabs");
     tabs.forEach(([href,target,label],index)=>{
@@ -320,6 +323,9 @@ if(scrollToTopButton&&scrollToBottomButton){
       "พระธาตุพนม สู่มรดกโลก",
       "โครงการบูรณะสระมุจลินท์ (สระพังทอง)"
     ];
+    const sig = `${activeProject}|` + titles.join("|");
+    if(sideNav.dataset.renderedSig === sig && sideNav.children.length > 0) return;
+    sideNav.dataset.renderedSig = sig;
     sideNav.replaceChildren();
     const heading=document.createElement("strong");
     heading.className="project-switch-heading";

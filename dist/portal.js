@@ -756,16 +756,36 @@ function createProjectCard(project) {
 function renderProjectCatalog() {
   const root = $("#projectCatalogGrid");
   if (!root) return;
+  const currentLang = document.documentElement.lang || "th";
   const projects = portal.nodes
     .filter(node => node.type === "project" && !node.deletedAt)
     .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0) || String(a.title || "").localeCompare(String(b.title || ""), "th"));
   const hasCurrent = projects.some(node => node.contentRef === PROJECT_KEY || node.slug === PROJECT_KEY || node.id === DEFAULT_PROJECT.id);
   if (!hasCurrent) projects.unshift(DEFAULT_PROJECT);
   if (isAdmin() && !projects.some(isMuchalindaProject)) projects.push(DEFAULT_SUPPORT_PROJECT);
+
+  const catalogSig = `${currentLang}|${isAdmin()}|` + projects.map(p => `${p.id}:${p.title}:${p.order}`).join("|");
+  if (root.dataset.renderedSig === catalogSig && root.children.length > 0) {
+    $("#projectCatalogCount").textContent = projectText().count(projects.length);
+    $("#manageProjectsButton").hidden = !isAdmin();
+    return;
+  }
+  root.dataset.renderedSig = catalogSig;
+
   root.replaceChildren();
   projects.forEach(project => root.append(createProjectCard(project)));
   $("#projectCatalogCount").textContent = projectText().count(projects.length);
   $("#manageProjectsButton").hidden = !isAdmin();
+}
+
+let portalRenderPending = false;
+function scheduleRenderPortal() {
+  if (portalRenderPending) return;
+  portalRenderPending = true;
+  requestAnimationFrame(() => {
+    portalRenderPending = false;
+    renderPortal();
+  });
 }
 
 function renderPortal() {
@@ -792,19 +812,19 @@ function listenPortalData() {
   portal.unsubContent = onSnapshot(contentQuery, snapshot => {
     portal.items = snapshot.docs.map(record => ({ id: record.id, ...record.data() }));
     window.dispatchEvent(new CustomEvent("portal-content-updated", { detail: portal.items }));
-    renderPortal();
+    scheduleRenderPortal();
   }, error => {
     console.warn("Project content unavailable", error.code);
     portal.items = [];
-    renderPortal();
+    scheduleRenderPortal();
   });
   portal.unsubNodes = onSnapshot(nodeQuery, snapshot => {
     portal.nodes = snapshot.docs.map(record => ({ id: record.id, ...record.data() })).filter(node => !node.deletedAt);
-    renderPortal();
+    scheduleRenderPortal();
   }, error => {
     console.warn("Published project sections unavailable", error.code);
     portal.nodes = [];
-    renderPortal();
+    scheduleRenderPortal();
   });
   portal.unsubMedia = onSnapshot(query(mediaCollection, orderBy("order", "asc")), snapshot => {
     portal.media = snapshot.docs.map(record => ({ id: record.id, ...record.data() }));
@@ -1370,7 +1390,7 @@ async function autoTranslateRailFields(force = false) {
 
   if (statusWrap && statusText) {
     statusWrap.hidden = false;
-    statusText.textContent = "⚡ กำลังแปลภาษาลาวและอังกฤษอัตโนมัติ...";
+    statusText.textContent = "🌐 กำลังแปลภาษาลาวและอังกฤษ...";
   }
   if (translateBtn) translateBtn.disabled = true;
   isTranslatingRail = true;
@@ -1413,7 +1433,7 @@ async function autoTranslateRailFields(force = false) {
     if (btnEnEl && (force || !btnEnEl.dataset.customized)) btnEnEl.value = btnEn;
 
     if (statusText) {
-      statusText.textContent = "✓ แปลภาษาลาวและอังกฤษอัตโนมัติสำเร็จ";
+      statusText.textContent = "✓ แปลภาษาลาวและอังกฤษสำเร็จ";
       setTimeout(() => {
         if (statusWrap) statusWrap.hidden = true;
       }, 3500);
@@ -1421,7 +1441,7 @@ async function autoTranslateRailFields(force = false) {
   } catch (err) {
     console.error("Auto-translate rail fields error:", err);
     if (statusText) {
-      statusText.textContent = "ระบบแปลภาษาอัตโนมัติพร้อมใช้งาน";
+      statusText.textContent = "ระบบแปลภาษาพร้อมใช้งาน";
       setTimeout(() => {
         if (statusWrap) statusWrap.hidden = true;
       }, 3000);
@@ -1433,10 +1453,7 @@ async function autoTranslateRailFields(force = false) {
 }
 
 function queueAutoTranslate() {
-  if (autoTranslateTimer) clearTimeout(autoTranslateTimer);
-  autoTranslateTimer = setTimeout(() => {
-    autoTranslateRailFields(false);
-  }, 750);
+  // ยกเลิกการแปลอัตโนมัติขณะพิมพ์ตามคำสั่ง ให้กดปุ่มแปลภาษาอย่างเดียว
 }
 
 let autoTranslateSidebarTimer = null;
@@ -1456,7 +1473,7 @@ async function autoTranslateSidebarFields(force = false) {
 
   if (statusWrap && statusText) {
     statusWrap.hidden = false;
-    statusText.textContent = "⚡ กำลังแปลภาษาลาวและอังกฤษอัตโนมัติ...";
+    statusText.textContent = "🌐 กำลังแปลภาษาลาวและอังกฤษ...";
   }
   if (translateBtn) translateBtn.disabled = true;
   isTranslatingSidebar = true;
@@ -1481,7 +1498,7 @@ async function autoTranslateSidebarFields(force = false) {
     if (descEnEl && (force || !descEnEl.dataset.customized)) descEnEl.value = descEn;
 
     if (statusText) {
-      statusText.textContent = "✓ แปลภาษาลาวและอังกฤษอัตโนมัติสำเร็จ";
+      statusText.textContent = "✓ แปลภาษาลาวและอังกฤษสำเร็จ";
       setTimeout(() => {
         if (statusWrap) statusWrap.hidden = true;
       }, 3500);
@@ -1489,7 +1506,7 @@ async function autoTranslateSidebarFields(force = false) {
   } catch (err) {
     console.error("Auto-translate sidebar fields error:", err);
     if (statusText) {
-      statusText.textContent = "ระบบแปลภาษาอัตโนมัติพร้อมใช้งาน";
+      statusText.textContent = "ระบบแปลภาษาพร้อมใช้งาน";
       setTimeout(() => {
         if (statusWrap) statusWrap.hidden = true;
       }, 3000);
@@ -1501,10 +1518,7 @@ async function autoTranslateSidebarFields(force = false) {
 }
 
 function queueAutoTranslateSidebar() {
-  if (autoTranslateSidebarTimer) clearTimeout(autoTranslateSidebarTimer);
-  autoTranslateSidebarTimer = setTimeout(() => {
-    autoTranslateSidebarFields(false);
-  }, 750);
+  // ยกเลิกการแปลอัตโนมัติขณะพิมพ์ตามคำสั่ง ให้กดปุ่มแปลภาษาอย่างเดียว
 }
 
 function renderRightRail() {
@@ -1538,6 +1552,12 @@ function renderRightRail() {
       return true;
     })
     .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+
+  const cardsSig = `${currentLang}|${isAdmin()}|${activeProjectSlug}|` + visibleCards.map(c => [c.id, c.order, c.updatedAt?.seconds || c.updatedAt || '', c.titleTh || c.title || '', c.descTh || c.description || '', c.theme || '', c.type || '', c.published].join(":")).join(";");
+  if (container.dataset.renderedSig === cardsSig && container.children.length > 0) {
+    return;
+  }
+  container.dataset.renderedSig = cardsSig;
 
   container.innerHTML = "";
 
@@ -2455,6 +2475,12 @@ function renderLeftSidebarCustom() {
       return true;
     });
 
+  const itemsSig = `${currentLang}|${isAdmin()}|${activeProjectSlug}|` + visibleItems.map(i => [i.id, i.order, i.updatedAt?.seconds || i.updatedAt || '', i.titleTh || i.title || '', i.descTh || i.description || '', i.theme || '', i.icon || '', i.published].join(":")).join(";");
+  if (container.dataset.renderedSig === itemsSig && container.children.length > 0) {
+    return;
+  }
+  container.dataset.renderedSig = itemsSig;
+
   container.innerHTML = "";
 
   if (visibleItems.length === 0) {
@@ -3309,7 +3335,6 @@ function setupPortalEvents() {
           else if (iconKey === "link") descEl.value = "เข้าชมเว็บไซต์ข้อมูลทางการ";
         }
 
-        queueAutoTranslateSidebar();
         activateSocialLinkInput(iconKey);
       }
     });
@@ -3323,13 +3348,6 @@ function setupPortalEvents() {
       } else {
         delete e.target.dataset.customized;
       }
-    });
-  });
-
-  // Real-time auto-translation from Thai (master language) for Left Sidebar
-  ["TitleTh", "DescTh"].forEach(key => {
-    $(`#sidebarItem${key}`)?.addEventListener("input", () => {
-      queueAutoTranslateSidebar();
     });
   });
 
@@ -3396,8 +3414,6 @@ function setupPortalEvents() {
           else if (iconKey === "youtube") btnEl.value = "ชมวิดีโอ";
           else btnEl.value = "ติดตาม";
         }
-
-        queueAutoTranslate();
       }
     });
   });
@@ -3410,13 +3426,6 @@ function setupPortalEvents() {
       } else {
         delete e.target.dataset.customized;
       }
-    });
-  });
-
-  // Real-time auto-translation from Thai (master language)
-  ["KickerTh", "TitleTh", "DescTh", "BtnTh"].forEach(key => {
-    $(`#railCard${key}`)?.addEventListener("input", () => {
-      queueAutoTranslate();
     });
   });
 
