@@ -72,6 +72,7 @@
       <button id="editorMenuButton" class="role-only" type="button" hidden><span aria-hidden="true">✎</span><span>Edit Web</span><small id="editorRoleBadge"></small></button>
       <button id="treeMenuButton" class="role-only" type="button" hidden><span aria-hidden="true">⌘</span><span>ผังโครงการ</span><small>Admin</small></button>
       <button id="siteStatusMenuButton" class="role-only" type="button" hidden><span aria-hidden="true">⚙</span><span>สถานะการเผยแพร่</span><small id="siteStatusBadge">กำลังพัฒนา</small></button>
+      <button id="backupRestoreMenuButton" class="role-only" type="button" hidden><span aria-hidden="true">💾</span><span>สำรองและกู้คืนข้อมูล</span><small>Admin</small></button>
       <button id="chatMenuButton" type="button"><span aria-hidden="true">◇</span><span>แชทกับผู้ดูแล</span></button>
     </nav>
     <p class="side-note">ทุกคนเข้าชมเว็บไซต์ได้โดยไม่ต้องเข้าสู่ระบบ การเข้าสู่ระบบใช้สำหรับจัดการเนื้อหา แสดงความคิดเห็น และแชทเท่านั้น</p>
@@ -545,7 +546,7 @@
         <button class="button primary" id="addRootProjectButton" type="button">＋ เพิ่มโครงการ</button>
         <button class="button secondary" id="addChildNodeButton" type="button">＋ เพิ่มโหนดย่อย</button>
         <button class="button secondary" id="treeTrashButton" type="button">ถังขยะ</button>
-        <button class="button secondary" id="exportTreeButton" type="button">ส่งออก JSON</button>
+        <button class="button secondary" id="exportTreeButton" type="button">ส่งออก JSON</button>        <button class="button secondary" id="treeBackupRestoreButton" type="button">💾 สำรอง/กู้คืนข้อมูล</button>
       </div>
       <div class="tree-workspace">
         <section class="tree-panel" aria-label="ผังโครงการ">
@@ -1307,6 +1308,69 @@
 
       <div class="dialog-actions">
         <button class="button secondary" id="closeSiteStatusBtn" type="button">ปิดหน้าต่าง</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- กล่องสำรองและกู้คืนข้อมูลสำหรับ Admin -->
+  <dialog class="manage-dialog" id="backupRestoreDialog" aria-labelledby="backupRestoreTitle">
+    <div class="dialog-shell">
+      <div class="dialog-head">
+        <div>
+          <p class="eyebrow">ระบบความปลอดภัยและฐานข้อมูล</p>
+          <h2 id="backupRestoreTitle">สำรองและกู้คืนข้อมูล</h2>
+          <span>ดาวน์โหลดสำเนาข้อมูลทั้งระบบเป็นไฟล์ JSON หรือกู้คืนข้อมูลกลับสู่ฐานข้อมูล</span>
+        </div>
+        <button class="icon-button" id="closeBackupRestoreDialog" type="button" aria-label="ปิดหน้าต่าง">×</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 16px; margin: 16px 0;">
+        <!-- Card 1: สำรองข้อมูล -->
+        <div style="padding: 16px; border-radius: 8px; background: #faf9f6; border: 1px solid rgba(0,0,0,0.08);">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 8px;">
+            <div>
+              <strong style="font-size: 1rem; color: #1e1b18; display: block;">📥 ดาวน์โหลดไฟล์สำรองข้อมูล</strong>
+              <span style="font-size: 0.85rem; color: #696579; line-height: 1.5; display: block; margin-top: 4px;">
+                บันทึกโครงสร้างผังเว็บไซต์, เนื้อหาบทความ, คลังสื่อรูปภาพและวิดีโอ, กล่องแถบขวา และแถบซ้าย ทั้งหมดออกมาเป็นไฟล์ JSON
+              </span>
+            </div>
+            <button class="button primary" id="exportFullBackupButton" type="button" style="white-space: nowrap;">
+              ⬇ ส่งออกไฟล์สำรอง
+            </button>
+          </div>
+          <div id="backupStatusText" style="font-size: 0.84rem; color: #3b7a57; margin-top: 6px;" hidden></div>
+        </div>
+
+        <!-- Card 2: กู้คืนข้อมูล -->
+        <div style="padding: 16px; border-radius: 8px; background: #faf9f6; border: 1px solid rgba(0,0,0,0.08);">
+          <div style="margin-bottom: 8px;">
+            <strong style="font-size: 1rem; color: #1e1b18; display: block;">📤 กู้คืนข้อมูลจากไฟล์สำรอง</strong>
+            <span style="font-size: 0.85rem; color: #696579; line-height: 1.5; display: block; margin-top: 4px;">
+              เลือกไฟล์ JSON ที่เคยสำรองไว้เพื่อนำข้อมูลกลับเข้าสู่ระบบคลาวด์ โดยระบบจะอัปเดตและกู้คืนข้อมูลเดิมให้สมบูรณ์
+            </span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; margin-top: 12px; flex-wrap: wrap;">
+            <input type="file" id="restoreBackupFileInput" accept=".json" style="display: none;">
+            <button class="button secondary" id="chooseRestoreFileBtn" type="button">
+              📁 เลือกไฟล์สำรอง (.json)
+            </button>
+            <span id="chosenRestoreFileName" style="font-size: 0.85rem; color: #696579;">ยังไม่ได้เลือกไฟล์</span>
+            <button class="button primary" id="startRestoreButton" type="button" disabled style="margin-left: auto;">
+              ⚡ เริ่มกู้คืนข้อมูล
+            </button>
+          </div>
+          <div id="restoreStatusText" style="font-size: 0.84rem; color: #d97706; margin-top: 8px;" hidden></div>
+        </div>
+
+        <div style="padding: 12px 16px; border-radius: 6px; background: #fbf8ef; border: 1px solid rgba(203,166,75,0.28);">
+          <p style="margin: 0; font-size: 0.84rem; color: #696579; line-height: 1.6;">
+            💡 <strong>คำแนะนำ:</strong> ควรดาวน์โหลดไฟล์สำรองข้อมูลไว้อย่างสม่ำเสมอ เพื่อให้สามารถกู้คืนข้อมูลกลับมาได้ทุกเมื่อ
+          </p>
+        </div>
+      </div>
+
+      <div class="dialog-actions">
+        <button class="button secondary" id="closeBackupRestoreBtn" type="button">ปิดหน้าต่าง</button>
       </div>
     </div>
   </dialog>

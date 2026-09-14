@@ -369,7 +369,7 @@ async function synchronizeDriveMedia(trigger) {
 
 exports.syncDriveMedia = onSchedule({
   ...FUNCTION_OPTIONS,
-  schedule: "every 5 minutes",
+  schedule: "every 20 minutes",
   timeZone: "Asia/Bangkok",
   retryCount: 1,
 }, async () => {
