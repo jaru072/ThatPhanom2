@@ -48,6 +48,20 @@ service firebase.storage {
       allow delete: if isAdmin(projectId);
     }
 
+    match /projects/{projectId}/rail/{userId}/{fileName} {
+      allow read: if true;
+      allow create: if isAdmin(projectId) && request.auth.uid == userId && validMedia();
+      allow update: if isAdmin(projectId) && validMedia();
+      allow delete: if isAdmin(projectId);
+    }
+
+    match /projects/{projectId}/sidebar/{userId}/{fileName} {
+      allow read: if true;
+      allow create: if isAdmin(projectId) && request.auth.uid == userId && validMedia();
+      allow update: if isAdmin(projectId) && validMedia();
+      allow delete: if isAdmin(projectId);
+    }
+
     match /projects/{projectId}/content/{userId}/{fileName} {
       allow read: if true;
       allow create: if isAdmin(projectId) && request.auth.uid == userId && validContentFile();
