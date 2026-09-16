@@ -244,3 +244,388 @@ input:checked + .site-toggle-slider:before {
   background: #fff3e0;
   color: #e65100;
 }
+
+
+/* Universal Admin Gear Button & Admin controls: Strictly hidden for non-admins */
+.portal-admin-only,
+.sidebar-admin-toolbar,
+#sidebarAdminToolbar,
+.rail-admin-toolbar,
+#railAdminToolbar,
+.sidebar-add-button,
+.sidebar-trash-button,
+.rail-add-button,
+.rail-trash-button,
+.admin-gear-btn,
+.rail-card-gear,
+.sidebar-item-gear,
+.section-gear-btn,
+.topnav-gear-btn,
+.cms-hidden-section-notice,
+[hidden] {
+  display: none !important;
+}
+
+/* Sidebar and Rail toolbars: Visible ONLY for Admin */
+body.is-admin .sidebar-admin-toolbar:not([hidden]),
+body.is-admin #sidebarAdminToolbar:not([hidden]) {
+  margin-top: 8px !important;
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  gap: 6px !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+body.is-admin .rail-admin-toolbar:not([hidden]),
+body.is-admin #railAdminToolbar:not([hidden]) {
+  margin-top: 14px !important;
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  gap: 6px !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+body.is-admin .sidebar-admin-toolbar button,
+body.is-admin .rail-admin-toolbar button {
+  min-height: 38px !important;
+  font-size: 0.82rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* PURE GEAR BUTTONS ACROSS ALL BARS AND SECTIONS: NO CIRCLE, NO BORDER, NO BACKGROUND */
+body.is-admin .admin-gear-btn:not([hidden]),
+body.is-admin .rail-card-gear:not([hidden]),
+body.is-admin .sidebar-item-gear:not([hidden]),
+body.is-admin .section-gear-btn:not([hidden]),
+body.is-admin .topnav-gear-btn:not([hidden]),
+.admin-gear-btn,
+.rail-card-gear,
+.sidebar-item-gear,
+.section-gear-btn,
+.topnav-gear-btn {
+  position: absolute !important;
+  top: 14px !important;
+  right: 14px !important;
+  z-index: 30 !important;
+  width: auto !important;
+  min-width: 30px !important;
+  height: auto !important;
+  min-height: 30px !important;
+  border-radius: 0 !important;
+  border: none !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  color: #cba64b !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 1.4rem !important;
+  line-height: 1 !important;
+  cursor: pointer !important;
+  box-shadow: none !important;
+  outline: none !important;
+  padding: 2px !important;
+  opacity: 0.9 !important;
+  visibility: visible !important;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s, opacity 0.2s !important;
+}
+
+body.is-admin .admin-gear-btn:not([hidden]):hover,
+body.is-admin .rail-card-gear:not([hidden]):hover,
+body.is-admin .sidebar-item-gear:not([hidden]):hover,
+body.is-admin .section-gear-btn:not([hidden]):hover,
+body.is-admin .topnav-gear-btn:not([hidden]):hover,
+.admin-gear-btn:hover,
+.rail-card-gear:hover,
+.sidebar-item-gear:hover,
+.section-gear-btn:hover,
+.topnav-gear-btn:hover {
+  transform: rotate(60deg) scale(1.18) !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: #e6b83f !important;
+  opacity: 1 !important;
+}
+
+body.is-admin .admin-gear-btn:not([hidden]):active,
+body.is-admin .rail-card-gear:not([hidden]):active,
+body.is-admin .sidebar-item-gear:not([hidden]):active,
+body.is-admin .section-gear-btn:not([hidden]):active,
+body.is-admin .topnav-gear-btn:not([hidden]):active,
+.admin-gear-btn:active,
+.rail-card-gear:active,
+.sidebar-item-gear:active,
+.section-gear-btn:active,
+.topnav-gear-btn:active {
+  transform: rotate(120deg) scale(0.95) !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: #cba64b !important;
+}
+
+body.is-admin .cms-hidden-section-notice:not([hidden]) {
+  display: flex !important;
+}
+
+/* Dark context adaptation (e.g. sidebar or hero or project cards) - strictly no circles */
+body.is-admin .desktop-sidebar .admin-gear-btn,
+body.is-admin .desktop-sidebar .sidebar-item-gear,
+body.is-admin .hero .section-gear-btn,
+body.is-admin .project-card .rail-card-gear {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  color: #ffd978 !important;
+}
+
+/* Ensure parent containers have relative position for absolute gears */
+.has-admin-gear {
+  position: relative !important;
+}
+.site-header {
+  position: sticky !important;
+}
+.header-gear-wrapper {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 6px;
+}
+.header-gear-wrapper .topnav-gear-btn {
+  position: static !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.rail-card-top-row .rail-card-gear {
+  position: static !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+.rail-lang-tab,
+.sidebar-lang-tab,
+.top-nav-lang-tab {
+  border: 0 !important;
+  background: transparent !important;
+  padding: 8px 14px !important;
+  font-size: .88rem !important;
+  font-weight: 600 !important;
+  color: var(--muted, #696579) !important;
+  cursor: pointer !important;
+  border-bottom: 3px solid transparent !important;
+  transition: all .15s !important;
+}
+.rail-lang-tab.active,
+.sidebar-lang-tab.active,
+.top-nav-lang-tab.active {
+  color: var(--social-red, #8b231f) !important;
+  border-bottom-color: var(--social-red, #8b231f) !important;
+}
+.social-topbar .top-nav a.active span{color:var(--social-red)!important;font-weight:700}
+.social-topbar .top-nav a.active svg{stroke:var(--social-red)!important}
+.mobile-bottom-nav a.active span{color:var(--social-red)!important;font-weight:700}
+.mobile-bottom-nav a.active svg{stroke:var(--social-red)!important}
+
+
+/* Responsive & Scrollable Top Navigation Bar */
+.social-topbar .top-nav {
+  display: flex !important;
+  align-items: center !important;
+  align-self: stretch !important;
+  gap: 6px !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow-x: auto !important;
+  overflow-y: hidden !important;
+  white-space: nowrap !important;
+  padding: 4px 6px !important;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(203, 166, 75, 0.4) transparent;
+}
+
+.social-topbar .top-nav::-webkit-scrollbar {
+  height: 4px;
+}
+
+.social-topbar .top-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.social-topbar .top-nav::-webkit-scrollbar-thumb {
+  background: rgba(203, 166, 75, 0.45);
+  border-radius: 999px;
+}
+
+.social-topbar .top-nav::-webkit-scrollbar-thumb:hover {
+  background: rgba(189, 138, 39, 0.75);
+}
+
+.social-topbar .top-nav a {
+  flex: 0 0 auto !important;
+  white-space: nowrap !important;
+}
+
+@media (max-width: 1160px) and (min-width: 768px) {
+  .site-header.social-topbar {
+    grid-template-columns: minmax(200px, 280px) minmax(180px, 1fr) auto auto !important;
+  }
+  .social-topbar .top-nav {
+    display: flex !important;
+    overflow-x: auto !important;
+    max-width: 260px !important;
+  }
+}
+
+/* YouTube Open Links and Direct Actions */
+.youtube-open-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  margin-top: 10px !important;
+  padding: 6px 14px !important;
+  font-size: 0.84rem !important;
+  font-weight: 600 !important;
+  color: #b38a38 !important;
+  background: rgba(179, 138, 56, 0.08) !important;
+  border: 1px solid rgba(179, 138, 56, 0.28) !important;
+  border-radius: 999px !important;
+  text-decoration: none !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  width: fit-content !important;
+  cursor: pointer !important;
+}
+.youtube-open-link svg {
+  color: #ff0000 !important;
+  flex-shrink: 0 !important;
+}
+.youtube-open-link:hover {
+  background: rgba(179, 138, 56, 0.18) !important;
+  border-color: #b38a38 !important;
+  color: #8c6820 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(179, 138, 56, 0.15) !important;
+}
+.resource-panel.has-admin-gear {
+  position: relative !important;
+}
+.resource-panel > .section-gear-btn {
+  top: 18px !important;
+  right: 18px !important;
+}
+@media (max-width: 600px) {
+  .resource-panel > .section-gear-btn {
+    top: 12px !important;
+    right: 12px !important;
+  }
+}
+/* Manual Refresh Button Styles */
+.portal-refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 6px 13px;
+  border-radius: 999px;
+  border: 1px solid rgba(231, 206, 128, 0.4);
+  background: rgba(255, 255, 255, 0.08);
+  color: #f6e6b4;
+  font: 500 0.85rem inherit;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+.portal-refresh-btn:hover {
+  background: rgba(231, 206, 128, 0.22);
+  border-color: rgba(231, 206, 128, 0.8);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+.portal-refresh-btn:active {
+  transform: translateY(0);
+}
+.portal-refresh-btn svg {
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  flex-shrink: 0;
+}
+.portal-refresh-btn.is-refreshing svg,
+.sidebar-refresh-btn.is-refreshing span,
+.rail-refresh-btn.is-refreshing span {
+  display: inline-block;
+  animation: portal-spin 0.75s linear infinite;
+}
+@keyframes portal-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+@media (max-width: 600px) {
+  .portal-refresh-btn .refresh-label {
+    display: none;
+  }
+  .portal-refresh-btn {
+    padding: 6px 9px;
+    min-height: 32px;
+  }
+}
+.sidebar-refresh-btn, .rail-refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+/* Facebook video and reel open links */
+.facebook-open-link {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 7px !important;
+  margin-top: 10px !important;
+  padding: 6px 14px !important;
+  font-size: 0.84rem !important;
+  font-weight: 600 !important;
+  color: #1877f2 !important;
+  background: rgba(24, 119, 242, 0.08) !important;
+  border: 1px solid rgba(24, 119, 242, 0.28) !important;
+  border-radius: 999px !important;
+  text-decoration: none !important;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  width: fit-content !important;
+  cursor: pointer !important;
+}
+.facebook-open-link svg {
+  color: #1877f2 !important;
+  flex-shrink: 0 !important;
+}
+.facebook-open-link:hover {
+  background: rgba(24, 119, 242, 0.18) !important;
+  border-color: #1877f2 !important;
+  color: #0d5bbd !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(24, 119, 242, 0.2);
+}
+.slide-facebook-direct-btn {
+  background: rgba(24, 119, 242, 0.92) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+}
+.slide-facebook-direct-btn:hover {
+  background: #1877f2 !important;
+  color: #ffffff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4) !important;
+}

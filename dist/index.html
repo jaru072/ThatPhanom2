@@ -18,6 +18,7 @@
 
   <script type="module" crossorigin src="/assets/index-D4DSCKUz.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/index-dX7NzDAm.css">
+  <script type="module" crossorigin src="/assets/index-B5Qt9EMX.js"></script>
 </head>
 <body>
   <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
@@ -28,7 +29,7 @@
       </button>
       <a class="brand" href="#top" aria-label="กลับสู่ด้านบน">
         <img src="/assets/logo-AxQWlNNP.png" alt="ตราพระธาตุพนม สู่มรดกโลก">
-        <span><small data-i18n="trialLabel">รุ่นทดลอง</small><strong data-i18n="brand">พระธาตุพนม สู่มรดกโลก</strong></span>
+        <span><small data-i18n="trialLabel"></small><strong data-i18n="brand">พระธาตุพนม สู่มรดกโลก</strong></span>
       </a>
     </div>
     <form class="site-search" id="siteSearchForm" role="search">
@@ -36,7 +37,8 @@
       <input id="siteSearchInput" type="search" placeholder="ค้นหาเรื่องราว โครงการ หรือกิจกรรม" autocomplete="off" aria-label="ค้นหาในเว็บไซต์">
       <button type="submit" aria-label="ค้นหา" data-i18n="searchAction">ค้นหา</button>
     </form>
-    <nav class="top-nav" aria-label="เมนูหลัก">
+    <nav class="top-nav" aria-label="เมนูหลัก" id="mainTopNav">
+      <button class="topnav-gear-btn admin-gear-btn portal-admin-only" id="topNavGearBtn" type="button" title="จัดการเมนูแถบนำทาง" aria-label="จัดการเมนูแถบนำทาง" hidden>⚙</button>
       <a class="active" href="#top" data-nav-target="top"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-8 9 8"></path><path d="M5 10v10h14V10"></path></svg><span data-i18n="navHome">หน้าหลัก</span></a>
       <a href="#history" data-nav-target="history"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v15H4z"></path><path d="M8 2v6M16 2v6M8 12h8M8 16h5"></path></svg><span data-i18n="navHistory">เรื่องราว</span></a>
       <a href="#world-heritage" data-nav-target="world-heritage"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"></path></svg><span data-i18n="navWorld">สู่มรดกโลก</span></a>
@@ -71,6 +73,8 @@
       <button id="loginMenuButton" type="button"><span aria-hidden="true">◉</span><span id="loginMenuText">เข้าสู่ระบบด้วย Google</span></button>
       <button id="editorMenuButton" class="role-only" type="button" hidden><span aria-hidden="true">✎</span><span>Edit Web</span><small id="editorRoleBadge"></small></button>
       <button id="treeMenuButton" class="role-only" type="button" hidden><span aria-hidden="true">⌘</span><span>ผังโครงการ</span><small>Admin</small></button>
+      <button id="siteStatusMenuButton" class="role-only" type="button" hidden><span aria-hidden="true">⚙</span><span>สถานะการเผยแพร่</span><small id="siteStatusBadge">กำลังพัฒนา</small></button>
+      <button id="backupRestoreMenuButton" class="role-only" type="button" hidden><span aria-hidden="true">💾</span><span>สำรองและกู้คืนข้อมูล</span><small>Admin</small></button>
       <button id="chatMenuButton" type="button"><span aria-hidden="true">◇</span><span>แชทกับผู้ดูแล</span></button>
     </nav>
     <p class="side-note">ทุกคนเข้าชมเว็บไซต์ได้โดยไม่ต้องเข้าสู่ระบบ การเข้าสู่ระบบใช้สำหรับจัดการเนื้อหา แสดงความคิดเห็น และแชทเท่านั้น</p>
@@ -83,14 +87,11 @@
           <img src="/assets/logo-AxQWlNNP.png" alt="">
           <span><strong data-i18n="brand">พระธาตุพนม สู่มรดกโลก</strong><small data-i18n="trialLabel">รุ่นทดลอง</small></span>
         </a>
-        <nav class="social-nav" aria-label="ส่วนต่าง ๆ ของเว็บไซต์">
-          <a class="active" href="#top" data-nav-target="top"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 11 9-8 9 8"></path><path d="M5 10v10h14V10"></path></svg></span><span data-i18n="navHome">หน้าหลัก</span></a>
-          <a href="#history" data-nav-target="history"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v15H4z"></path><path d="M8 2v6M16 2v6M8 12h8M8 16h5"></path></svg></span><span data-i18n="navHistory">เรื่องราวแห่งศรัทธา</span></a>
-          <a href="#milestones" data-nav-target="milestones"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3v18M5 6h12l-2 4 2 4H5"></path></svg></span><span data-i18n="navMilestones">หมุดหมายสำคัญ</span></a>
-          <a href="#world-heritage" data-nav-target="world-heritage"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"></path></svg></span><span data-i18n="navWorld">สู่มรดกโลก</span></a>
-          <a href="#videos" data-nav-target="videos"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m10 9 5 3-5 3z"></path></svg></span><span data-i18n="navVideos">วิดีโอ</span></a>
-          <a href="#projects" data-nav-target="projects"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h6l2 3h8v11H4z"></path></svg></span><span data-i18n="navResources">โครงการ</span></a>
-          <a href="#community" data-nav-target="community"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h16v12H8l-4 4z"></path><path d="M8 9h8M8 13h5"></path></svg></span><span data-i18n="navCommunity">ชุมชน</span></a>
+        <div style="display:flex; justify-content:flex-start; align-items:center; padding: 14px 14px 8px 14px;">
+          <span style="font-size:1.05rem; font-weight:700; letter-spacing:0.3px; color:#cba64b;">โครงการทั้งหมด</span>
+        </div>
+        <nav class="social-nav sidebar-projects-nav" id="sidebarProjectsNav" aria-label="โครงการทั้งหมด">
+          <div class="sidebar-projects-list" id="sidebarProjectsList"></div>
         </nav>
         <div class="sidebar-custom-section" id="sidebarCustomSection">
           <div class="sidebar-items-container" id="sidebarItemsContainer"></div>
@@ -103,7 +104,8 @@
     </aside>
 
     <div class="feed-column">
-    <section class="hero" aria-labelledby="heroTitle">
+    <section class="hero has-admin-gear" aria-labelledby="heroTitle">
+      <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="hero" title="จัดการภาพและข้อความนำ (Hero)" aria-label="จัดการภาพและข้อความนำ" hidden>⚙</button>
       <div class="hero-photo" id="heroMedia" aria-label="สไลด์ภาพหลักพระธาตุพนม">
         <div class="photo-credit"><span data-i18n="photo">ภาพพระธาตุพนม</span> · <a href="https://www.publicdomainpictures.net/en/view-image.php?image=331632&picture=wat-phra-that-phanom-temple" target="_blank" rel="noopener">Public Domain Pictures</a></div>
       </div>
@@ -111,10 +113,6 @@
         <p class="eyebrow" data-i18n="eyebrow">ศรัทธาแห่งลุ่มน้ำโขง · มรดกของมวลมนุษยชาติ</p>
         <h1 id="heroTitle" data-i18n="title">พระธาตุพนม สู่มรดกโลก</h1>
         <p class="lead" data-i18n="lead">ร่วมสืบสานปูชนียสถานอันเป็นศูนย์รวมศรัทธาของผู้คนไทย–ลาว และชุมชนลุ่มน้ำโขง ให้คงคุณค่าทั้งกายภาพและจิตวิญญาณสู่คนรุ่นต่อไป</p>
-        <div class="hero-actions">
-          <a class="button primary" href="#world-heritage" data-i18n="learn">เรียนรู้เส้นทางมรดกโลก</a>
-          <a class="button ghost" href="#videos" data-i18n="watch">ชมเรื่องราว</a>
-        </div>
       </div>
     </section>
 
@@ -124,7 +122,8 @@
       <strong data-i18n="commentAction">แสดงความคิดเห็น</strong>
     </a>
 
-    <section class="projects-hub section" id="projects" aria-labelledby="projectsTitle">
+    <section class="projects-hub section has-admin-gear" id="projects" aria-labelledby="projectsTitle">
+      <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="projects" title="จัดการโครงการเพื่อพระธาตุพนม" aria-label="จัดการโครงการเพื่อพระธาตุพนม" hidden>⚙</button>
       <div class="projects-hub-head">
         <div>
           <p class="kicker" data-i18n="projectsKicker">โครงการเพื่อพระธาตุพนม</p>
@@ -216,17 +215,19 @@
       </section>
     </section>
 
-    <section class="status-band" aria-label="สถานะปัจจุบัน">
+    <section class="status-band has-admin-gear" id="status" aria-label="สถานะปัจจุบัน">
+      <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="status" title="จัดการสถานะปัจจุบัน" aria-label="จัดการสถานะปัจจุบัน" hidden>⚙</button>
       <div class="status-icon" aria-hidden="true">✦</div>
       <div>
-        <p class="status-label" data-i18n="statusLabel">สถานะปัจจุบัน</p>
+        <p class="status-label kicker" data-i18n="statusLabel">สถานะปัจจุบัน</p>
         <h2 data-i18n="statusTitle">อยู่ในบัญชีรายชื่อเบื้องต้นของศูนย์มรดกโลก</h2>
         <p data-i18n="statusText">ประเทศไทยเสนอเมื่อ 2 กุมภาพันธ์ 2560 ในประเภทมรดกทางวัฒนธรรม ตามเกณฑ์ (i), (ii) และ (vi) ปัจจุบันยังอยู่ในกระบวนการเตรียมความพร้อมเพื่อเสนอขึ้นทะเบียน</p>
       </div>
       <a class="source-link" href="https://whc.unesco.org/en/tentativelists/6183/" target="_blank" rel="noopener" data-i18n="unesco">ตรวจสอบกับ UNESCO ↗</a>
     </section>
 
-    <section class="story section" id="history">
+    <section id="history" class="story section has-admin-gear">
+      <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="history" title="จัดการเรื่องราวแห่งศรัทธา" aria-label="จัดการเรื่องราวแห่งศรัทธา" hidden>⚙</button>
       <div class="section-heading">
         <p class="kicker" data-i18n="storyKicker">เรื่องราวแห่งศรัทธา</p>
         <h2 data-i18n="storyTitle">พระธาตุที่มีชีวิตของคนสองฝั่งโขง</h2>
@@ -260,7 +261,8 @@
       </div>
     </section>
 
-    <section class="timeline-section section" id="milestones" aria-labelledby="timeline-title">
+    <section id="milestones" class="timeline-section section has-admin-gear" aria-labelledby="timeline-title">
+      <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="milestones" title="จัดการหมุดหมายสำคัญ" aria-label="จัดการหมุดหมายสำคัญ" hidden>⚙</button>
       <div class="section-heading compact">
         <p class="kicker" data-i18n="timelineKicker">หมุดหมายสำคัญ</p>
         <h2 id="timeline-title" data-i18n="timelineTitle">อดีตที่หล่อหลอมอนาคต</h2>
@@ -274,7 +276,8 @@
       </ol>
     </section>
 
-    <section class="world section" id="world-heritage">
+    <section id="world-heritage" class="world section has-admin-gear">
+      <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="world-heritage" title="จัดการสู่มรดกโลก" aria-label="จัดการสู่มรดกโลก" hidden>⚙</button>
       <div class="section-heading inverse">
         <p class="kicker" data-i18n="criteriaKicker">คุณค่าโดดเด่นเป็นสากล</p>
         <h2 data-i18n="criteriaTitle">เหตุใดพระธาตุพนมจึงควรเป็นมรดกโลก</h2>
@@ -320,7 +323,8 @@
       </blockquote>
     </section>
 
-    <section class="videos section" id="videos">
+    <section id="videos" class="videos section has-admin-gear">
+      <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="videos" title="จัดการส่วนวิดีโอ" aria-label="จัดการส่วนวิดีโอ" hidden>⚙</button>
       <div class="section-heading">
         <p class="kicker" data-i18n="videosKicker">เสียงจากผู้คนและชุมชน</p>
         <h2 data-i18n="videosTitle">ชมเรื่องราวพระธาตุพนม</h2>
@@ -398,7 +402,8 @@
       </section>
     </section>
 
-    <section class="community section" id="community">
+    <section id="community" class="community section has-admin-gear">
+      <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="community" title="จัดการส่วนชุมชน" aria-label="จัดการส่วนชุมชน" hidden>⚙</button>
       <div class="section-heading">
         <p class="kicker">เสียงจากชุมชน</p>
         <h2>ความคิดเห็นและกำลังใจ</h2>
@@ -544,7 +549,7 @@
         <button class="button primary" id="addRootProjectButton" type="button">＋ เพิ่มโครงการ</button>
         <button class="button secondary" id="addChildNodeButton" type="button">＋ เพิ่มโหนดย่อย</button>
         <button class="button secondary" id="treeTrashButton" type="button">ถังขยะ</button>
-        <button class="button secondary" id="exportTreeButton" type="button">ส่งออก JSON</button>
+        <button class="button secondary" id="exportTreeButton" type="button">ส่งออก JSON</button>        <button class="button secondary" id="treeBackupRestoreButton" type="button">💾 สำรอง/กู้คืนข้อมูล</button>
       </div>
       <div class="tree-workspace">
         <section class="tree-panel" aria-label="ผังโครงการ">
@@ -631,6 +636,7 @@
             <div class="dialog-actions tree-editor-actions">
               <button class="button danger" id="deleteTreeNodeButton" type="button">ย้ายไปถังขยะ</button>
               <button class="button secondary" id="restoreTreeNodeButton" type="button" hidden>กู้คืน</button>
+              <button class="button danger" id="permDeleteTreeNodeButton" type="button" hidden>ลบถาวร</button>
               <button class="button primary" type="submit">บันทึก</button>
             </div>
           </form>
@@ -1274,8 +1280,250 @@
     </button>
   </nav>
 
+  <!-- กล่องตั้งค่าสถานะเว็บไซต์สำหรับ Admin -->
+  <dialog class="manage-dialog" id="siteStatusDialog" aria-labelledby="siteStatusTitle">
+    <div class="dialog-shell">
+      <div class="dialog-head">
+        <div>
+          <p class="eyebrow">ระบบตั้งค่าเว็บไซต์</p>
+          <h2 id="siteStatusTitle">สถานะการเผยแพร่เว็บไซต์</h2>
+          <span>กำหนดให้บุคคลทั่วไปเข้าชมเว็บไซต์ หรือแสดงหน้าต่างกำลังพัฒนา</span>
+        </div>
+        <button class="icon-button" id="closeSiteStatusDialog" type="button" aria-label="ปิดหน้าต่าง">×</button>
+      </div>
+
+      <div class="status-switch-row">
+        <div class="status-switch-info">
+          <strong id="statusSwitchLabel">สถานะปัจจุบัน: กำลังพัฒนา</strong>
+          <span id="statusSwitchSub">บุคคลทั่วไปจะเห็นหน้าจอ "กำลังพัฒนา โปรดเข้ามาชมใหม่ภายหลัง"</span>
+        </div>
+        <label class="site-toggle-switch">
+          <input type="checkbox" id="sitePublishedToggle">
+          <span class="site-toggle-slider"></span>
+        </label>
+      </div>
+
+      <div style="padding: 14px 18px; border-radius: 6px; background: #fbf8ef; border: 1px solid rgba(203,166,75,0.28); margin-bottom: 20px;">
+        <p style="margin: 0; font-size: 0.88rem; color: #696579; line-height: 1.6;">
+          💡 <strong>คำแนะนำ:</strong> เมื่อตั้งเป็น "กำลังพัฒนา" บัญชีผู้ดูแลระบบ (Admin) ยังคงสามารถเข้าสู่ระบบเพื่อแก้ไข อัปโหลดรูปภาพ และดูเนื้อหาทั้งหมดได้ตามปกติ
+        </p>
+      </div>
+
+      <div class="dialog-actions">
+        <button class="button secondary" id="closeSiteStatusBtn" type="button">ปิดหน้าต่าง</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- กล่องสำรองและกู้คืนข้อมูลสำหรับ Admin -->
+  <dialog class="manage-dialog" id="backupRestoreDialog" aria-labelledby="backupRestoreTitle">
+    <div class="dialog-shell">
+      <div class="dialog-head">
+        <div>
+          <p class="eyebrow">ระบบความปลอดภัยและฐานข้อมูล</p>
+          <h2 id="backupRestoreTitle">สำรองและกู้คืนข้อมูล</h2>
+          <span>ดาวน์โหลดสำเนาข้อมูลทั้งระบบเป็นไฟล์ JSON หรือกู้คืนข้อมูลกลับสู่ฐานข้อมูล</span>
+        </div>
+        <button class="icon-button" id="closeBackupRestoreDialog" type="button" aria-label="ปิดหน้าต่าง">×</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 16px; margin: 16px 0;">
+        <!-- Card 1: สำรองข้อมูล -->
+        <div style="padding: 16px; border-radius: 8px; background: #faf9f6; border: 1px solid rgba(0,0,0,0.08);">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 8px;">
+            <div>
+              <strong style="font-size: 1rem; color: #1e1b18; display: block;">📥 ดาวน์โหลดไฟล์สำรองข้อมูล</strong>
+              <span style="font-size: 0.85rem; color: #696579; line-height: 1.5; display: block; margin-top: 4px;">
+                บันทึกโครงสร้างผังเว็บไซต์, เนื้อหาบทความ, คลังสื่อรูปภาพและวิดีโอ, กล่องแถบขวา และแถบซ้าย ทั้งหมดออกมาเป็นไฟล์ JSON
+              </span>
+            </div>
+            <button class="button primary" id="exportFullBackupButton" type="button" style="white-space: nowrap;">
+              ⬇ ส่งออกไฟล์สำรอง
+            </button>
+          </div>
+          <div id="backupStatusText" style="font-size: 0.84rem; color: #3b7a57; margin-top: 6px;" hidden></div>
+        </div>
+
+        <!-- Card 2: กู้คืนข้อมูล -->
+        <div style="padding: 16px; border-radius: 8px; background: #faf9f6; border: 1px solid rgba(0,0,0,0.08);">
+          <div style="margin-bottom: 8px;">
+            <strong style="font-size: 1rem; color: #1e1b18; display: block;">📤 กู้คืนข้อมูลจากไฟล์สำรอง</strong>
+            <span style="font-size: 0.85rem; color: #696579; line-height: 1.5; display: block; margin-top: 4px;">
+              เลือกไฟล์ JSON ที่เคยสำรองไว้เพื่อนำข้อมูลกลับเข้าสู่ระบบคลาวด์ โดยระบบจะอัปเดตและกู้คืนข้อมูลเดิมให้สมบูรณ์
+            </span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; margin-top: 12px; flex-wrap: wrap;">
+            <input type="file" id="restoreBackupFileInput" accept=".json" style="display: none;">
+            <button class="button secondary" id="chooseRestoreFileBtn" type="button">
+              📁 เลือกไฟล์สำรอง (.json)
+            </button>
+            <span id="chosenRestoreFileName" style="font-size: 0.85rem; color: #696579;">ยังไม่ได้เลือกไฟล์</span>
+            <button class="button primary" id="startRestoreButton" type="button" disabled style="margin-left: auto;">
+              ⚡ เริ่มกู้คืนข้อมูล
+            </button>
+          </div>
+          <div id="restoreStatusText" style="font-size: 0.84rem; color: #d97706; margin-top: 8px;" hidden></div>
+        </div>
+
+        <div style="padding: 12px 16px; border-radius: 6px; background: #fbf8ef; border: 1px solid rgba(203,166,75,0.28);">
+          <p style="margin: 0; font-size: 0.84rem; color: #696579; line-height: 1.6;">
+            💡 <strong>คำแนะนำ:</strong> ควรดาวน์โหลดไฟล์สำรองข้อมูลไว้อย่างสม่ำเสมอ เพื่อให้สามารถกู้คืนข้อมูลกลับมาได้ทุกเมื่อ
+          </p>
+        </div>
+      </div>
+
+      <div class="dialog-actions">
+        <button class="button secondary" id="closeBackupRestoreBtn" type="button">ปิดหน้าต่าง</button>
+      </div>
+    </div>
+  </dialog>
+
+  
+  <!-- หน้าต่างจัดการเมนูแถบนำทาง Top Bar สำหรับ Admin -->
+  <dialog class="manage-dialog" id="topNavManageDialog" aria-labelledby="topNavDialogTitle">
+    <div class="dialog-shell" style="max-width: 680px;">
+      <div class="dialog-head">
+        <div>
+          <p class="eyebrow">ระบบจัดการเมนูนำทาง</p>
+          <h2 id="topNavDialogTitle">จัดการเมนูแถบนำทาง (Top Bar)</h2>
+          <span>เพิ่ม แก้ไข เรียงลำดับ หรือลบเมนูนำทางด้านบนและบนมือถือ</span>
+        </div>
+        <button class="icon-button" id="closeTopNavDialog" type="button" aria-label="ปิดหน้าต่าง">×</button>
+      </div>
+
+      <div style="margin: 16px 0; display: flex; flex-direction: column; gap: 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-weight: 600; font-size: 0.95rem; color: #171329;">รายการเมนูทั้งหมด (<span id="topNavTotalCount">0</span>)</span>
+          <button class="button primary" id="addNewTopNavItemBtn" type="button" style="padding: 6px 14px; font-size: 0.85rem;">＋ เพิ่มเมนูใหม่</button>
+        </div>
+
+        <div id="topNavItemsTable" style="display: flex; flex-direction: column; gap: 8px; max-height: 380px; overflow-y: auto; padding: 4px;">
+          <!-- Items will be rendered here dynamically -->
+        </div>
+
+        <!-- Form for Add/Edit Top Nav Item (Inline or nested) -->
+        <form id="topNavEditForm" style="display: none; padding: 16px; background: #faf9f6; border: 1px solid rgba(203,166,75,0.4); border-radius: 8px; margin-top: 10px;">
+          <h3 id="topNavFormTitle" style="margin-top:0; font-size: 1rem; color: #171329; margin-bottom: 12px;">แก้ไขเมนู</h3>
+          <input type="hidden" id="topNavEditId">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+            <label style="display: flex; flex-direction: column; font-size: 0.85rem; gap: 4px;">
+              <span>ชื่อเมนู (ไทย) *</span>
+              <input type="text" id="topNavTitleTh" required style="padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px;">
+            </label>
+            <label style="display: flex; flex-direction: column; font-size: 0.85rem; gap: 4px;">
+              <span>ชื่อเมนู (English)</span>
+              <input type="text" id="topNavTitleEn" style="padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px;">
+            </label>
+          </div>
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 12px; margin-bottom: 12px;">
+            <label style="display: flex; flex-direction: column; font-size: 0.85rem; gap: 4px;">
+              <span>ลิงก์ปลายทาง (เช่น #world-heritage หรือ URL ภายนอก) *</span>
+              <input type="text" id="topNavTargetUrl" required placeholder="#section หรือ https://..." style="padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px;">
+            </label>
+            <label style="display: flex; flex-direction: column; font-size: 0.85rem; gap: 4px;">
+              <span>ลำดับ (Order)</span>
+              <input type="number" id="topNavOrder" value="10" style="padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px;">
+            </label>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 14px;">
+            <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.88rem; cursor: pointer;">
+              <input type="checkbox" id="topNavPublished" checked>
+              <span>เผยแพร่เมนูนี้ทันที</span>
+            </label>
+            <div style="display: flex; gap: 8px;">
+              <button type="button" class="button secondary" id="cancelTopNavFormBtn" style="padding: 6px 14px;">ยกเลิก</button>
+              <button type="submit" class="button primary" style="padding: 6px 16px;">💾 บันทึกเมนู</button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="dialog-actions">
+        <button class="button secondary" id="closeTopNavDialogBtn" type="button">ปิดหน้าต่าง</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- หน้าต่างแก้ไขส่วนเนื้อหาแถบตรงกลาง (Section CMS Editor) สำหรับ Admin -->
+  <dialog class="manage-dialog" id="sectionEditorDialog" aria-labelledby="sectionEditorTitle">
+    <div class="dialog-shell" style="max-width: 680px;">
+      <div class="dialog-head">
+        <div>
+          <p class="eyebrow">ระบบจัดการเนื้อหาเว็บไซต์</p>
+          <h2 id="sectionEditorTitle">จัดการเนื้อหาส่วนนี้</h2>
+          <span id="sectionEditorSubtitle">แก้ไขข้อความและรูปภาพของหัวข้อในแถบตรงกลาง</span>
+        </div>
+        <button class="icon-button" id="closeSectionEditorDialog" type="button" aria-label="ปิดหน้าต่าง">×</button>
+      </div>
+
+      <form id="sectionEditorForm" style="margin: 16px 0; display: flex; flex-direction: column; gap: 14px;">
+        <input type="hidden" id="sectionEditorTargetId">
+
+        <label style="display: flex; flex-direction: column; font-size: 0.85rem; gap: 4px;">
+          <span>หัวข้อย่อย / คำโปรย (Kicker)</span>
+          <input type="text" id="sectionEditorKicker" placeholder="เช่น เรื่องราวแห่งศรัทธา หรือ สู่มรดกโลก" style="padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px;">
+        </label>
+
+        <label style="display: flex; flex-direction: column; font-size: 0.85rem; gap: 4px;">
+          <span>หัวข้อหลัก (Title) *</span>
+          <input type="text" id="sectionEditorTitleInput" required style="padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px; font-weight: 600;">
+        </label>
+
+        <label style="display: flex; flex-direction: column; font-size: 0.85rem; gap: 4px;">
+          <span>เนื้อหารายละเอียด (Description / Story)</span>
+          <textarea id="sectionEditorContent" rows="6" style="padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: inherit; line-height: 1.6; resize: vertical;"></textarea>
+        </label>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+          <label style="display: flex; flex-direction: column; font-size: 0.85rem; gap: 4px;">
+            <span>ลิงก์รูปภาพประกอบ (URL ภาพ)</span>
+            <input type="text" id="sectionEditorImageUrl" placeholder="assets/... หรือ https://..." style="padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px;">
+          </label>
+          <label style="display: flex; flex-direction: column; font-size: 0.85rem; gap: 4px;">
+            <span>ลิงก์ปุ่มการดำเนินการ (ถ้ามี)</span>
+            <input type="text" id="sectionEditorActionUrl" placeholder="#milestones หรือ https://..." style="padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px;">
+          </label>
+        </div>
+
+        <div id="sectionEditorStatus" style="font-size: 0.88rem; padding: 8px 12px; border-radius: 6px; display: none;"></div>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 10px; border-top: 1px solid #eee;">
+          <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.88rem; cursor: pointer;">
+            <input type="checkbox" id="sectionEditorPublished" checked>
+            <span>แสดงส่วนนี้บนหน้าเว็บไซต์</span>
+          </label>
+          <div style="display: flex; gap: 8px;">
+            <button type="button" class="button secondary" id="cancelSectionEditorBtn">ยกเลิก</button>
+            <button type="submit" class="button primary">💾 บันทึกข้อมูลส่วนนี้</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+<!-- หน้าจอแจ้งสถานะกำลังพัฒนาสำหรับบุคคลทั่วไป (Maintenance Overlay) -->
+  <div class="maintenance-overlay" id="maintenanceOverlay" hidden>
+    <div class="maintenance-box">
+      <img class="maintenance-logo" src="/assets/logo-AxQWlNNP.png" alt="ตราพระธาตุพนม สู่มรดกโลก">
+      <div class="maintenance-status-badge">กำลังพัฒนา</div>
+      <h1 class="maintenance-title">พระธาตุพนม สู่มรดกโลก</h1>
+      <p class="maintenance-desc">กำลังพัฒนา โปรดเข้ามาชมใหม่ภายหลัง</p>
+      <div class="maintenance-actions">
+        <button class="maintenance-admin-btn" id="maintenanceLoginBtn" type="button">
+          <span>เข้าสู่ระบบสำหรับผู้ดูแลระบบ</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <dialog class="confirm-dialog" id="confirmDialog" aria-labelledby="confirmTitle">
-    <div><h3 id="confirmTitle">ยืนยันการลบ</h3><p id="confirmMessage"></p><div class="dialog-actions"><button class="button secondary" id="confirmCancel" type="button">ยกเลิก</button><button class="button danger" id="confirmOk" type="button">ลบ</button></div></div>
+    <div>
+      <h3 id="confirmTitle">ยืนยันการลบ</h3>
+      <p id="confirmMessage"></p>
+      <div class="dialog-actions">
+        <button class="button secondary" id="confirmCancel" type="button">ยกเลิก</button>
+        <button class="button danger" id="confirmOk" type="button">ลบ</button>
+      </div>
+    </div>
   </dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
   <script src="script.js"></script>

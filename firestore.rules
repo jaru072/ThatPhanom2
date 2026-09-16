@@ -7,29 +7,50 @@ service cloud.firestore {
     }
 
     function isDefaultAdmin() {
-      return signedIn()
-        && 'email' in request.auth.token
-        && request.auth.token.email != null
-        && (request.auth.token.email == 'jaru072@gmail.com'
-            || request.auth.token.email.matches('(?i)^jaru072@gmail[.]com$'));
+      return signedIn() && (
+        ('email' in request.auth.token && request.auth.token.email != null && (
+          request.auth.token.email == 'jaru072@gmail.com'
+          || request.auth.token.email.lower() == 'jaru072@gmail.com'
+        ))
+        || (exists(/databases/$(database)/documents/users/$(request.auth.uid))
+            && 'email' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data
+            && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.email == 'jaru072@gmail.com')
+        || (exists(/databases/$(database)/documents/projects/world-heritage/members/$(request.auth.uid))
+            && 'email' in get(/databases/$(database)/documents/projects/world-heritage/members/$(request.auth.uid)).data
+            && get(/databases/$(database)/documents/projects/world-heritage/members/$(request.auth.uid)).data.email == 'jaru072@gmail.com')
+        || (exists(/databases/$(database)/documents/projects/that-phanom/members/$(request.auth.uid))
+            && 'email' in get(/databases/$(database)/documents/projects/that-phanom/members/$(request.auth.uid)).data
+            && get(/databases/$(database)/documents/projects/that-phanom/members/$(request.auth.uid)).data.email == 'jaru072@gmail.com')
+      );
     }
 
     function isGlobalAdmin() {
       return isDefaultAdmin()
         || (signedIn()
           && exists(/databases/$(database)/documents/users/$(request.auth.uid))
-          && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.get('globalRole', '') == 'admin');
+          && 'globalRole' in get(/databases/$(database)/documents/users/$(request.auth.uid)).data
+          && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.globalRole == 'admin')
+        || (signedIn()
+          && exists(/databases/$(database)/documents/projects/world-heritage/members/$(request.auth.uid))
+          && 'role' in get(/databases/$(database)/documents/projects/world-heritage/members/$(request.auth.uid)).data
+          && get(/databases/$(database)/documents/projects/world-heritage/members/$(request.auth.uid)).data.role in ['admin', 'manager'])
+        || (signedIn()
+          && exists(/databases/$(database)/documents/projects/that-phanom/members/$(request.auth.uid))
+          && 'role' in get(/databases/$(database)/documents/projects/that-phanom/members/$(request.auth.uid)).data
+          && get(/databases/$(database)/documents/projects/that-phanom/members/$(request.auth.uid)).data.role in ['admin', 'manager']);
     }
 
     function projectRole(projectId) {
-      return isGlobalAdmin() ? 'admin'
+      return isDefaultAdmin() ? 'admin'
         : (signedIn() && exists(/databases/$(database)/documents/projects/$(projectId)/members/$(request.auth.uid)))
-          ? get(/databases/$(database)/documents/projects/$(projectId)/members/$(request.auth.uid)).data.get('role', 'guest')
+          ? ('role' in get(/databases/$(database)/documents/projects/$(projectId)/members/$(request.auth.uid)).data
+              ? get(/databases/$(database)/documents/projects/$(projectId)/members/$(request.auth.uid)).data.role
+              : 'guest')
           : 'guest';
     }
 
     function isAdmin(projectId) {
-      return isGlobalAdmin() || projectRole(projectId) == 'admin';
+      return isDefaultAdmin() || isGlobalAdmin() || projectRole(projectId) in ['admin', 'manager'];
     }
 
     function isStaff(projectId) {
@@ -105,6 +126,16 @@ service cloud.firestore {
         allow create, update, delete: if isAdmin(projectId);
       }
 
+      // เมนูแถบนำทาง (Top Navigation Items)
+      match /topNavItems/{navId} {
+        allow read: if true;
+        allow create, update, delete: if isAdmin(projectId);
+      }
+      // เนื้อหาข้อความและส่วนต่าง ๆ (Site Sections CMS)
+      match /siteSections/{sectionId} {
+        allow read: if true;
+        allow create, update, delete: if isAdmin(projectId);
+      }
       // หัวข้อแถบซ้าย (Left Sidebar Items)
       match /sidebarItems/{itemId} {
         allow read: if true;
@@ -170,14 +201,22 @@ service cloud.firestore {
       }
     }
 
+    match /topNavItems/{navId} {
+      allow read: if true;
+      allow create, update, delete: if isDefaultAdmin() || isGlobalAdmin() || isAdmin('world-heritage') || isAdmin('that-phanom');
+    }
+    match /siteSections/{sectionId} {
+      allow read: if true;
+      allow create, update, delete: if isDefaultAdmin() || isGlobalAdmin() || isAdmin('world-heritage') || isAdmin('that-phanom');
+    }
     match /sidebarItems/{itemId} {
       allow read: if true;
-      allow create, update, delete: if isGlobalAdmin();
+      allow create, update, delete: if isDefaultAdmin() || isGlobalAdmin() || isAdmin('world-heritage') || isAdmin('that-phanom');
     }
 
     match /railCards/{cardId} {
       allow read: if true;
-      allow create, update, delete: if isGlobalAdmin();
+      allow create, update, delete: if isDefaultAdmin() || isGlobalAdmin() || isAdmin('world-heritage') || isAdmin('that-phanom');
     }
 
     match /{document=**} {

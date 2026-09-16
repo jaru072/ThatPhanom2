@@ -155,11 +155,55 @@ const I18N_TH = {
   "supportHeritage": "ร่วมสืบสานมรดกแห่งศรัทธา",
   "supportHeritageDesc": "ร่วมทำบุญสมทบทุนเพื่อบูรณะและผลักดันพระธาตุพนมขึ้นทะเบียนเป็นมรดกโลก",
   "donationDetails": "ดูรายละเอียด",
-  "railFootnote": "เว็บไซต์เผยแพร่ความรู้เพื่อการอนุรักษ์ ไม่ใช่เว็บไซต์อย่างเป็นทางการของ UNESCO",
+  "railFootnote": "ข้อมูลสำหรับการศึกษาและร่วมสืบสานคุณค่าพระธาตุพนม สู่มรดกโลก",
   "footerSub": "องค์ความรู้เพื่อศรัทธาและการอนุรักษ์อย่างยั่งยืน",
   "sources": "แหล่งข้อมูล",
-  "note": "เว็บไซต์นี้สรุปและเรียบเรียงจากแหล่งข้อมูลที่ระบุ เพื่อเผยแพร่ความรู้ ไม่ใช่เว็บไซต์อย่างเป็นทางการของ UNESCO"
+  "note": "เว็บไซต์นี้สรุปและเรียบเรียงจากแหล่งข้อมูลที่ระบุ เพื่อเผยแพร่ความรู้ ไม่ใช่เว็บไซต์อย่างเป็นทางการของ UNESCO",
+  "sidebarProjectsTitle": "โครงการทั้งหมด",
+  "accountLoginBtn": "เข้าสู่ระบบ",
+  "trialBrand": "รุ่นทดลอง พระธาตุพนม สู่มรดกโลก",
+  "menuAndManagement": "เมนูและการจัดการ",
+  "avatarVisitor": "ผู้เยี่ยมชม",
+  "notLoggedIn": "ยังไม่ได้เข้าสู่ระบบ",
+  "roleGuest": "บุคคลทั่วไป",
+  "loginWithGoogle": "เข้าสู่ระบบด้วย Google",
+  "projectMapMenu": "ผังโครงการ",
+  "siteStatusMenu": "สถานะการเผยแพร่",
+  "backupRestoreMenu": "สำรองและกู้คืนข้อมูล",
+  "chatWithAdminMenu": "แชทกับผู้ดูแล",
+  "loginNote": "ทุกคนเข้าชมเว็บไซต์ได้โดยไม่ต้องเข้าสู่ระบบ การเข้าสู่ระบบใช้สำหรับจัดการเนื้อหา แสดงความคิดเห็น และแชทเท่านั้น",
+  "loadingCatalog": "กำลังเตรียมข้อมูล...",
+  "manageProjectsBtn": "จัดการโครงการ",
+  "emptyProjects": "กำลังเตรียมรายการโครงการ...",
+  "driveVideoTitle": "วิดีโอล่าสุดจากคลังสื่อโครงการ",
+  "driveVideoSubtitle": "รายการนี้อัปเดตอัตโนมัติจากโฟลเดอร์ Videos ใน Google Drive",
+  "filterAll": "ทั้งหมด",
+  "filterImages": "รูปภาพ",
+  "filterVideos": "วิดีโอ",
+  "emptyMedia": "กำลังเตรียมคลังสื่อ...",
+  "emptyNews": "ยังไม่มีข่าวหรือกิจกรรมที่เผยแพร่",
+  "emptyDocs": "ยังไม่มีเอกสารที่เผยแพร่",
+  "emptyDonation": "ยังไม่มีช่องทางร่วมบุญที่เผยแพร่",
+  "communityKicker": "เสียงจากชุมชน",
+  "communityTitle": "ความคิดเห็นและกำลังใจ",
+  "communitySubtitle": "ร่วมแบ่งปันความประทับใจ ข้อเสนอแนะ และพลังสนับสนุนการอนุรักษ์พระธาตุพนม",
+  "commentFormLabel": "แสดงความคิดเห็น",
+  "commentAboutLabel": "เกี่ยวกับ",
+  "commentOptStory": "เรื่องราวแห่งศรัทธา",
+  "commentOptCriteria": "คุณค่าโดดเด่นเป็นสากล",
+  "commentOptMilestones": "หมุดหมายสำคัญ",
+  "commentOptGeneral": "ภาพรวมเว็บไซต์",
+  "commentSubmitBtn": "ส่งความคิดเห็น",
+  "emptyComments": "ยังไม่มีความคิดเห็น เป็นคนแรกที่ร่วมส่งกำลังใจได้เลย",
+  "sidebarAddButtonText": "＋ เพิ่มหัวข้อใหม่",
+  "sidebarTrashButtonText": "🗑 ถังพัก",
+  "railAddButtonText": "＋ เพิ่มหัวข้อใหม่",
+  "railTrashButtonText": "🗑 ถังพัก",
+  "searchPlaceholder": "ค้นหาเรื่องราว โครงการ หรือกิจกรรม",
+  "commentPlaceholder": "เข้าสู่ระบบด้วย Google เพื่อร่วมแสดงความคิดเห็น",
+  "generalManageBtn": "จัดการ"
 };
+
 const I18N_LO = {
   "brand": "ພະທາດພະນົມສູ່ມໍລະດົກໂລກ",
   "navHistory": "ເລື່ອງລາວ",
@@ -295,7 +339,7 @@ const I18N_LO = {
   "projectDonationSafety": "ເງິນບໍລິຈາກທັງໝົດເຂົ້າບັນຊີໂຄງການວັດພະທາດພະນົມໂດຍກົງ ໂປ່ງໃສ ແລະກວດສອບໄດ້",
   "supportHeritage": "ສະໜັບສະໜູນພະທາດພະນົມສູ່ມໍລະດົກໂລກ",
   "supportHeritageDesc": "ຮ່ວມເປັນພະລັງໃນການອະນຸລັກ ພັດທະນາ ແລະເຜີຍແຜ່ຄຸນຄ່າພະທາດພະນົມໃຫ້ຍືນຍົງສືບໄປ",
-  "donationDetails": "ລາຍລະອຽດການບໍລິຈາກ",
+  "donationDetails": "ເບິ່ງລາຍລະອຽດ",
   "newsKicker": "ຂ່າວສານ ແລະຄວາມຄືບໜ້າ",
   "newsTitle": "ຂ່າວສານຫຼ້າສຸດ",
   "newsIntro": "ຕິດຕາມຂ່າວສານ ກິດຈະກຳງານບຸນ ແລະຄວາມຄືບໜ້າການສະເໜີຂຶ້ນທະບຽນມໍລະດົກໂລກ",
@@ -318,8 +362,53 @@ const I18N_LO = {
   "currentProject": "ໂຄງການເດັ່ນໃນຂະນະນີ້",
   "currentProjectText": "ກຳລັງດຳເນີນການບູລະນະສະມຸດຈະລິນ (ສະພັງທອງ) ເພື່ອຄືນຄວາມສົມບູນສູ່ພື້ນທີ່ສັກສິດ",
   "quickAccess": "ເຂົ້າເຖິງດ່ວນ",
-  "viewAllProjects": "ເບິ່ງໂຄງການທັງໝົດ"
+  "viewAllProjects": "ເບິ່ງໂຄງການທັງໝົດ",
+  "sidebarProjectsTitle": "ໂຄງການທັງໝົດ",
+  "accountLoginBtn": "ເຂົ້າສູ່ລະບົບ",
+  "trialBrand": "ລຸ້ນທົດລອງ ພະທາດພະນົມ ສູ່ມໍລະດົກໂລກ",
+  "menuAndManagement": "ເມນູແລະການຈັດການ",
+  "avatarVisitor": "ຜູ້ຢ້ຽມຊົມ",
+  "notLoggedIn": "ຍັງບໍ່ໄດ້ເຂົ້າສູ່ລະບົບ",
+  "roleGuest": "ບຸກຄົນທົ່ວໄປ",
+  "loginWithGoogle": "ເຂົ້າສູ່ລະບົບດ້ວຍ Google",
+  "projectMapMenu": "ຜັງໂຄງການ",
+  "siteStatusMenu": "ສະຖານະການເຜີຍແຜ່",
+  "backupRestoreMenu": "ສຳຮອງແລະກູ້ຄືນຂໍ້ມູນ",
+  "chatWithAdminMenu": "ແຊັດກັບຜູ້ດູແລ",
+  "loginNote": "ທຸກຄົນເຂົ້າຊົມເວັບໄຊໄດ້ໂດຍບໍ່ຕ້ອງເຂົ້າສູ່ລະບົບ ການເຂົ້າສູ່ລະບົບໃຊ້ສຳລັບຈັດການເນື້ອຫາ ສະແດງຄວາມຄິດເຫັນ ແລະແຊັດເທົ່ານັ້ນ",
+  "loadingCatalog": "ກຳລັງກຽມຂໍ້ມູນ...",
+  "manageProjectsBtn": "ຈັດການໂຄງການ",
+  "emptyProjects": "ກຳລັງກຽມລາຍການໂຄງການ...",
+  "driveVideoTitle": "ວິດີໂອຫຼ້າສຸດຈາກຄັງສື່ໂຄງການ",
+  "driveVideoSubtitle": "ລາຍການນີ້ອັບເດດອັດຕະໂນມັດຈາກໂຟລເດີ Videos ໃນ Google Drive",
+  "filterAll": "ທັງໝົດ",
+  "filterImages": "ຮູບພາບ",
+  "filterVideos": "ວິດີໂອ",
+  "emptyMedia": "ກຳລັງກຽມຄັງສື່...",
+  "emptyNews": "ຍັງບໍ່ມີຂ່າວຫຼືກິດຈະກຳທີ່ເຜີຍແຜ່",
+  "emptyDocs": "ຍັງບໍ່ມີເອກະສານທີ່ເຜີຍແຜ່",
+  "emptyDonation": "ຍັງບໍ່ມີຊ່ອງທາງຮ່ວມບຸນທີ່ເຜີຍແຜ່",
+  "communityKicker": "ສຽງຈາກຊຸມຊົນ",
+  "communityTitle": "ຄວາມຄິດເຫັນແລະກຳລັງໃຈ",
+  "communitySubtitle": "ຮ່ວມແບ່ງປັນຄວາມປະທັບໃຈ ຂໍ້ສະເໜີແນະ ແລະພະລັງສະໜັບສະໜູນການອະນຸລັກພະທາດພະນົມ",
+  "commentFormLabel": "ສະແດງຄວາມຄິດເຫັນ",
+  "commentAboutLabel": "ກ່ຽວກັບ",
+  "commentOptStory": "ເລື່ອງລາວແຫ່ງສັດທາ",
+  "commentOptCriteria": "ຄຸນຄ່າໂດດເດັ່ນເປັນສາກົນ",
+  "commentOptMilestones": "ໝຸດໝາຍສຳຄັນ",
+  "commentOptGeneral": "ພາບລວມເວັບໄຊ",
+  "commentSubmitBtn": "ສົ່ງຄວາມຄິດເຫັນ",
+  "emptyComments": "ຍັງບໍ່ມີຄວາມຄິດເຫັນ ເປັນຄົນທຳອິດທີ່ຮ່ວມສົ່ງກຳລັງໃຈໄດ້ເລີຍ",
+  "sidebarAddButtonText": "＋ ເພີ່ມຫົວຂໍ້ໃໝ່",
+  "sidebarTrashButtonText": "🗑 ຖັງພັກ",
+  "railAddButtonText": "＋ ເພີ່ມຫົວຂໍ້ໃໝ່",
+  "railTrashButtonText": "🗑 ຖັງພັກ",
+  "railFootnote": "ຂໍ້ມູນສຳລັບການສຶກສາ ແລະຮ່ວມສືບສານຄຸນຄ່າພະທາດພະນົມ ສູ່ມໍລະດົກໂລກ",
+  "searchPlaceholder": "ຄົ້ນຫາເລື່ອງລາວ ໂຄງການ ຫຼືກິດຈະກຳ",
+  "commentPlaceholder": "ເຂົ້າສູ່ລະບົບດ້ວຍ Google ເພື່ອຮ່ວມສະແດງຄວາມຄິດເຫັນ",
+  "generalManageBtn": "ຈັດການ"
 };
+
 const I18N_EN = {
   "trialLabel": "Beta Version",
   "brand": "Phra That Phanom to World Heritage",
@@ -442,7 +531,7 @@ const I18N_EN = {
   "projectDonationSafety": "Contributions directly support designated restoration accounts under Wat Phra That Phanom.",
   "supportHeritage": "Support Phra That Phanom Heritage",
   "supportHeritageDesc": "Join the merit in conserving sacred monuments, ancient sites, and educational outreach for World Heritage inscription.",
-  "donationDetails": "Donation Details",
+  "donationDetails": "View Details",
   "newsKicker": "News & Updates",
   "newsTitle": "Latest Information",
   "newsIntro": "Updates on conservation projects, Buddhist ceremonies, and progress toward World Heritage listing.",
@@ -478,7 +567,51 @@ const I18N_EN = {
   "share": "Share Website",
   "footerSub": "Wisdom for Faith and Sustainable Conservation",
   "sources": "Sources",
-  "note": "This website compiles information for educational and heritage appreciation purposes and is not an official UNESCO website."
+  "note": "This website compiles information for educational and heritage appreciation purposes and is not an official UNESCO website.",
+  "sidebarProjectsTitle": "All Projects",
+  "accountLoginBtn": "Sign In",
+  "trialBrand": "Preview: Phra That Phanom to World Heritage",
+  "menuAndManagement": "Menu & Management",
+  "avatarVisitor": "Visitor",
+  "notLoggedIn": "Not signed in",
+  "roleGuest": "Guest",
+  "loginWithGoogle": "Sign in with Google",
+  "projectMapMenu": "Project Diagram",
+  "siteStatusMenu": "Publishing Status",
+  "backupRestoreMenu": "Backup & Restore",
+  "chatWithAdminMenu": "Chat with Admin",
+  "loginNote": "Everyone can browse the site without signing in. Signing in is only for content management, comments, and chat.",
+  "loadingCatalog": "Loading data...",
+  "manageProjectsBtn": "Manage Projects",
+  "emptyProjects": "Loading projects...",
+  "driveVideoTitle": "Latest Videos from Project Media Archive",
+  "driveVideoSubtitle": "This list updates automatically from the Videos folder in Google Drive",
+  "filterAll": "All",
+  "filterImages": "Images",
+  "filterVideos": "Videos",
+  "emptyMedia": "Loading media archive...",
+  "emptyNews": "No news or events published yet",
+  "emptyDocs": "No documents published yet",
+  "emptyDonation": "No donation channels published yet",
+  "communityKicker": "Voices from the Community",
+  "communityTitle": "Comments & Support",
+  "communitySubtitle": "Share your impressions, feedback, and support for the preservation of Phra That Phanom.",
+  "commentFormLabel": "Share your thoughts",
+  "commentAboutLabel": "Topic",
+  "commentOptStory": "Story of Faith",
+  "commentOptCriteria": "Universal Value",
+  "commentOptMilestones": "Key Milestones",
+  "commentOptGeneral": "General Website",
+  "commentSubmitBtn": "Post Comment",
+  "emptyComments": "No comments yet. Be the first to share your support!",
+  "sidebarAddButtonText": "＋ Add New Topic",
+  "sidebarTrashButtonText": "🗑 Trash",
+  "railAddButtonText": "＋ Add New Topic",
+  "railTrashButtonText": "🗑 Trash",
+  "railFootnote": "Information compiled for educational and heritage appreciation purposes.",
+  "searchPlaceholder": "Search stories, projects, or activities",
+  "commentPlaceholder": "Sign in with Google to leave a comment",
+  "generalManageBtn": "Manage"
 };
 
 const I18N_LANGS = {
@@ -500,6 +633,16 @@ function setLanguage(lang) {
       el.innerHTML = I18N_TH[key];
     }
   });
+
+  // Update placeholders
+  const searchInput = document.getElementById("siteSearchInput");
+  if (searchInput && config.dict && config.dict.searchPlaceholder) {
+    searchInput.placeholder = config.dict.searchPlaceholder;
+  }
+  const commentText = document.getElementById("commentText");
+  if (commentText && config.dict && config.dict.commentPlaceholder) {
+    commentText.placeholder = config.dict.commentPlaceholder;
+  }
 
   // Update current language label in dropdown
   const labelEl = document.getElementById("currentLanguageLabel");
@@ -523,7 +666,12 @@ function setLanguage(lang) {
   window.dispatchEvent(new CustomEvent("portal:languageChange", { detail: { lang } }));
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+window.I18N_TH = I18N_TH;
+window.I18N_LO = I18N_LO;
+window.I18N_EN = I18N_EN;
+window.setLanguage = setLanguage;
+
+function _initLanguageDropdown() {
   const dropdownBtn = document.getElementById("languageDropdownButton");
   const menu = document.getElementById("languageMenu");
 
@@ -540,20 +688,20 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (dropdownBtn) {
-    dropdownBtn.addEventListener("click", (e) => {
+    dropdownBtn.onclick = (e) => {
       e.stopPropagation();
       toggleMenu();
-    });
+    };
   }
 
   // Option selection
   document.querySelectorAll(".language-option").forEach((opt) => {
-    opt.addEventListener("click", (e) => {
+    opt.onclick = (e) => {
       e.stopPropagation();
       const selectedLang = opt.getAttribute("data-lang") || "th";
       setLanguage(selectedLang);
       closeMenu();
-    });
+    };
   });
 
   // Close when clicking outside
@@ -563,15 +711,19 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Restore saved language preference or default to Thai
+  // Restore saved language preference or initialize default
   const savedLang = localStorage.getItem("thatphanom_lang") || "th";
-  if (savedLang !== "th") {
-    setLanguage(savedLang);
-  }
-});
+  setLanguage(savedLang);
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", _initLanguageDropdown);
+} else {
+  _initLanguageDropdown();
+}
 
 // Core interactions and UI navigation helpers
-document.addEventListener("DOMContentLoaded", () => {
+function _initUiHelpers() {
   const progressBar = document.getElementById("progressBar");
   if (progressBar) {
     window.addEventListener("scroll", () => {
@@ -596,4 +748,62 @@ document.addEventListener("DOMContentLoaded", () => {
       window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
     });
   }
-});
+
+  // Navigation active state and click handler
+  let _scriptNavLock = 0;
+  let _scriptActive = "#top";
+
+  const updateNavActive = (target) => {
+    if (target === undefined || target === null) return;
+    let raw = String(target).trim();
+    if (!raw || raw === "#" || raw === "#top" || raw === "top" || raw === "header") {
+      raw = "top";
+    } else {
+      raw = raw.replace(/^#/, "");
+    }
+    const targetHash = "#" + raw;
+    _scriptActive = targetHash;
+
+    const links = document.querySelectorAll("#mainTopNav a, .mobile-bottom-nav a");
+    let matched = false;
+    links.forEach(a => {
+      const href = (a.getAttribute("href") || "").trim();
+      const navTarget = (a.dataset.navTarget || "").trim();
+      const aRaw = navTarget || (href.startsWith("#") ? href.substring(1) : href);
+      const isMatch = (raw === "top" && (aRaw === "top" || aRaw === "" || href === "#top" || href === "#")) ||
+                      (aRaw === raw || href === targetHash);
+      if (isMatch && !matched) {
+        a.classList.add("active");
+        matched = true;
+      } else {
+        a.classList.remove("active");
+      }
+    });
+    if (!matched && raw === "top" && links.length > 0) {
+      links[0].classList.add("active");
+    }
+  };
+
+  document.addEventListener("click", (e) => {
+    const link = e.target.closest("#mainTopNav a, .mobile-bottom-nav a");
+    if (!link) return;
+    const href = (link.getAttribute("href") || "").trim();
+    if (href.startsWith("#")) {
+      _scriptNavLock = Date.now() + 1200;
+      updateNavActive(href);
+    }
+  });
+
+  window.addEventListener("hashchange", () => {
+    if (location.hash) {
+      _scriptNavLock = Date.now() + 1000;
+      updateNavActive(location.hash);
+    }
+  });
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", _initUiHelpers);
+} else {
+  _initUiHelpers();
+}
