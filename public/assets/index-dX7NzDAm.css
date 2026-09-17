@@ -629,3 +629,33 @@ body.is-admin .project-card .rail-card-gear {
   transform: translateY(-2px);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4) !important;
 }
+
+/* Sub-card and section relative positioning for admin gear buttons */
+.story-feature-card,
+.story-mini-card,
+.milestone-media-card,
+.criteria-media-card,
+.process-step-card,
+.voices,
+.support-project-story,
+.support-project-facts,
+.support-project-objectives,
+.support-project-objectives article,
+.support-project-progress,
+.support-project-progress li,
+footer#siteFooter {
+  position: relative !important;
+}
+
+.story-mini-card .section-gear-btn,
+.story-feature-card .section-gear-btn,
+.criteria-media-card .section-gear-btn,
+.process-step-card .section-gear-btn,
+.milestone-media-card .section-gear-btn,
+.support-project-objectives article .section-gear-btn,
+.support-project-progress li .section-gear-btn {
+  top: 8px !important;
+  right: 8px !important;
+  font-size: 1.25rem !important;
+  z-index: 25 !important;
+}

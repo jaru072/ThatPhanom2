@@ -1325,64 +1325,116 @@ function _updateAdminDOMState() {
   }
 }
 
+const _targetAliases = {
+  storyFeature: "storyFeatureCard",
+  storyArt: "storyArtCard",
+  storyPeople: "storyPeopleCard",
+  milestoneOne: "milestoneOneCard",
+  milestoneTwo: "milestoneTwoCard",
+  milestoneThree: "milestoneThreeCard",
+  milestoneFour: "milestoneFourCard",
+  criteriaOne: "criteriaOneCard",
+  criteriaTwo: "criteriaTwoCard",
+  criteriaThree: "criteriaThreeCard",
+  processOne: "processOneCard",
+  processTwo: "processTwoCard",
+  processThree: "processThreeCard",
+  processFour: "processFourCard",
+  voices: "voices",
+  muchalindaHistory: "muchalinda-history",
+  muchalindaFacts: "muchalindaFacts",
+  muchalindaObjectives: "muchalinda-objectives",
+  objectiveOne: "objectiveOneCard",
+  objectiveTwo: "objectiveTwoCard",
+  objectiveThree: "objectiveThreeCard",
+  muchalindaProgress: "muchalinda-progress",
+  progressOne: "progressOneCard",
+  progressTwo: "progressTwoCard",
+  progressThree: "progressThreeCard",
+  progressFour: "progressFourCard",
+  footer: "siteFooter"
+};
+
+const _sectionNames = {
+  hero: "ภาพและข้อความนำ (Hero)",
+  projects: "โครงการเพื่อพระธาตุพนม (Projects)",
+  status: "สถานะปัจจุบัน (Status)",
+  history: "เรื่องราวแห่งศรัทธา (History - หัวข้อหลัก)",
+  storyFeature: "เรื่องราว: พระอุรังคธาตุและความเชื่อ",
+  storyArt: "เรื่องราว: ร่องรอยศิลปกรรม",
+  storyPeople: "เรื่องราว: ศูนย์รวมผู้คน",
+  milestones: "หมุดหมายสำคัญ (Milestones - หัวข้อหลัก)",
+  milestoneOne: "หมุดหมาย 1: โครงสร้างยุคแรก",
+  milestoneTwo: "หมุดหมาย 2: โบราณสถานของชาติ",
+  milestoneThree: "หมุดหมาย 3: ล้มและฟื้นคืน",
+  milestoneFour: "หมุดหมาย 4: ก้าวสู่เวทีโลก",
+  "world-heritage": "สู่มรดกโลก (World Heritage - หัวข้อหลัก)",
+  criteriaOne: "เกณฑ์คุณค่า 1: ผลงานสร้างสรรค์อันเป็นเลิศ",
+  criteriaTwo: "เกณฑ์คุณค่า 2: การแลกเปลี่ยนคุณค่าข้ามวัฒนธรรม",
+  criteriaThree: "เกณฑ์คุณค่า 3: สัมพันธ์กับความเชื่อที่ยังดำรงอยู่",
+  processOne: "ขั้นตอน 1: กำหนดคุณค่าและขอบเขต",
+  processTwo: "ขั้นตอน 2: จัดทำแผนอนุรักษ์และบริหาร",
+  processThree: "ขั้นตอน 3: สร้างการมีส่วนร่วม",
+  processFour: "ขั้นตอน 4: จัดทำเอกสารเสนอชื่อ",
+  voices: "คำคมและเสียงสะท้อน (Quote)",
+  videos: "ชมเรื่องราวพระธาตุพนม (วิดีโอ)",
+  community: "ชุมชนและข้อเสนอแนะ",
+  muchalindaHistory: "สระมุจลินท์: ความเป็นมาและความสำคัญ",
+  muchalindaFacts: "สระมุจลินท์: ข้อมูลโครงการ",
+  muchalindaObjectives: "สระมุจลินท์: เป้าหมายการบูรณะ (หัวข้อ)",
+  objectiveOne: "สระมุจลินท์ วัตถุประสงค์ 1: อนุรักษ์มรดก",
+  objectiveTwo: "สระมุจลินท์ วัตถุประสงค์ 2: สร้างแหล่งเรียนรู้",
+  objectiveThree: "สระมุจลินท์ วัตถุประสงค์ 3: สืบสานพุทธศรัทธา",
+  muchalindaProgress: "สระมุจลินท์: ลำดับการดำเนินงาน (หัวข้อ)",
+  progressOne: "สระมุจลินท์ ความคืบหน้า 1: เริ่มงานบูรณะ",
+  progressTwo: "สระมุจลินท์ ความคืบหน้า 2: พิธีบวงสรวง",
+  progressThree: "สระมุจลินท์ ความคืบหน้า 3: ปรับภูมิทัศน์สีเขียว",
+  progressFour: "สระมุจลินท์ ความคืบหน้า 4: ดำเนินงานต่อเนื่อง",
+  footer: "ข้อมูลส่วนท้ายเว็บไซต์ (Footer)"
+};
+
+function _findSectionEl(id) {
+  const alias = _targetAliases[id] || id;
+  return document.getElementById(alias)
+    || document.querySelector('[data-section-target="' + id + '"]')?.closest("article, li, section, aside, footer, blockquote, div")
+    || document.getElementById(id)
+    || document.querySelector('.' + id)
+    || document.querySelector('[data-section-target="' + id + '"]')?.closest("section");
+}
+
 function _renderSiteSectionsCMS() {
   const isAdmin = _checkIsAdmin();
   _updateAdminDOMState();
   if (!L.siteSections || L.siteSections.length === 0) return;
 
-  const sectionNames = {
-    hero: "ภาพและข้อความนำ (Hero)",
-    projects: "โครงการเพื่อพระธาตุพนม",
-    status: "สถานะปัจจุบัน",
-    history: "เรื่องราวแห่งศรัทธา",
-    milestones: "หมุดหมายสำคัญ",
-    "world-heritage": "สู่มรดกโลก",
-    videos: "ชมเรื่องราวพระธาตุพนม (วิดีโอ)",
-    community: "ชุมชนและข้อเสนอแนะ"
-  };
-
   L.siteSections.forEach(sec => {
     if (!sec || !sec.id) return;
-    const sectionEl = document.getElementById(sec.id) || document.querySelector(`.${sec.id}`) || document.querySelector(`[data-section-target="${sec.id}"]`)?.closest("section");
+    const sectionEl = _findSectionEl(sec.id);
     if (!sectionEl) return;
 
-    let placeholderBar = document.getElementById(`placeholder-${sec.id}`);
-
+    let placeholderBar = document.getElementById('placeholder-' + sec.id);
     if (sec.published === false) {
-      // Hide original section content completely
       sectionEl.hidden = true;
       sectionEl.style.setProperty("display", "none", "important");
-
       if (!isAdmin) {
         if (placeholderBar) placeholderBar.style.setProperty("display", "none", "important");
         return;
       } else {
-        // Admin: show placeholder bar with gear button so Admin can re-enable it
-        if (!placeholderBar) {
+        if (!placeholderBar && (sectionEl.tagName === "SECTION" || sectionEl.tagName === "ARTICLE")) {
           placeholderBar = document.createElement("div");
-          placeholderBar.id = `placeholder-${sec.id}`;
+          placeholderBar.id = 'placeholder-' + sec.id;
           placeholderBar.className = "portal-admin-only cms-hidden-section-notice";
           placeholderBar.style.cssText = "display:flex; justify-content:space-between; align-items:center; background:#fffbe6; border:1.5px dashed #faad14; border-radius:10px; padding:12px 20px; margin:16px auto; max-width:1180px; box-shadow:0 2px 8px rgba(0,0,0,0.05);";
-          const sName = sectionNames[sec.id] || sec.title || sec.id;
-          placeholderBar.innerHTML = `
-            <div style="display:flex; align-items:center; gap:12px;">
-              <span style="font-size:1.3rem;">👁️</span>
-              <div>
-                <strong style="color:#d46b08; font-size:0.95rem; display:block;">[ซ่อนการแสดงผล] ${sName}</strong>
-                <span style="color:#8c6114; font-size:0.8rem;">ส่วนนี้ถูกปิดการแสดงผลบนเว็บไซต์ (บุคคลทั่วไปมองไม่เห็น)</span>
-              </div>
-            </div>
-            <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="${sec.id}" title="ตั้งค่า/เปิดแสดงผลส่วนนี้" style="position:static !important; width:38px !important; height:38px !important; font-size:1.15rem !important;">⚙</button>
-          `;
+          const sName = _sectionNames[sec.id] || sec.title || sec.id;
+          placeholderBar.innerHTML = '<div style="display:flex; align-items:center; gap:12px;"><span style="font-size:1.3rem;">👁️</span><div><strong style="color:#d46b08; font-size:0.95rem; display:block;">[ซ่อนการแสดงผล] ' + sName + '</strong><span style="color:#8c6114; font-size:0.8rem;">ส่วนนี้ถูกปิดการแสดงผลบนเว็บไซต์ (บุคคลทั่วไปมองไม่เห็น)</span></div></div><button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="' + sec.id + '" title="ตั้งค่า/เปิดแสดงผลส่วนนี้" style="position:static !important; width:38px !important; height:38px !important; font-size:1.15rem !important;">⚙</button>';
           sectionEl.parentNode.insertBefore(placeholderBar, sectionEl.nextSibling);
-        } else {
+        } else if (placeholderBar) {
           placeholderBar.style.removeProperty("display");
           placeholderBar.hidden = false;
         }
         return;
       }
     } else {
-      // Published is true
       sectionEl.hidden = false;
       sectionEl.style.removeProperty("display");
       if (placeholderBar) {
@@ -1393,76 +1445,100 @@ function _renderSiteSectionsCMS() {
 
     const curLang = document.documentElement.lang || "th";
     const dict = (window.I18N_LANGS && window.I18N_LANGS[curLang]?.dict) || (curLang === "lo" ? window.I18N_LO : curLang === "en" ? window.I18N_EN : window.I18N_TH) || {};
-    // Apply custom Title (preserve data-i18n and support language switching)
-    const hTitle = sectionEl.querySelector("h1, h2, .section-title, .hero-title");
-    if (hTitle) {
-      const i18nKey = hTitle.getAttribute("data-i18n");
-      if (curLang === "lo" && sec.title_lo) {
-        hTitle.textContent = sec.title_lo;
-      } else if (curLang === "en" && sec.title_en) {
-        hTitle.textContent = sec.title_en;
-      } else if (curLang === "th" && sec.title) {
-        hTitle.textContent = sec.title;
-      } else if (i18nKey && dict[i18nKey]) {
-        hTitle.innerHTML = dict[i18nKey];
-      } else if (sec.title) {
-        hTitle.textContent = sec.title;
+
+    // 1. Title
+    if (sec.id === "voices") {
+      const p = sectionEl.querySelector("blockquote p, p");
+      if (p && sec.title) p.textContent = sec.title;
+    } else if (sec.id === "footer") {
+      const strong = sectionEl.querySelector(".footer-brand strong");
+      if (strong && sec.title) strong.textContent = sec.title;
+    } else {
+      const hTitle = sectionEl.querySelector("h1, h2, h3, h4, strong[data-i18n], strong, .section-title, .hero-title");
+      if (hTitle) {
+        const i18nKey = hTitle.getAttribute("data-i18n");
+        if (curLang === "lo" && sec.title_lo) {
+          hTitle.textContent = sec.title_lo;
+        } else if (curLang === "en" && sec.title_en) {
+          hTitle.textContent = sec.title_en;
+        } else if (curLang === "th" && sec.title) {
+          hTitle.textContent = sec.title;
+        } else if (i18nKey && dict[i18nKey]) {
+          hTitle.innerHTML = dict[i18nKey];
+        } else if (sec.title) {
+          hTitle.textContent = sec.title;
+        }
       }
     }
-    // Apply custom Kicker
-    const kickerEl = sectionEl.querySelector(".kicker, .eyebrow, .hero-kicker, .status-label");
-    if (kickerEl) {
-      const i18nKey = kickerEl.getAttribute("data-i18n");
-      if (curLang === "lo" && sec.kicker_lo) {
-        kickerEl.textContent = sec.kicker_lo;
-      } else if (curLang === "en" && sec.kicker_en) {
-        kickerEl.textContent = sec.kicker_en;
-      } else if (curLang === "th" && sec.kicker) {
-        kickerEl.textContent = sec.kicker;
-      } else if (i18nKey && dict[i18nKey]) {
-        kickerEl.innerHTML = dict[i18nKey];
-      } else if (sec.kicker) {
-        kickerEl.textContent = sec.kicker;
+
+    // 2. Kicker / time / number
+    if (sec.id === "footer") {
+      const span = sectionEl.querySelector(".footer-brand span, span[data-i18n='footerSub']");
+      if (span && sec.kicker) span.textContent = sec.kicker;
+    } else if (sec.id !== "voices") {
+      const kickerEl = sectionEl.querySelector(".kicker, .eyebrow, .hero-kicker, .status-label, time, .feature-no, .criteria-number");
+      if (kickerEl) {
+        const i18nKey = kickerEl.getAttribute("data-i18n");
+        if (curLang === "lo" && sec.kicker_lo) {
+          kickerEl.textContent = sec.kicker_lo;
+        } else if (curLang === "en" && sec.kicker_en) {
+          kickerEl.textContent = sec.kicker_en;
+        } else if (curLang === "th" && sec.kicker) {
+          kickerEl.textContent = sec.kicker;
+        } else if (i18nKey && dict[i18nKey]) {
+          kickerEl.innerHTML = dict[i18nKey];
+        } else if (sec.kicker) {
+          kickerEl.textContent = sec.kicker;
+        }
       }
     }
-    // Apply custom Content / Lead
-    const descEl = sectionEl.querySelector(".section-description, .hero-desc, p.lead, p:not(.kicker):not(.eyebrow):not(.photo-credit):not(.status-label)");
-    if (descEl) {
-      const i18nKey = descEl.getAttribute("data-i18n");
-      if (curLang === "lo" && sec.content_lo) {
-        descEl.textContent = sec.content_lo;
-      } else if (curLang === "en" && sec.content_en) {
-        descEl.textContent = sec.content_en;
-      } else if (curLang === "th" && sec.content) {
-        descEl.textContent = sec.content;
-      } else if (i18nKey && dict[i18nKey]) {
-        descEl.innerHTML = dict[i18nKey];
-      } else if (sec.content) {
-        descEl.textContent = sec.content;
+
+    // 3. Content / description / note
+    if (sec.id === "footer") {
+      const note = sectionEl.querySelector("p.note, .note");
+      if (note && sec.content) note.textContent = sec.content;
+    } else if (sec.id === "voices") {
+      const p = sectionEl.querySelector("blockquote p, p");
+      if (p && sec.content) p.textContent = sec.content;
+    } else {
+      const descEl = sectionEl.querySelector(".section-description, .hero-desc, p.lead, .story-feature-copy p, .story-mini-copy p, .criteria-card-copy p, .process-step-copy span, .milestone-card-copy span, ol li span, p.note, p:not(.kicker):not(.eyebrow):not(.photo-credit):not(.status-label)");
+      if (descEl) {
+        const i18nKey = descEl.getAttribute("data-i18n");
+        if (curLang === "lo" && sec.content_lo) {
+          descEl.textContent = sec.content_lo;
+        } else if (curLang === "en" && sec.content_en) {
+          descEl.textContent = sec.content_en;
+        } else if (curLang === "th" && sec.content) {
+          descEl.textContent = sec.content;
+        } else if (i18nKey && dict[i18nKey]) {
+          descEl.innerHTML = dict[i18nKey];
+        } else if (sec.content) {
+          descEl.textContent = sec.content;
+        }
       }
     }
-    // Apply custom Image / Cover
+
+    // 4. Image
     if (sec.imageUrl) {
       const imgEl = sectionEl.querySelector("img.hero-cover, img.story-cover, img.section-cover, img");
-      if (imgEl) {
-        imgEl.src = sec.imageUrl;
-      }
+      if (imgEl) imgEl.src = sec.imageUrl;
     }
-    // Apply custom Action URL
+
+    // 5. Action URL
     if (sec.actionUrl) {
-      const actionEl = sectionEl.querySelector("a.source-link, a.action-link, a.button");
-      if (actionEl) {
-        actionEl.href = sec.actionUrl;
-      }
+      const actionEl = sectionEl.querySelector("a.source-link, a.action-link, a.button, a");
+      if (actionEl) actionEl.href = sec.actionUrl;
     }
   });
 }
+window.renderSiteSectionsCMS = _renderSiteSectionsCMS;
 
 function _openSectionEditor(sectionTargetId) {
   if (!_checkIsAdmin()) return;
   const dlg = document.getElementById("sectionEditorDialog");
   if (!dlg) return;
-  const sectionEl = document.getElementById(sectionTargetId) || document.querySelector(`.${sectionTargetId}`) || document.querySelector(`[data-section-target="${sectionTargetId}"]`)?.closest("section");
+
+  const sectionEl = _findSectionEl(sectionTargetId);
   const secData = (L.siteSections || []).find(s => s.id === sectionTargetId) || {};
   const targetInput = document.getElementById("sectionEditorTargetId");
   const subtitleEl = document.getElementById("sectionEditorSubtitle");
@@ -1474,29 +1550,55 @@ function _openSectionEditor(sectionTargetId) {
   const actionInput = document.getElementById("sectionEditorActionUrl");
   const pubCheckbox = document.getElementById("sectionEditorPublished");
 
-  const sectionNames = {
-    hero: "ภาพและข้อความนำ (Hero)",
-    projects: "โครงการเพื่อพระธาตุพนม",
-    status: "สถานะปัจจุบัน",
-    history: "เรื่องราวแห่งศรัทธา",
-    milestones: "หมุดหมายสำคัญ",
-    "world-heritage": "สู่มรดกโลก",
-    videos: "ชมเรื่องราวพระธาตุพนม (วิดีโอ)",
-    community: "ชุมชนและข้อเสนอแนะ"
-  };
-  const sectionLabel = sectionNames[sectionTargetId] || sectionTargetId;
-
+  const sectionLabel = _sectionNames[sectionTargetId] || sectionTargetId;
   if (targetInput) targetInput.value = sectionTargetId;
-  if (subtitleEl) subtitleEl.textContent = `แก้ไขข้อมูลสำหรับส่วน: ${sectionLabel}`;
+  if (subtitleEl) subtitleEl.textContent = "แก้ไขข้อมูลสำหรับ: " + sectionLabel;
   if (statusEl) {
     statusEl.style.display = "none";
     statusEl.textContent = "";
   }
-  const currentTitle = secData.title || (sectionEl ? (sectionEl.querySelector("h1, h2, .section-title, .hero-title")?.textContent || "") : "");
-  const currentKicker = secData.kicker || (sectionEl ? (sectionEl.querySelector(".kicker, .eyebrow, .hero-kicker, .status-label")?.textContent || "") : "");
-  const currentContent = secData.content || (sectionEl ? (sectionEl.querySelector(".section-description, .hero-desc, p.lead, p:not(.kicker):not(.eyebrow):not(.photo-credit):not(.status-label)")?.textContent || "") : "");
-  const currentImage = secData.imageUrl || (sectionEl ? (sectionEl.querySelector("img")?.src || "") : "");
-  const currentAction = secData.actionUrl || (sectionEl ? (sectionEl.querySelector("a.source-link, a.action-link, a.button")?.href || "") : "");
+
+  let currentTitle = secData.title || "";
+  let currentKicker = secData.kicker || "";
+  let currentContent = secData.content || "";
+  let currentImage = secData.imageUrl || "";
+  let currentAction = secData.actionUrl || "";
+
+  if (sectionEl) {
+    if (!currentTitle) {
+      if (sectionTargetId === "voices") {
+        currentTitle = sectionEl.querySelector("blockquote p, p")?.textContent || "";
+      } else if (sectionTargetId === "footer") {
+        currentTitle = sectionEl.querySelector(".footer-brand strong")?.textContent || "";
+      } else {
+        currentTitle = sectionEl.querySelector("h1, h2, h3, h4, strong[data-i18n], strong, .section-title, .hero-title")?.textContent || "";
+      }
+    }
+    if (!currentKicker) {
+      if (sectionTargetId === "footer") {
+        currentKicker = sectionEl.querySelector(".footer-brand span, span[data-i18n='footerSub']")?.textContent || "";
+      } else if (sectionTargetId === "voices") {
+        currentKicker = "คำคมและเสียงสะท้อน";
+      } else {
+        currentKicker = sectionEl.querySelector(".kicker, .eyebrow, .hero-kicker, .status-label, time, .feature-no, .criteria-number")?.textContent || "";
+      }
+    }
+    if (!currentContent) {
+      if (sectionTargetId === "footer") {
+        currentContent = sectionEl.querySelector("p.note, .note")?.textContent || "";
+      } else if (sectionTargetId === "voices") {
+        currentContent = sectionEl.querySelector("blockquote p, p")?.textContent || "";
+      } else {
+        currentContent = sectionEl.querySelector(".section-description, .hero-desc, p.lead, .story-feature-copy p, .story-mini-copy p, .criteria-card-copy p, .process-step-copy span, .milestone-card-copy span, ol li span, p.note, p:not(.kicker):not(.eyebrow):not(.photo-credit):not(.status-label)")?.textContent || "";
+      }
+    }
+    if (!currentImage) {
+      currentImage = sectionEl.querySelector("img")?.src || "";
+    }
+    if (!currentAction) {
+      currentAction = sectionEl.querySelector("a.source-link, a.action-link, a.button, a")?.href || "";
+    }
+  }
 
   if (titleInput) titleInput.value = currentTitle.trim();
   if (kickerInput) kickerInput.value = currentKicker.trim();
@@ -1504,6 +1606,7 @@ function _openSectionEditor(sectionTargetId) {
   if (imageInput) imageInput.value = currentImage;
   if (actionInput) actionInput.value = currentAction;
   if (pubCheckbox) pubCheckbox.checked = (secData.published !== false);
+
   dlg.showModal();
 }
 
@@ -1511,7 +1614,6 @@ function _closeSectionEditor() {
   const dlg = document.getElementById("sectionEditorDialog");
   if (dlg) dlg.close();
 }
-
 async function _saveSectionEditor(e) {
   if (e && typeof e.preventDefault === "function") e.preventDefault();
   const statusEl = document.getElementById("sectionEditorStatus");

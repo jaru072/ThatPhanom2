@@ -664,6 +664,9 @@ function setLanguage(lang) {
 
   // Dispatch custom event for CMS or dynamic components to re-render
   window.dispatchEvent(new CustomEvent("portal:languageChange", { detail: { lang } }));
+  if (typeof window.renderSiteSectionsCMS === "function") {
+    try { window.renderSiteSectionsCMS(); } catch (_) {}
+  }
 }
 
 window.I18N_TH = I18N_TH;

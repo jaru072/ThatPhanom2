@@ -168,7 +168,8 @@
           <a href="#muchalinda-donation"><span aria-hidden="true">♡</span><b data-i18n="projectDonation">ร่วมบุญ</b></a>
         </nav>
         <div class="support-project-content" id="muchalinda-overview">
-          <article class="support-project-story" id="muchalinda-history">
+          <article class="support-project-story has-admin-gear" id="muchalinda-history">
+            <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="muchalindaHistory" title="จัดการความเป็นมาโครงการสระมุจลินท์" aria-label="จัดการความเป็นมาโครงการสระมุจลินท์" hidden>⚙</button>
             <div class="support-project-card-title"><span aria-hidden="true">▤</span><h3 data-i18n="projectHistory">ความเป็นมา</h3></div>
             <div class="support-project-story-body">
               <figure class="support-project-story-image">
@@ -178,7 +179,8 @@
               <div><p class="kicker" data-i18n="projectHistoryKicker">กว่า 1,000 ปีแห่งศรัทธา</p><h4 data-i18n="muchalindaHistoryTitle">ความเป็นมาและความสำคัญ</h4><p data-i18n="muchalindaHistoryText">สระมุจลินท์ หรือสระพังทอง ตั้งอยู่ทางทิศตะวันตกเฉียงใต้ขององค์พระธาตุพนม ตามตำนานอุรังคธาตุ ชุมชนในอดีตขุดสระเพื่อนำดินไปทำอิฐสำหรับสร้างและบูรณะองค์พระธาตุพนม ต่อมาสระแห่งนี้ยังเป็นแหล่งน้ำของชุมชนและได้รับการเคารพว่าเป็นบ่อน้ำศักดิ์สิทธิ์</p></div>
             </div>
           </article>
-          <aside class="support-project-facts" aria-label="ข้อมูลโครงการ">
+          <aside class="support-project-facts has-admin-gear" id="muchalindaFacts" aria-label="ข้อมูลโครงการ">
+            <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="muchalindaFacts" title="จัดการข้อมูลโครงการสระมุจลินท์" aria-label="จัดการข้อมูลโครงการสระมุจลินท์" hidden>⚙</button>
             <div class="support-project-card-title"><span aria-hidden="true">▤</span><h3 data-i18n="projectFacts">ข้อมูลโครงการ</h3></div>
             <ul>
               <li><strong data-i18n="projectLocationLabel">สถานที่</strong><span data-i18n="projectLocation">วัดพระธาตุพนมวรมหาวิหาร จังหวัดนครพนม</span></li>
@@ -187,23 +189,25 @@
             </ul>
           </aside>
         </div>
-        <section class="support-project-objectives" id="muchalinda-objectives" aria-labelledby="muchalindaObjectivesTitle">
+        <section class="support-project-objectives has-admin-gear" id="muchalinda-objectives" aria-labelledby="muchalindaObjectivesTitle">
+          <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="muchalindaObjectives" title="จัดการเป้าหมายการบูรณะสระมุจลินท์" aria-label="จัดการเป้าหมายการบูรณะสระมุจลินท์" hidden>⚙</button>
           <p class="kicker" data-i18n="projectObjectivesKicker">เป้าหมายของการบูรณะ</p>
           <h3 id="muchalindaObjectivesTitle" data-i18n="projectObjectivesTitle">อนุรักษ์พื้นที่ศักดิ์สิทธิ์ให้มีชีวิตต่อไป</h3>
           <div class="support-project-objective-grid">
-            <article><span aria-hidden="true">◇</span><h4 data-i18n="objectiveOneTitle">อนุรักษ์มรดก</h4><p data-i18n="objectiveOneText">ฟื้นฟูสระโบราณ ระบบน้ำ และภูมิทัศน์โดยรอบอย่างเหมาะสม</p></article>
-            <article><span aria-hidden="true">▤</span><h4 data-i18n="objectiveTwoTitle">สร้างแหล่งเรียนรู้</h4><p data-i18n="objectiveTwoText">ถ่ายทอดเรื่องราวพระพุทธศาสนา ประวัติศาสตร์ และวัฒนธรรมแก่เยาวชน</p></article>
-            <article><span aria-hidden="true">✦</span><h4 data-i18n="objectiveThreeTitle">สืบสานพุทธศรัทธา</h4><p data-i18n="objectiveThreeText">ประดิษฐานพระพุทธอุรังคธาตุพนมนาคา มหาจักรีสิรินธร ณ เกาะกลางสระ</p></article>
+            <article id="objectiveOneCard"><button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="objectiveOne" title="จัดการวัตถุประสงค์ 1" aria-label="จัดการวัตถุประสงค์ 1" hidden>⚙</button><span aria-hidden="true">◇</span><h4 data-i18n="objectiveOneTitle">อนุรักษ์มรดก</h4><p data-i18n="objectiveOneText">ฟื้นฟูสระโบราณ ระบบน้ำ และภูมิทัศน์โดยรอบอย่างเหมาะสม</p></article>
+            <article id="objectiveTwoCard"><button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="objectiveTwo" title="จัดการวัตถุประสงค์ 2" aria-label="จัดการวัตถุประสงค์ 2" hidden>⚙</button><span aria-hidden="true">▤</span><h4 data-i18n="objectiveTwoTitle">สร้างแหล่งเรียนรู้</h4><p data-i18n="objectiveTwoText">ถ่ายทอดเรื่องราวพระพุทธศาสนา ประวัติศาสตร์ และวัฒนธรรมแก่เยาวชน</p></article>
+            <article id="objectiveThreeCard"><button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="objectiveThree" title="จัดการวัตถุประสงค์ 3" aria-label="จัดการวัตถุประสงค์ 3" hidden>⚙</button><span aria-hidden="true">✦</span><h4 data-i18n="objectiveThreeTitle">สืบสานพุทธศรัทธา</h4><p data-i18n="objectiveThreeText">ประดิษฐานพระพุทธอุรังคธาตุพนมนาคา มหาจักรีสิรินธร ณ เกาะกลางสระ</p></article>
           </div>
         </section>
-        <section class="support-project-progress" id="muchalinda-progress" aria-labelledby="muchalindaProgressTitle">
+        <section class="support-project-progress has-admin-gear" id="muchalinda-progress" aria-labelledby="muchalindaProgressTitle">
+          <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="muchalindaProgress" title="จัดการลำดับการดำเนินงานโครงการสระมุจลินท์" aria-label="จัดการลำดับการดำเนินงานโครงการสระมุจลินท์" hidden>⚙</button>
           <p class="kicker" data-i18n="projectProgressKicker">ลำดับการดำเนินงาน</p>
           <h3 id="muchalindaProgressTitle" data-i18n="projectProgressTitle">จากการเริ่มบูรณะสู่ภูมิทัศน์แห่งศรัทธา</h3>
           <ol>
-            <li><time data-i18n="projectTimeOne">1 พ.ค. 2568</time><strong data-i18n="projectTimeOneTitle">เริ่มงานบูรณะ</strong><span data-i18n="projectTimeOneText">ปรับปรุงระบบน้ำ ระบายน้ำ และเตรียมโครงสร้างพื้นฐาน</span></li>
-            <li><time data-i18n="projectTimeTwo">14 ก.ย. 2568</time><strong data-i18n="projectTimeTwoTitle">พิธีบวงสรวง</strong><span data-i18n="projectTimeTwoText">เปิดโครงการอย่างเป็นทางการด้วยความร่วมมือจากทุกภาคส่วน</span></li>
-            <li><time data-i18n="projectTimeThree">มิ.ย. 2569</time><strong data-i18n="projectTimeThreeTitle">ปรับภูมิทัศน์สีเขียว</strong><span data-i18n="projectTimeThreeText">ปลูกต้นไม้และเพิ่มความร่มรื่นรอบสระมุจลินท์</span></li>
-            <li><time data-i18n="projectTimeFour">ปัจจุบัน</time><strong data-i18n="projectTimeFourTitle">ดำเนินงานต่อเนื่อง</strong><span data-i18n="projectTimeFourText">ก่อสร้าง ตกแต่งสถาปัตยกรรม และเตรียมพื้นที่โดยรอบ</span></li>
+            <li id="progressOneCard"><button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="progressOne" title="จัดการความคืบหน้า 1" aria-label="จัดการความคืบหน้า 1" hidden>⚙</button><time data-i18n="projectTimeOne">1 พ.ค. 2568</time><strong data-i18n="projectTimeOneTitle">เริ่มงานบูรณะ</strong><span data-i18n="projectTimeOneText">ปรับปรุงระบบน้ำ ระบายน้ำ และเตรียมโครงสร้างพื้นฐาน</span></li>
+            <li id="progressTwoCard"><button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="progressTwo" title="จัดการความคืบหน้า 2" aria-label="จัดการความคืบหน้า 2" hidden>⚙</button><time data-i18n="projectTimeTwo">14 ก.ย. 2568</time><strong data-i18n="projectTimeTwoTitle">พิธีบวงสรวง</strong><span data-i18n="projectTimeTwoText">เปิดโครงการอย่างเป็นทางการด้วยความร่วมมือจากทุกภาคส่วน</span></li>
+            <li id="progressThreeCard"><button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="progressThree" title="จัดการความคืบหน้า 3" aria-label="จัดการความคืบหน้า 3" hidden>⚙</button><time data-i18n="projectTimeThree">มิ.ย. 2569</time><strong data-i18n="projectTimeThreeTitle">ปรับภูมิทัศน์สีเขียว</strong><span data-i18n="projectTimeThreeText">ปลูกต้นไม้และเพิ่มความร่มรื่นรอบสระมุจลินท์</span></li>
+            <li id="progressFourCard"><button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="progressFour" title="จัดการความคืบหน้า 4" aria-label="จัดการความคืบหน้า 4" hidden>⚙</button><time data-i18n="projectTimeFour">ปัจจุบัน</time><strong data-i18n="projectTimeFourTitle">ดำเนินงานต่อเนื่อง</strong><span data-i18n="projectTimeFourText">ก่อสร้าง ตกแต่งสถาปัตยกรรม และเตรียมพื้นที่โดยรอบ</span></li>
           </ol>
         </section>
         <section class="support-project-donation" id="muchalinda-donation" aria-labelledby="muchalindaDonationTitle">
@@ -242,6 +246,7 @@
       </div>
       <div class="story-grid">
         <article class="feature feature-large story-feature-card" id="storyFeatureCard">
+          <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="storyFeature" title="จัดการเนื้อหาพระอุรังคธาตุและความเชื่อ" aria-label="จัดการเนื้อหาพระอุรังคธาตุและความเชื่อ" hidden>⚙</button>
           <div class="story-feature-media" id="storyFeatureMedia"></div>
           <span class="feature-no">01</span>
           <div class="story-feature-copy">
@@ -250,6 +255,7 @@
           </div>
         </article>
         <article class="feature story-mini-card" id="storyArtCard">
+          <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="storyArt" title="จัดการเนื้อหาร่องรอยศิลปกรรม" aria-label="จัดการเนื้อหาร่องรอยศิลปกรรม" hidden>⚙</button>
           <div class="story-mini-media" id="storyArtMedia"></div>
           <span class="feature-no">02</span>
           <div class="story-mini-copy">
@@ -258,6 +264,7 @@
           </div>
         </article>
         <article class="feature story-mini-card" id="storyPeopleCard">
+          <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="storyPeople" title="จัดการเนื้อหาศูนย์รวมผู้คน" aria-label="จัดการเนื้อหาศูนย์รวมผู้คน" hidden>⚙</button>
           <div class="story-mini-media" id="storyPeopleMedia"></div>
           <span class="feature-no">03</span>
           <div class="story-mini-copy">
@@ -276,10 +283,10 @@
       </div>
       <div class="milestones-overview-media" id="milestonesOverviewMedia"></div>
       <ol class="timeline">
-        <li class="milestone-media-card" id="milestoneOneCard"><div class="milestone-card-media" id="milestoneOneMedia"></div><b class="milestone-number">1</b><div class="milestone-card-copy"><time data-i18n="t1time">ราวพุทธศตวรรษที่ 12–13</time><strong data-i18n="t1title">โครงสร้างยุคแรก</strong><span data-i18n="t1text">หลักฐานจากการขุดค้นระบุอายุห้องอิฐชั้นในราวคริสต์ศตวรรษที่ 7–8</span></div></li>
-        <li class="milestone-media-card" id="milestoneTwoCard"><div class="milestone-card-media" id="milestoneTwoMedia"></div><b class="milestone-number">2</b><div class="milestone-card-copy"><time>พ.ศ. 2478</time><strong data-i18n="t2title">โบราณสถานของชาติ</strong><span data-i18n="t2text">กรมศิลปากรประกาศขึ้นทะเบียนเพื่อการอนุรักษ์และคุ้มครอง</span></div></li>
-        <li class="milestone-media-card" id="milestoneThreeCard"><div class="milestone-card-media" id="milestoneThreeMedia"></div><b class="milestone-number">3</b><div class="milestone-card-copy"><time>พ.ศ. 2518–2522</time><strong data-i18n="t3title">ล้มและฟื้นคืน</strong><span data-i18n="t3text">องค์พระธาตุล้มจากพายุฝน ก่อนบูรณะด้วยความร่วมแรงร่วมใจจากทั่วประเทศและภูมิภาค</span></div></li>
-        <li class="milestone-media-card" id="milestoneFourCard"><div class="milestone-card-media" id="milestoneFourMedia"></div><b class="milestone-number">4</b><div class="milestone-card-copy"><time>2 ก.พ. 2560</time><strong data-i18n="t4title">ก้าวสู่เวทีโลก</strong><span data-i18n="t4text">ได้รับการบรรจุในบัญชีรายชื่อเบื้องต้น ภายใต้ชื่อ Phra That Phanom, its related historic buildings and associated landscape</span></div></li>
+        <li class="milestone-media-card" id="milestoneOneCard"><button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="milestoneOne" title="จัดการหมุดหมายข้อ 1" aria-label="จัดการหมุดหมายข้อ 1" hidden>⚙</button><div class="milestone-card-media" id="milestoneOneMedia"></div><b class="milestone-number">1</b><div class="milestone-card-copy"><time data-i18n="t1time">ราวพุทธศตวรรษที่ 12–13</time><strong data-i18n="t1title">โครงสร้างยุคแรก</strong><span data-i18n="t1text">หลักฐานจากการขุดค้นระบุอายุห้องอิฐชั้นในราวคริสต์ศตวรรษที่ 7–8</span></div></li>
+        <li class="milestone-media-card" id="milestoneTwoCard"><button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="milestoneTwo" title="จัดการหมุดหมายข้อ 2" aria-label="จัดการหมุดหมายข้อ 2" hidden>⚙</button><div class="milestone-card-media" id="milestoneTwoMedia"></div><b class="milestone-number">2</b><div class="milestone-card-copy"><time>พ.ศ. 2478</time><strong data-i18n="t2title">โบราณสถานของชาติ</strong><span data-i18n="t2text">กรมศิลปากรประกาศขึ้นทะเบียนเพื่อการอนุรักษ์และคุ้มครอง</span></div></li>
+        <li class="milestone-media-card" id="milestoneThreeCard"><button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="milestoneThree" title="จัดการหมุดหมายข้อ 3" aria-label="จัดการหมุดหมายข้อ 3" hidden>⚙</button><div class="milestone-card-media" id="milestoneThreeMedia"></div><b class="milestone-number">3</b><div class="milestone-card-copy"><time>พ.ศ. 2518–2522</time><strong data-i18n="t3title">ล้มและฟื้นคืน</strong><span data-i18n="t3text">องค์พระธาตุล้มจากพายุฝน ก่อนบูรณะด้วยความร่วมแรงร่วมใจจากทั่วประเทศและภูมิภาค</span></div></li>
+        <li class="milestone-media-card" id="milestoneFourCard"><button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="milestoneFour" title="จัดการหมุดหมายข้อ 4" aria-label="จัดการหมุดหมายข้อ 4" hidden>⚙</button><div class="milestone-card-media" id="milestoneFourMedia"></div><b class="milestone-number">4</b><div class="milestone-card-copy"><time>2 ก.พ. 2560</time><strong data-i18n="t4title">ก้าวสู่เวทีโลก</strong><span data-i18n="t4text">ได้รับการบรรจุในบัญชีรายชื่อเบื้องต้น ภายใต้ชื่อ Phra That Phanom, its related historic buildings and associated landscape</span></div></li>
       </ol>
     </section>
 
@@ -292,16 +299,19 @@
       </div>
       <div class="criteria-grid">
         <article class="criteria-media-card" id="criteriaOneCard">
+          <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="criteriaOne" title="จัดการเกณฑ์คุณค่าข้อ 1" aria-label="จัดการเกณฑ์คุณค่าข้อ 1" hidden>⚙</button>
           <div class="criteria-card-media" id="criteriaOneMedia"></div>
           <span class="criteria-number">1</span>
           <div class="criteria-card-copy"><h3 data-i18n="c1title">ผลงานสร้างสรรค์อันเป็นเลิศ</h3><p data-i18n="c1text">สถาปัตยกรรมพุทธศิลป์ที่ผสานรากศิลปะโบราณกับจิตวิญญาณและงานช่างแห่งลุ่มน้ำโขงอย่างมีเอกลักษณ์</p></div>
         </article>
         <article class="criteria-media-card" id="criteriaTwoCard">
+          <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="criteriaTwo" title="จัดการเกณฑ์คุณค่าข้อ 2" aria-label="จัดการเกณฑ์คุณค่าข้อ 2" hidden>⚙</button>
           <div class="criteria-card-media" id="criteriaTwoMedia"></div>
           <span class="criteria-number">2</span>
           <div class="criteria-card-copy"><h3 data-i18n="c2title">การแลกเปลี่ยนคุณค่าข้ามวัฒนธรรม</h3><p data-i18n="c2text">วิวัฒนาการยาวนานของรูปแบบพระธาตุ แสดงการพบกันของความเชื่อท้องถิ่นกับพุทธศาสนา และส่งอิทธิพลต่อศิลปกรรมอีสาน</p></div>
         </article>
         <article class="criteria-media-card" id="criteriaThreeCard">
+          <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="criteriaThree" title="จัดการเกณฑ์คุณค่าข้อ 3" aria-label="จัดการเกณฑ์คุณค่าข้อ 3" hidden>⚙</button>
           <div class="criteria-card-media" id="criteriaThreeMedia"></div>
           <span class="criteria-number">3</span>
           <div class="criteria-card-copy"><h3 data-i18n="c3title">สัมพันธ์กับความเชื่อที่ยังดำรงอยู่</h3><p data-i18n="c3text">เชื่อมโยงโดยตรงกับการบูชาพระบรมสารีริกธาตุ ตำนานอุรังคธาตุ และประเพณีศักดิ์สิทธิ์ที่ชุมชนยังสืบทอด</p></div>
@@ -315,15 +325,16 @@
           <div class="process-overview-media" id="processOverviewMedia"></div>
         </div>
         <ol class="steps">
-          <li class="process-step-card" id="processOneCard"><div class="process-step-media" id="processOneMedia"></div><b>1</b><div class="process-step-copy"><strong data-i18n="s1title">กำหนดคุณค่าและขอบเขต</strong><span data-i18n="s1text">ศึกษาองค์ประกอบสำคัญ พื้นที่หลัก และพื้นที่กันชน</span></div></li>
-          <li class="process-step-card" id="processTwoCard"><div class="process-step-media" id="processTwoMedia"></div><b>2</b><div class="process-step-copy"><strong data-i18n="s2title">จัดทำแผนอนุรักษ์และบริหาร</strong><span data-i18n="s2text">คุ้มครองโบราณสถาน ภูมิทัศน์ ประเพณี และวิถีชุมชนอย่างสมดุล</span></div></li>
-          <li class="process-step-card" id="processThreeCard"><div class="process-step-media" id="processThreeMedia"></div><b>3</b><div class="process-step-copy"><strong data-i18n="s3title">สร้างการมีส่วนร่วม</strong><span data-i18n="s3text">คณะสงฆ์ ชุมชน นักวิชาการ ภาครัฐ ภาคเอกชน และเยาวชนร่วมกำหนดอนาคต</span></div></li>
-          <li class="process-step-card" id="processFourCard"><div class="process-step-media" id="processFourMedia"></div><b>4</b><div class="process-step-copy"><strong data-i18n="s4title">จัดทำเอกสารเสนอชื่อ</strong><span data-i18n="s4text">รวบรวมหลักฐานและแผนงานเป็น Nomination Dossier เพื่อเข้าสู่การพิจารณาตามกระบวนการ UNESCO</span></div></li>
+          <li class="process-step-card" id="processOneCard"><button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="processOne" title="จัดการขั้นตอนที่ 1" aria-label="จัดการขั้นตอนที่ 1" hidden>⚙</button><div class="process-step-media" id="processOneMedia"></div><b>1</b><div class="process-step-copy"><strong data-i18n="s1title">กำหนดคุณค่าและขอบเขต</strong><span data-i18n="s1text">ศึกษาองค์ประกอบสำคัญ พื้นที่หลัก และพื้นที่กันชน</span></div></li>
+          <li class="process-step-card" id="processTwoCard"><button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="processTwo" title="จัดการขั้นตอนที่ 2" aria-label="จัดการขั้นตอนที่ 2" hidden>⚙</button><div class="process-step-media" id="processTwoMedia"></div><b>2</b><div class="process-step-copy"><strong data-i18n="s2title">จัดทำแผนอนุรักษ์และบริหาร</strong><span data-i18n="s2text">คุ้มครองโบราณสถาน ภูมิทัศน์ ประเพณี และวิถีชุมชนอย่างสมดุล</span></div></li>
+          <li class="process-step-card" id="processThreeCard"><button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="processThree" title="จัดการขั้นตอนที่ 3" aria-label="จัดการขั้นตอนที่ 3" hidden>⚙</button><div class="process-step-media" id="processThreeMedia"></div><b>3</b><div class="process-step-copy"><strong data-i18n="s3title">สร้างการมีส่วนร่วม</strong><span data-i18n="s3text">คณะสงฆ์ ชุมชน นักวิชาการ ภาครัฐ ภาคเอกชน และเยาวชนร่วมกำหนดอนาคต</span></div></li>
+          <li class="process-step-card" id="processFourCard"><button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="processFour" title="จัดการขั้นตอนที่ 4" aria-label="จัดการขั้นตอนที่ 4" hidden>⚙</button><div class="process-step-media" id="processFourMedia"></div><b>4</b><div class="process-step-copy"><strong data-i18n="s4title">จัดทำเอกสารเสนอชื่อ</strong><span data-i18n="s4text">รวบรวมหลักฐานและแผนงานเป็น Nomination Dossier เพื่อเข้าสู่การพิจารณาตามกระบวนการ UNESCO</span></div></li>
         </ol>
       </div>
     </section>
 
-    <section class="voices section">
+    <section class="voices section has-admin-gear" id="voices">
+      <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="voices" title="จัดการกล่องคำคมเสียงสะท้อน" aria-label="จัดการกล่องคำคมเสียงสะท้อน" hidden>⚙</button>
       <blockquote>
         <span aria-hidden="true">“</span>
         <p data-i18n="quote">มรดกโลกเริ่มต้นจากการที่คนในพื้นที่เห็นคุณค่า ร่วมกันดูแล และส่งต่อศรัทธาอย่างรู้เท่าทันการเปลี่ยนแปลง</p>
@@ -501,7 +512,8 @@
     </aside>
   </main>
 
-  <footer>
+  <footer id="siteFooter" class="has-admin-gear">
+    <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="footer" title="จัดการข้อมูลส่วนท้ายเว็บไซต์" aria-label="จัดการข้อมูลส่วนท้ายเว็บไซต์" hidden>⚙</button>
     <div class="footer-brand"><img src="/assets/logo-AxQWlNNP.png" alt=""><div><strong data-i18n="brand">พระธาตุพนม สู่มรดกโลก</strong><span data-i18n="footerSub">องค์ความรู้เพื่อศรัทธาและการอนุรักษ์อย่างยั่งยืน</span></div></div>
     <div class="sources">
       <span data-i18n="sources">แหล่งข้อมูล</span>
