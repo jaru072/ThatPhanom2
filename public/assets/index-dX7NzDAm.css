@@ -659,3 +659,132 @@ footer#siteFooter {
   font-size: 1.25rem !important;
   z-index: 25 !important;
 }
+
+
+/* ==========================================================================
+   ยกเลิกเงาไล่ระดับสีดำ และใช้เงาคมรอบขอบตัวอักษรโดยตรง (ไม่บังวิดีโอ)
+   ========================================================================== */
+
+/* 1. ยกเลิกเงาไล่ระดับสีดำและพื้นหลังของกล่องข้อความทั้งหมด */
+.media-caption,
+.story-feature-copy,
+.story-mini-copy,
+.criteria-card-copy,
+.milestone-card-copy,
+.process-step-copy,
+.muchalinda-donation-slider .media-caption,
+.muchalinda-hero-slider .media-caption,
+.process-overview-slider .media-caption {
+  background: none !important;
+  background-color: transparent !important;
+  pointer-events: none !important;
+}
+
+/* 2. ยกเลิกแผ่นเงาดำทับบนสไลด์และวิดีโอทั้งหมด */
+.story-feature-slider .media-slide:after,
+.story-mini-slider .media-slide:after,
+.criteria-card-slider .media-slide:after,
+.milestone-card-slider .media-slide:after,
+.process-step-slider .media-slide:after,
+.hero-media-slider .media-slide:after {
+  display: none !important;
+  background: none !important;
+}
+
+/* 3. ปรับระยะขอบด้านบนของกล่องข้อความให้กระชับ ไม่ยื่นขึ้นไปบังวิดีโอ */
+.media-caption {
+  padding: 8px 75px 12px !important;
+  line-height: 1.4 !important;
+}
+.story-feature-copy {
+  padding: 14px 32px 18px !important;
+}
+.story-mini-copy {
+  padding: 10px 24px 14px !important;
+}
+.criteria-card-copy {
+  padding: 10px 24px 14px !important;
+}
+.milestone-card-copy {
+  padding: 10px 24px 14px !important;
+}
+.process-step-copy {
+  padding: 10px 22px 14px !important;
+}
+
+@media (max-width: 600px) {
+  .media-caption {
+    padding: 6px 48px 10px !important;
+    font-size: 0.85rem !important;
+  }
+  .story-feature-copy {
+    padding: 10px 18px 14px !important;
+  }
+  .story-mini-copy,
+  .criteria-card-copy,
+  .milestone-card-copy,
+  .process-step-copy {
+    padding: 8px 16px 12px !important;
+  }
+}
+
+/* 4. ใช้เงาคมรอบขอบตัวอักษรโดยตรง (Text Stroke & Sharp Drop Shadow) */
+.media-caption {
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  text-shadow:
+    -1.5px -1.5px 0 rgba(0, 0, 0, 0.95),
+     1.5px -1.5px 0 rgba(0, 0, 0, 0.95),
+    -1.5px  1.5px 0 rgba(0, 0, 0, 0.95),
+     1.5px  1.5px 0 rgba(0, 0, 0, 0.95),
+     0   2px 5px rgba(0, 0, 0, 0.95),
+     0   0   8px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* หัวข้อในการ์ดและสไลด์ */
+.story-feature-copy h3,
+.story-mini-copy h3,
+.criteria-card-copy h3,
+.timeline .milestone-card-copy strong,
+.process-step-copy strong {
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  text-shadow:
+    -1.5px -1.5px 0 rgba(0, 0, 0, 0.95),
+     1.5px -1.5px 0 rgba(0, 0, 0, 0.95),
+    -1.5px  1.5px 0 rgba(0, 0, 0, 0.95),
+     1.5px  1.5px 0 rgba(0, 0, 0, 0.95),
+     0   2px 5px rgba(0, 0, 0, 0.95),
+     0   0   10px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* คำอธิบายและเนื้อหาย่อยในการ์ดและสไลด์ */
+.story-feature-copy p,
+.story-mini-copy p,
+.criteria-card-copy p,
+.timeline .milestone-card-copy span,
+.process-step-copy span {
+  color: #ffffff !important;
+  font-weight: 500 !important;
+  text-shadow:
+    -1px -1px 0 rgba(0, 0, 0, 0.95),
+     1px -1px 0 rgba(0, 0, 0, 0.95),
+    -1px  1px 0 rgba(0, 0, 0, 0.95),
+     1px  1px 0 rgba(0, 0, 0, 0.95),
+     0   1.5px 4px rgba(0, 0, 0, 0.95),
+     0   0   6px rgba(0, 0, 0, 0.75) !important;
+}
+
+/* วันที่และหมวดหมู่ในการ์ด */
+.timeline .milestone-card-copy time,
+.story-feature-copy .feature-kicker,
+.story-feature-card .feature-no,
+.story-mini-card .feature-no {
+  color: #ffea9f !important;
+  text-shadow:
+    -1px -1px 0 rgba(0, 0, 0, 0.95),
+     1px -1px 0 rgba(0, 0, 0, 0.95),
+    -1px  1px 0 rgba(0, 0, 0, 0.95),
+     1px  1px 0 rgba(0, 0, 0, 0.95),
+     0   2px 4px rgba(0, 0, 0, 0.95) !important;
+}

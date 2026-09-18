@@ -805,6 +805,384 @@ function _initUiHelpers() {
   });
 }
 
+// ============================================================================
+// ระบบหยุดวิดีโออัตโนมัติเมื่อเลื่อนหน้าจอ (2 ระดับ) และเมื่อเปลี่ยนสไลด์
+// รองรับการขยายวิดีโอเต็มจอ ทั้ง Fullscreen API และหน้าต่างขยาย Lightbox
+// ============================================================================
+(function initVideoAutoPauseEngine() {
+  /**
+   * ตรวจสอบว่าหน้าจอกำลังแสดงผลในโหมดเต็มจอ (Fullscreen) หรือไม่
+   */
+  function isFullscreenActive() {
+    return !!(
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement
+    );
+  }
+
+  /**
+   * ตรวจสอบว่าองค์ประกอบนี้กำลังแสดงผลเต็มจอ หรืออยู่ภายในองค์ประกอบที่กำลังเต็มจอหรือไม่
+   */
+  function isElementInFullscreen(el) {
+    const fsEl =
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement;
+    if (!fsEl || !el) return false;
+    return fsEl === el || fsEl.contains(el) || el.contains(fsEl);
+  }
+
+  /**
+   * ตรวจสอบว่าองค์ประกอบนี้อยู่ภายในไดอะล็อกที่กำลังเปิดอยู่ (เช่น กล่องขยายวิดีโอ Lightbox) หรือไม่
+   */
+  function isElementInOpenDialog(el) {
+    if (!el) return false;
+    const dlg = el.closest ? el.closest("dialog") : null;
+    return !!(dlg && dlg.open);
+  }
+
+  /**
+   * ฟังก์ชันหยุดเล่นและตัดเสียงวิดีโอทุกประเภทในคอนเทนเนอร์ที่กำหนดทันที
+   * ครอบคลุมทั้ง HTML5 Video, YouTube, Google Drive, และ Facebook Video
+   */
+  function stopMediaInElement(container) {
+    if (!container) return;
+
+    // หากองค์ประกอบหรือคอนเทนเนอร์นี้กำลังอยู่ในโหมดเต็มจอ หรือเปิดอยู่ในไดอะล็อกขยาย ไม่ต้องสั่งหยุด
+    if (isElementInFullscreen(container) || isElementInOpenDialog(container)) {
+      return;
+    }
+
+    // 1. จัดการ HTML5 Video
+    const videos = container.tagName === "VIDEO" ? [container] : Array.from(container.querySelectorAll("video"));
+    videos.forEach((v) => {
+      if (isElementInFullscreen(v) || isElementInOpenDialog(v)) return;
+      try {
+        if (!v.paused) {
+          v.pause();
+        }
+      } catch (_) {}
+    });
+
+    // 2. จัดการ iframe (YouTube, Google Drive, Facebook)
+    const iframes = container.tagName === "IFRAME" ? [container] : Array.from(container.querySelectorAll("iframe"));
+    iframes.forEach((ifr) => {
+      if (isElementInFullscreen(ifr) || isElementInOpenDialog(ifr)) return;
+
+      // A. ส่งคำสั่งหยุดผ่าน YouTube Player API
+      try {
+        ifr.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', "*");
+        ifr.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', "*");
+        ifr.contentWindow.postMessage(JSON.stringify({ event: "command", func: "pauseVideo", args: [] }), "*");
+        ifr.contentWindow.postMessage(JSON.stringify({ event: "command", func: "stopVideo", args: [] }), "*");
+      } catch (_) {}
+
+      // B. ตรวจสอบ URL ของ iframe
+      const src = ifr.getAttribute("src") || ifr.src || "";
+      if (!src) return;
+
+      const isDrive = src.includes("drive.google.com");
+      const isFb = src.includes("facebook.com") || src.includes("fb.watch");
+      const isYt = src.includes("youtube.com") || src.includes("youtube-nocookie.com");
+      const hasAutoplay = src.includes("autoplay=1") || src.includes("autoplay=true");
+
+      // สำหรับ Google Drive, Facebook หรือ YouTube ที่กำลังเล่น (autoplay=1)
+      // การรีเซ็ต src ตัด autoplay จะตัดเสียงและภาพทันที 100%
+      if (isDrive || isFb || hasAutoplay) {
+        let cleanSrc = src.replace(/[?&]autoplay=[^&]+/g, "").replace(/[?&]rel=0/g, "");
+        if (cleanSrc.endsWith("?") || cleanSrc.endsWith("&")) {
+          cleanSrc = cleanSrc.slice(0, -1);
+        }
+        ifr.src = cleanSrc;
+
+        // หากอยู่ในสไลด์ (.media-slide) และปุ่มกดชมวิดีโอถูกซ่อน/ลบ ให้คืนปุ่มเล่นกลับมา
+        const slide = ifr.closest(".media-slide");
+        if (slide && !slide.querySelector(".media-play-button")) {
+          const playBtn = document.createElement("button");
+          playBtn.type = "button";
+          playBtn.className = "media-play-button";
+          playBtn.setAttribute("aria-label", "ชมวิดีโอ");
+          playBtn.innerHTML = '<span aria-hidden="true">▶</span> ชมวิดีโอ';
+          playBtn.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const delim = cleanSrc.includes("?") ? "&" : "?";
+            ifr.src = cleanSrc + delim + "autoplay=1&rel=0";
+            playBtn.remove();
+          });
+          slide.appendChild(playBtn);
+        }
+      }
+    });
+  }
+
+  // ส่งออกฟังก์ชันไว้ที่ window เพื่อให้สคริปต์สไลเดอร์เรียกใช้ได้โดยตรง
+  window.pauseMediaInElement = stopMediaInElement;
+
+  // ตัวเลือกสำหรับค้นหากล่องวิดีโอ กล่องการ์ดเนื้อหา กล่องสไลด์ และกล่องรายงานข่าว
+  const TARGET_SELECTOR = [
+    ".media-slider",
+    ".media-slide",
+    ".portal-content-card",
+    ".news-card",
+    ".portal-media-card",
+    ".portal-media-visual",
+    ".sidebar-item-card",
+    ".sidebar-item",
+    ".rail-card",
+    "#selectedProjectMedia",
+    "#selectedProjectDetail",
+    ".support-project-detail",
+    "#muchalinda-project",
+    "#portalNewsList article",
+    "video",
+    "iframe[src*='youtube']",
+    "iframe[src*='drive.google.com']",
+    "iframe[src*='facebook.com']"
+  ].join(", ");
+
+  // ==========================================================================
+  // ระดับที่ 1: ตัวตรวจจับระยะการมองเห็นของสายตา (Intersection Observer)
+  // ==========================================================================
+  let sightObserver = null;
+  if ("IntersectionObserver" in window) {
+    sightObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const target = entry.target;
+          // หากผู้ใช้กำลังขยายเต็มจอ หรือเปิดในหน้าต่างขยายวิดีโอ ไม่ต้องสั่งหยุด
+          if (isElementInFullscreen(target) || isElementInOpenDialog(target)) {
+            return;
+          }
+
+          // หากกล่องวิดีโอเลื่อนพ้นขอบสายตา (ไม่ตัดผ่านหน้าจอ หรือสัดส่วนต่ำกว่า 5%)
+          if (!entry.isIntersecting || entry.intersectionRatio <= 0.05) {
+            stopMediaInElement(target);
+          }
+        });
+      },
+      {
+        root: null, // ใช้หน้าต่างหน้าจอ (Viewport)
+        rootMargin: "0px",
+        threshold: [0, 0.05, 0.2]
+      }
+    );
+  }
+
+  // ==========================================================================
+  // ระดับที่ 2: ตัวคำนวณพิกัดการเลื่อนหน้าจอ (Scroll & Viewport Coordinate Calculator)
+  // ==========================================================================
+  let isScrollCheckScheduled = false;
+
+  function calculateViewportCoordinates() {
+    isScrollCheckScheduled = false;
+
+    // ถ้ากำลังอยู่ในโหมดเต็มจอของเบราว์เซอร์
+    const fsEl =
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.mozFullScreenElement ||
+      document.msFullscreenElement;
+
+    const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+    const windowWidth = window.innerWidth || document.documentElement.clientWidth;
+
+    const elements = document.querySelectorAll(TARGET_SELECTOR);
+    elements.forEach((el) => {
+      // หากอยู่ในโหมดเต็มจอ หรือเป็นส่วนหนึ่งของโหมดเต็มจอ ห้ามสั่งหยุด
+      if (fsEl && (fsEl === el || fsEl.contains(el) || el.contains(fsEl))) {
+        return;
+      }
+
+      // หากอยู่ในหน้าต่างขยายวิดีโอ (dialog ที่เปิดอยู่) ห้ามสั่งหยุด
+      if (isElementInOpenDialog(el)) {
+        return;
+      }
+
+      // ตรวจสอบการถูกซ่อนด้วย CSS display: none หรือ visibility: hidden
+      const style = window.getComputedStyle ? window.getComputedStyle(el) : null;
+      if (style && (style.display === "none" || style.visibility === "hidden")) {
+        const hasMedia = el.tagName === "VIDEO" || el.tagName === "IFRAME" || el.querySelector("video, iframe");
+        if (hasMedia) {
+          stopMediaInElement(el);
+        }
+        return;
+      }
+
+      // คำนวณพิกัดกรอบตำแหน่งสัมพัทธ์กับหน้าจอ
+      const rect = el.getBoundingClientRect();
+      if (rect.width === 0 && rect.height === 0) {
+        return;
+      }
+
+      const isOutOfScreen = (
+        rect.bottom <= 0 ||            // เลื่อนพ้นขอบบนของหน้าจอ
+        rect.top >= windowHeight ||    // เลื่อนพ้นขอบล่างของหน้าจอ
+        rect.right <= 0 ||             // เลื่อนพ้นขอบซ้ายของหน้าจอ
+        rect.left >= windowWidth       // เลื่อนพ้นขอบขวาของหน้าจอ
+      );
+
+      if (isOutOfScreen) {
+        stopMediaInElement(el);
+      }
+    });
+  }
+
+  function scheduleCoordinateCheck() {
+    if (!isScrollCheckScheduled) {
+      // หากอยู่ในโหมดเต็มจอ ไม่ต้องสั่งตรวจสอบพิกัดพื้นหลัง
+      if (isFullscreenActive()) {
+        return;
+      }
+      isScrollCheckScheduled = true;
+      requestAnimationFrame(calculateViewportCoordinates);
+    }
+  }
+
+  // ติดตั้งตัวตรวจจับอีเวนต์การเลื่อนหน้าจอและปรับขนาดหน้าจอ
+  window.addEventListener("scroll", scheduleCoordinateCheck, { passive: true });
+  window.addEventListener("resize", scheduleCoordinateCheck, { passive: true });
+  window.addEventListener("orientationchange", scheduleCoordinateCheck, { passive: true });
+
+  // จัดการเมื่อเข้าหรือออกจากโหมดเต็มจอ
+  document.addEventListener("fullscreenchange", () => {
+    if (isFullscreenActive()) {
+      isScrollCheckScheduled = false;
+    } else {
+      setTimeout(scheduleCoordinateCheck, 250);
+    }
+  });
+  document.addEventListener("webkitfullscreenchange", () => {
+    if (isFullscreenActive()) {
+      isScrollCheckScheduled = false;
+    } else {
+      setTimeout(scheduleCoordinateCheck, 250);
+    }
+  });
+
+  // ลงทะเบียนองค์ประกอบเป้าหมายเข้าสู่ตัวตรวจจับระดับที่ 1
+  function registerTargets(root) {
+    if (!sightObserver) return;
+    const targets = (root || document).querySelectorAll(TARGET_SELECTOR);
+    targets.forEach((target) => {
+      // ไม่ลงทะเบียนองค์ประกอบที่อยู่ใน dialog ขยายวิดีโอ
+      if (isElementInOpenDialog(target)) return;
+      sightObserver.observe(target);
+    });
+  }
+
+  // ==========================================================================
+  // ระบบหยุดวิดีโออัตโนมัติเมื่อเปลี่ยนสไลด์: กด Next, Previous, ตัวเลขนับสไลด์ หรือปัดหน้าจอ
+  // ==========================================================================
+  function handleSlideChangeAction(e) {
+    // ตรวจสอบการกดปุ่มเปลี่ยนสไลด์: Previous, Next, ตัวเลขนับสไลด์ หรือจุด pagination
+    const arrowOrCounter = e.target.closest(
+      ".slider-arrow.prev, .slider-arrow.next, .slider-counter, [data-slide-prev], [data-slide-next], [data-slide-counter], .slide-dot, .slider-dot"
+    );
+    if (arrowOrCounter) {
+      const slider = arrowOrCounter.closest(".media-slider, [data-slider], .slider-container");
+      if (slider) {
+        const activeSlide = slider.querySelector(".media-slide.active, .slide.active");
+        if (activeSlide) {
+          stopMediaInElement(activeSlide);
+        }
+        const allSlides = slider.querySelectorAll(".media-slide, .slide");
+        allSlides.forEach((slide) => {
+          if (slide !== activeSlide) {
+            stopMediaInElement(slide);
+          }
+        });
+      }
+    }
+  }
+
+  document.addEventListener("click", handleSlideChangeAction, true);
+
+  // ตรวจจับการใช้นิ้วปัดหน้าจอบนมือถือ (Mobile Touch Swipe) บนกล่องสไลด์
+  let touchStartX = null;
+  let touchStartY = null;
+  let activeTouchSlider = null;
+
+  document.addEventListener(
+    "touchstart",
+    (e) => {
+      if (e.touches && e.touches.length === 1) {
+        const slider = e.target.closest(".media-slider, [data-slider], .media-stage");
+        if (slider) {
+          activeTouchSlider = slider;
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+        }
+      }
+    },
+    { passive: true }
+  );
+
+  document.addEventListener(
+    "touchend",
+    (e) => {
+      if (touchStartX !== null && touchStartY !== null && activeTouchSlider) {
+        const touchEndX = e.changedTouches && e.changedTouches.length ? e.changedTouches[0].clientX : touchStartX;
+        const touchEndY = e.changedTouches && e.changedTouches.length ? e.changedTouches[0].clientY : touchStartY;
+        const dx = touchEndX - touchStartX;
+        const dy = touchEndY - touchStartY;
+
+        // หากมีการปัดแนวนอนระยะเกิน 35px และชัดเจนกว่าแนวตั้ง
+        if (Math.abs(dx) >= 35 && Math.abs(dx) > Math.abs(dy)) {
+          const currentSlide = activeTouchSlider.querySelector(".media-slide.active, .slide.active");
+          if (currentSlide) {
+            stopMediaInElement(currentSlide);
+          }
+        }
+      }
+      touchStartX = null;
+      touchStartY = null;
+      activeTouchSlider = null;
+    },
+    { passive: true }
+  );
+
+  document.addEventListener(
+    "touchcancel",
+    () => {
+      touchStartX = null;
+      touchStartY = null;
+      activeTouchSlider = null;
+    },
+    { passive: true }
+  );
+
+  // เฝ้าสังเกตเนื้อหาที่โหลดมาใหม่ เช่น ข่าวสาร หรือสื่อโครงการจากฐานข้อมูล
+  if ("MutationObserver" in window) {
+    const domObserver = new MutationObserver((mutations) => {
+      let shouldReRegister = false;
+      mutations.forEach((m) => {
+        if (m.addedNodes && m.addedNodes.length > 0) {
+          shouldReRegister = true;
+        }
+      });
+      if (shouldReRegister) {
+        registerTargets();
+        scheduleCoordinateCheck();
+      }
+    });
+    domObserver.observe(document.body, { childList: true, subtree: true });
+  }
+
+  // เริ่มต้นการตรวจจับเมื่อโครงสร้างหน้าเว็บพร้อม
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", () => {
+      registerTargets();
+      scheduleCoordinateCheck();
+    });
+  } else {
+    registerTargets();
+    scheduleCoordinateCheck();
+  }
+})();
+
 if (document.readyState === "loading") {
   document.addEventListener("DOMContentLoaded", _initUiHelpers);
 } else {
