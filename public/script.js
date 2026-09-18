@@ -846,7 +846,7 @@ function _initUiHelpers() {
 
   /**
    * ฟังก์ชันหยุดเล่นและตัดเสียงวิดีโอทุกประเภทในคอนเทนเนอร์ที่กำหนดทันที
-   * ครอบคลุมทั้ง HTML5 Video, YouTube, Google Drive, และ Facebook Video
+   * ตรวจสอบเฉพาะวิดีโอที่เริ่มเล่นแล้วเท่านั้น เพื่อคงภาพปกเริ่มต้นไว้ ไม่ให้กลายเป็นจอดำ
    */
   function stopMediaInElement(container) {
     if (!container) return;
@@ -856,7 +856,7 @@ function _initUiHelpers() {
       return;
     }
 
-    // 1. จัดการ HTML5 Video
+    // 1. จัดการ HTML5 Video (สั่งหยุดเฉพาะคลิปที่กำลังเล่นอยู่เท่านั้น)
     const videos = container.tagName === "VIDEO" ? [container] : Array.from(container.querySelectorAll("video"));
     videos.forEach((v) => {
       if (isElementInFullscreen(v) || isElementInOpenDialog(v)) return;
@@ -872,35 +872,47 @@ function _initUiHelpers() {
     iframes.forEach((ifr) => {
       if (isElementInFullscreen(ifr) || isElementInOpenDialog(ifr)) return;
 
-      // A. ส่งคำสั่งหยุดผ่าน YouTube Player API
-      try {
-        ifr.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', "*");
-        ifr.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', "*");
-        ifr.contentWindow.postMessage(JSON.stringify({ event: "command", func: "pauseVideo", args: [] }), "*");
-        ifr.contentWindow.postMessage(JSON.stringify({ event: "command", func: "stopVideo", args: [] }), "*");
-      } catch (_) {}
-
-      // B. ตรวจสอบ URL ของ iframe
       const src = ifr.getAttribute("src") || ifr.src || "";
       if (!src) return;
 
+      const slide = ifr.closest(".media-slide");
+      const hasPlayButton = slide ? !!slide.querySelector(".media-play-button") : false;
+      const hasAutoplay = src.includes("autoplay=1") || src.includes("autoplay=true");
+      const isActivated = ifr.dataset.mediaActivated === "true" || hasAutoplay;
+
+      // หากวิดีโอนี้ยังมีปุ่มกดชมวิดีโออยู่ และยังไม่เคยถูกเริ่มเล่น (ผู้ใช้ยังไม่ได้กดเล่น)
+      // ให้ข้ามไปทันที ห้ามแตะต้อง iframe เพื่อคงภาพปกและตัวอย่างไว้ ไม่ให้จอมืด
+      if (hasPlayButton && !isActivated) {
+        return;
+      }
+
+      const isYt = src.includes("youtube.com") || src.includes("youtube-nocookie.com");
       const isDrive = src.includes("drive.google.com");
       const isFb = src.includes("facebook.com") || src.includes("fb.watch");
-      const isYt = src.includes("youtube.com") || src.includes("youtube-nocookie.com");
-      const hasAutoplay = src.includes("autoplay=1") || src.includes("autoplay=true");
 
-      // สำหรับ Google Drive, Facebook หรือ YouTube ที่กำลังเล่น (autoplay=1)
-      // การรีเซ็ต src ตัด autoplay จะตัดเสียงและภาพทันที 100%
-      if (isDrive || isFb || hasAutoplay) {
+      // A. สำหรับ YouTube: ใช้คำสั่ง pauseVideo เท่านั้น ห้ามส่ง stopVideo
+      // เพื่อพักวิดีโอไว้ที่เฟรมปัจจุบันอย่างนุ่มนวล โดยไม่ทำให้หน้าจอกลายเป็นสีดำ
+      if (isYt) {
+        try {
+          ifr.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', "*");
+          ifr.contentWindow.postMessage(JSON.stringify({ event: "command", func: "pauseVideo", args: [] }), "*");
+        } catch (_) {}
+        return;
+      }
+
+      // B. สำหรับ Google Drive หรือ Facebook:
+      // จัดการเฉพาะเมื่อวิดีโอถูกเริ่มเล่นแล้วเท่านั้น
+      if ((isDrive || isFb) && isActivated) {
         let cleanSrc = src.replace(/[?&]autoplay=[^&]+/g, "").replace(/[?&]rel=0/g, "");
         if (cleanSrc.endsWith("?") || cleanSrc.endsWith("&")) {
           cleanSrc = cleanSrc.slice(0, -1);
         }
         ifr.src = cleanSrc;
+        ifr.dataset.mediaActivated = "false";
 
         // หากอยู่ในสไลด์ (.media-slide) และปุ่มกดชมวิดีโอถูกซ่อน/ลบ ให้คืนปุ่มเล่นกลับมา
-        const slide = ifr.closest(".media-slide");
-        if (slide && !slide.querySelector(".media-play-button")) {
+        const targetSlide = slide || ifr.closest(".media-slide");
+        if (targetSlide && !targetSlide.querySelector(".media-play-button")) {
           const playBtn = document.createElement("button");
           playBtn.type = "button";
           playBtn.className = "media-play-button";
@@ -908,11 +920,12 @@ function _initUiHelpers() {
           playBtn.innerHTML = '<span aria-hidden="true">▶</span> ชมวิดีโอ';
           playBtn.addEventListener("click", (e) => {
             e.stopPropagation();
+            ifr.dataset.mediaActivated = "true";
             const delim = cleanSrc.includes("?") ? "&" : "?";
             ifr.src = cleanSrc + delim + "autoplay=1&rel=0";
             playBtn.remove();
           });
-          slide.appendChild(playBtn);
+          targetSlide.appendChild(playBtn);
         }
       }
     });
@@ -1097,6 +1110,24 @@ function _initUiHelpers() {
       }
     }
   }
+
+  // ตรวจจับการกดปุ่มเล่นวิดีโอ เพื่อบันทึกสถานะว่าวิดีโอถูกกดเล่นจริง
+  document.addEventListener(
+    "click",
+    (e) => {
+      const playBtn = e.target.closest(".media-play-button");
+      if (playBtn) {
+        const slide = playBtn.closest(".media-slide, .media-stage, .slider-container");
+        if (slide) {
+          const ifr = slide.querySelector("iframe");
+          if (ifr) {
+            ifr.dataset.mediaActivated = "true";
+          }
+        }
+      }
+    },
+    true
+  );
 
   document.addEventListener("click", handleSlideChangeAction, true);
 

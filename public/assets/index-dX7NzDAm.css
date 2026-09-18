@@ -788,3 +788,114 @@ footer#siteFooter {
      1px  1px 0 rgba(0, 0, 0, 0.95),
      0   2px 4px rgba(0, 0, 0, 0.95) !important;
 }
+
+
+/* ==========================================================================
+   ปรับแต่งการ์ดโครงการทั้งหมด: ลบกรอบสีแดงและป้ายสถานะ เหลือข้อความและปุ่มเปิดโครงการ
+   ========================================================================== */
+
+.project-catalog-card {
+  position: relative !important;
+  display: flex !important;
+  flex-direction: column !important;
+  min-height: 220px !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(199, 150, 48, 0.22) !important;
+  border-radius: 16px !important;
+  background: #ffffff !important;
+  box-shadow: 0 4px 20px rgba(23, 19, 41, 0.07) !important;
+  transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease !important;
+}
+
+.project-catalog-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: 0 12px 30px rgba(23, 19, 41, 0.12) !important;
+  border-color: rgba(199, 150, 48, 0.45) !important;
+}
+
+/* ซ่อนกรอบสีแดงด้านบนรวมถึงป้ายสถานะและโลโก้ */
+.project-catalog-card .project-card-cover {
+  display: none !important;
+}
+
+/* ส่วนข้อความชื่อและคำอธิบาย */
+.project-catalog-card .project-card-copy {
+  display: flex !important;
+  flex-direction: column !important;
+  flex: 1 0 auto !important;
+  padding: 24px 22px 20px !important;
+}
+
+.project-catalog-card .project-card-copy h3 {
+  margin: 0 0 10px 0 !important;
+  color: #171329 !important;
+  font-size: 1.15rem !important;
+  font-weight: 700 !important;
+  line-height: 1.45 !important;
+}
+
+.project-catalog-card .project-card-copy p {
+  display: -webkit-box !important;
+  margin: 0 0 18px 0 !important;
+  overflow: hidden !important;
+  color: #5e5865 !important;
+  font-size: 0.88rem !important;
+  line-height: 1.6 !important;
+  -webkit-box-orient: vertical !important;
+  -webkit-line-clamp: 4 !important;
+}
+
+/* แถบปุ่มด้านล่าง */
+.project-catalog-card .project-card-actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 12px !important;
+  margin-top: auto !important;
+  padding-top: 14px !important;
+  border-top: 1px dashed rgba(23, 19, 41, 0.09) !important;
+}
+
+/* ปุ่มเปิดโครงการ */
+.project-catalog-card .project-card-open {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  min-height: 40px !important;
+  padding: 8px 22px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: var(--social-red, #90261f) !important;
+  color: #ffffff !important;
+  font-weight: 600 !important;
+  font-size: 0.85rem !important;
+  letter-spacing: 0.01em !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 12px rgba(144, 38, 31, 0.25) !important;
+  transition: all 0.2s ease !important;
+}
+
+.project-catalog-card .project-card-open:hover {
+  background: #681814 !important;
+  box-shadow: 0 6px 18px rgba(144, 38, 31, 0.35) !important;
+  transform: translateY(-1px) !important;
+}
+
+/* ลิงก์เว็บไซต์ภายนอก (ถ้ามี) */
+.project-catalog-card .project-card-external {
+  display: inline-flex !important;
+  align-items: center !important;
+  color: #7c2637 !important;
+  font-size: 0.82rem !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  padding: 6px 12px !important;
+  border-radius: 8px !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.project-catalog-card .project-card-external:hover {
+  background: #fdf2f4 !important;
+  text-decoration: underline !important;
+}
