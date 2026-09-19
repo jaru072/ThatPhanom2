@@ -851,12 +851,19 @@ function _initUiHelpers() {
   function stopMediaInElement(container) {
     if (!container) return;
 
+    // รีเซ็ตการเลื่อนหลุดพิกัดแนวนอน (Horizontal scroll offset) ให้กลับมาที่ 0 เสมอ
+    try {
+      if (container.scrollLeft) {
+        container.scrollLeft = 0;
+      }
+    } catch (_) {}
+
     // หากองค์ประกอบหรือคอนเทนเนอร์นี้กำลังอยู่ในโหมดเต็มจอ หรือเปิดอยู่ในไดอะล็อกขยาย ไม่ต้องสั่งหยุด
     if (isElementInFullscreen(container) || isElementInOpenDialog(container)) {
       return;
     }
 
-    // 1. จัดการ HTML5 Video (สั่งหยุดเฉพาะคลิปที่กำลังเล่นอยู่เท่านั้น)
+    // 1. จัดการ HTML5 Video (สั่งหยุดทุกคลิปวิดีโอที่กำลังเล่นอยู่)
     const videos = container.tagName === "VIDEO" ? [container] : Array.from(container.querySelectorAll("video"));
     videos.forEach((v) => {
       if (isElementInFullscreen(v) || isElementInOpenDialog(v)) return;
@@ -864,54 +871,47 @@ function _initUiHelpers() {
         if (!v.paused) {
           v.pause();
         }
+        v.currentTime = 0;
       } catch (_) {}
     });
 
-    // 2. จัดการ iframe (YouTube, Google Drive, Facebook)
+    // 2. จัดการ iframe (YouTube, Google Drive, Facebook, TikTok)
     const iframes = container.tagName === "IFRAME" ? [container] : Array.from(container.querySelectorAll("iframe"));
     iframes.forEach((ifr) => {
       if (isElementInFullscreen(ifr) || isElementInOpenDialog(ifr)) return;
 
       const src = ifr.getAttribute("src") || ifr.src || "";
-      if (!src) return;
+      if (!src || src === "about:blank") return;
 
-      const slide = ifr.closest(".media-slide");
-      const hasPlayButton = slide ? !!slide.querySelector(".media-play-button") : false;
-      const hasAutoplay = src.includes("autoplay=1") || src.includes("autoplay=true");
-      const isActivated = ifr.dataset.mediaActivated === "true" || hasAutoplay;
-
-      // หากวิดีโอนี้ยังมีปุ่มกดชมวิดีโออยู่ และยังไม่เคยถูกเริ่มเล่น (ผู้ใช้ยังไม่ได้กดเล่น)
-      // ให้ข้ามไปทันที ห้ามแตะต้อง iframe เพื่อคงภาพปกและตัวอย่างไว้ ไม่ให้จอมืด
-      if (hasPlayButton && !isActivated) {
-        return;
-      }
-
-      const isYt = src.includes("youtube.com") || src.includes("youtube-nocookie.com");
-      const isDrive = src.includes("drive.google.com");
-      const isFb = src.includes("facebook.com") || src.includes("fb.watch");
-      const isTikTok = src.includes("tiktok.com");
-
-      // A. สำหรับ YouTube: ใช้คำสั่ง pauseVideo เท่านั้น ห้ามส่ง stopVideo
-      // เพื่อพักวิดีโอไว้ที่เฟรมปัจจุบันอย่างนุ่มนวล โดยไม่ทำให้หน้าจอกลายเป็นสีดำ
-      if (isYt) {
-        try {
-          ifr.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', "*");
-          ifr.contentWindow.postMessage(JSON.stringify({ event: "command", func: "pauseVideo", args: [] }), "*");
-        } catch (_) {}
-        return;
-      }
-
-      // B. สำหรับ Google Drive, Facebook หรือ TikTok:
-      // จัดการเฉพาะเมื่อวิดีโอถูกเริ่มเล่นแล้วเท่านั้น
-      if ((isDrive || isFb || isTikTok) && isActivated) {
+      // บันทึก URL ต้นฉบับที่สะอาด (ตัด autoplay ออก) ไว้เสมอ
+      if (!ifr.dataset.originalSrc || ifr.dataset.originalSrc === "about:blank") {
         let cleanSrc = src.replace(/[?&]autoplay=[^&]+/g, "").replace(/[?&]rel=0/g, "");
         if (cleanSrc.endsWith("?") || cleanSrc.endsWith("&")) {
           cleanSrc = cleanSrc.slice(0, -1);
         }
-        ifr.src = cleanSrc;
-        ifr.dataset.mediaActivated = "false";
+        ifr.dataset.originalSrc = cleanSrc;
+      }
 
-        // หากอยู่ในสไลด์ (.media-slide) และปุ่มกดชมวิดีโอถูกซ่อน/ลบ ให้คืนปุ่มเล่นกลับมา
+      // พยายามส่งคำสั่ง pause & stop ผ่าน postMessage
+      try {
+        ifr.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', "*");
+        ifr.contentWindow.postMessage(JSON.stringify({ event: "command", func: "pauseVideo", args: [] }), "*");
+        ifr.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', "*");
+        ifr.contentWindow.postMessage(JSON.stringify({ event: "command", func: "stopVideo", args: [] }), "*");
+      } catch (_) {}
+
+      // ปลดการเชื่อมต่อ iframe ทันที 100% เพื่อตัดสัญญาณเสียงและวิดีโอที่กำลังเล่นอยู่ทุกประเภท (รวมทั้ง Facebook Reel/Video)
+      ifr.src = "about:blank";
+      ifr.dataset.mediaActivated = "false";
+      ifr.dataset.mediaStopped = "true";
+
+      const slide = ifr.closest(".media-slide");
+      const isDrive = src.includes("drive.google.com");
+      const isTikTok = src.includes("tiktok.com");
+      const isYt = src.includes("youtube.com") || src.includes("youtube-nocookie.com");
+
+      // คืนปุ่มกดชมวิดีโอสำหรับ YouTube / Drive / TikTok หากมี
+      if (isYt || isDrive || isTikTok) {
         const targetSlide = slide || ifr.closest(".media-slide");
         if (targetSlide && !targetSlide.querySelector(".media-play-button")) {
           const playBtn = document.createElement("button");
@@ -922,8 +922,10 @@ function _initUiHelpers() {
           playBtn.addEventListener("click", (e) => {
             e.stopPropagation();
             ifr.dataset.mediaActivated = "true";
-            const delim = cleanSrc.includes("?") ? "&" : "?";
-            ifr.src = cleanSrc + delim + "autoplay=1&rel=0";
+            ifr.dataset.mediaStopped = "false";
+            const orig = ifr.dataset.originalSrc || src;
+            const delim = orig.includes("?") ? "&" : "?";
+            ifr.src = orig + delim + "autoplay=1&rel=0";
             playBtn.remove();
           });
           targetSlide.appendChild(playBtn);
@@ -934,11 +936,16 @@ function _initUiHelpers() {
 
   // ส่งออกฟังก์ชันไว้ที่ window เพื่อให้สคริปต์สไลเดอร์เรียกใช้ได้โดยตรง
   window.pauseMediaInElement = stopMediaInElement;
+  window.stopMediaInElement = stopMediaInElement;
 
   // ตัวเลือกสำหรับค้นหากล่องวิดีโอ กล่องการ์ดเนื้อหา กล่องสไลด์ และกล่องรายงานข่าว
   const TARGET_SELECTOR = [
     ".media-slider",
     ".media-slide",
+    ".media-stage",
+    ".support-project-hero-media",
+    "#muchalindaHeroMedia",
+    ".muchalinda-hero-slider",
     ".portal-content-card",
     ".news-card",
     ".portal-media-card",
@@ -970,6 +977,21 @@ function _initUiHelpers() {
           // หากผู้ใช้กำลังขยายเต็มจอ หรือเปิดในหน้าต่างขยายวิดีโอ ไม่ต้องสั่งหยุด
           if (isElementInFullscreen(target) || isElementInOpenDialog(target)) {
             return;
+          }
+
+          // เมื่อมองเห็นในหน้าจอ ให้ฟื้นฟูเฉพาะ iframe ที่อยู่ในสไลด์ที่กำลัง active หรือไม่ได้อยู่ในสไลเดอร์
+          if (entry.isIntersecting && entry.intersectionRatio > 0.15) {
+            const ifrs = target.tagName === "IFRAME" ? [target] : Array.from(target.querySelectorAll("iframe"));
+            ifrs.forEach((i) => {
+              i.dataset.mediaStopped = "false";
+              const parentSlide = i.closest(".media-slide");
+              if (!parentSlide || parentSlide.classList.contains("active")) {
+                const orig = i.dataset.originalSrc;
+                if (orig && (i.src === "about:blank" || !i.src || i.getAttribute("src") === "about:blank")) {
+                  i.src = orig;
+                }
+              }
+            });
           }
 
           // หากกล่องวิดีโอเลื่อนพ้นขอบสายตา (ไม่ตัดผ่านหน้าจอ หรือสัดส่วนต่ำกว่า 5%)
@@ -1041,6 +1063,11 @@ function _initUiHelpers() {
 
       if (isOutOfScreen) {
         stopMediaInElement(el);
+      } else {
+        const ifrs = el.tagName === "IFRAME" ? [el] : Array.from(el.querySelectorAll("iframe"));
+        ifrs.forEach((i) => {
+          i.dataset.mediaStopped = "false";
+        });
       }
     });
   }
@@ -1060,6 +1087,14 @@ function _initUiHelpers() {
   window.addEventListener("scroll", scheduleCoordinateCheck, { passive: true });
   window.addEventListener("resize", scheduleCoordinateCheck, { passive: true });
   window.addEventListener("orientationchange", scheduleCoordinateCheck, { passive: true });
+  window.addEventListener("hashchange", () => {
+    registerTargets();
+    scheduleCoordinateCheck();
+  });
+  window.addEventListener("popstate", () => {
+    registerTargets();
+    scheduleCoordinateCheck();
+  });
 
   // จัดการเมื่อเข้าหรือออกจากโหมดเต็มจอ
   document.addEventListener("fullscreenchange", () => {
@@ -1094,21 +1129,16 @@ function _initUiHelpers() {
   function handleSlideChangeAction(e) {
     // ตรวจสอบการกดปุ่มเปลี่ยนสไลด์: Previous, Next, ตัวเลขนับสไลด์ หรือจุด pagination
     const arrowOrCounter = e.target.closest(
-      ".slider-arrow.prev, .slider-arrow.next, .slider-counter, [data-slide-prev], [data-slide-next], [data-slide-counter], .slide-dot, .slider-dot"
+      ".slider-arrow.prev, .slider-arrow.next, .slider-arrow, .slider-counter, [data-slide-prev], [data-slide-next], [data-slide-counter], .slide-dot, .slider-dot"
     );
     if (arrowOrCounter) {
       const slider = arrowOrCounter.closest(".media-slider, [data-slider], .slider-container");
       if (slider) {
+        // ค้นหาสไลด์ที่กำลังแสดงผลอยู่ปัจจุบัน แล้วสั่งหยุดวิดีโอทันทีก่อนจะเปลี่ยนสไลด์
         const activeSlide = slider.querySelector(".media-slide.active, .slide.active");
         if (activeSlide) {
           stopMediaInElement(activeSlide);
         }
-        const allSlides = slider.querySelectorAll(".media-slide, .slide");
-        allSlides.forEach((slide) => {
-          if (slide !== activeSlide) {
-            stopMediaInElement(slide);
-          }
-        });
       }
     }
   }
@@ -1187,12 +1217,12 @@ function _initUiHelpers() {
     { passive: true }
   );
 
-  // เฝ้าสังเกตเนื้อหาที่โหลดมาใหม่ เช่น ข่าวสาร หรือสื่อโครงการจากฐานข้อมูล
+  // เฝ้าสังเกตเนื้อหาที่โหลดมาใหม่ เช่น ข่าวสาร หรือสื่อโครงการจากฐานข้อมูล และการเปิด/ปิดแท็บโครงการ
   if ("MutationObserver" in window) {
     const domObserver = new MutationObserver((mutations) => {
       let shouldReRegister = false;
       mutations.forEach((m) => {
-        if (m.addedNodes && m.addedNodes.length > 0) {
+        if ((m.addedNodes && m.addedNodes.length > 0) || m.type === "attributes") {
           shouldReRegister = true;
         }
       });
@@ -1201,7 +1231,12 @@ function _initUiHelpers() {
         scheduleCoordinateCheck();
       }
     });
-    domObserver.observe(document.body, { childList: true, subtree: true });
+    domObserver.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["hidden", "class", "style"]
+    });
   }
 
   // เริ่มต้นการตรวจจับเมื่อโครงสร้างหน้าเว็บพร้อม

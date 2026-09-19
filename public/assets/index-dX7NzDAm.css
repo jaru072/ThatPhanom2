@@ -899,3 +899,213 @@ footer#siteFooter {
   background: #fdf2f4 !important;
   text-decoration: underline !important;
 }
+
+/* ปรับปรุงการแสดงผลสื่อและวิดีโอในหน้าโครงการบูรณะสระมุจลินท์ ให้เต็มจอ ไม่แหว่ง ไม่ตกขอบ เหมือนหน้าหลัก */
+.support-project-hero-media {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  aspect-ratio: 16/9 !important;
+  background: #000 !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+  contain: paint !important;
+}
+
+.muchalinda-hero-slider {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: #000 !important;
+  box-shadow: none !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+.muchalinda-hero-slider .media-stage {
+  position: relative !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  height: 100% !important;
+  min-height: 0 !important;
+  aspect-ratio: 16/9 !important;
+  background: #000 !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+  overscroll-behavior: none !important;
+}
+
+.muchalinda-hero-slider .media-slide {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+.muchalinda-hero-slider .media-slide iframe {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  display: block !important;
+  box-sizing: border-box !important;
+}
+
+.muchalinda-hero-slider .media-slide video {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  display: block !important;
+  object-fit: contain !important;
+  background: #000 !important;
+  box-sizing: border-box !important;
+}
+
+.muchalinda-hero-slider .media-slide.image-slide > img.expandable-media {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.muchalinda-hero-slider .media-slide:after {
+  display: none !important;
+  background: none !important;
+}
+
+/* ปรับปุ่มนำทาง Previous และ Next ของสไลเดอร์สระมุจลินท์ ไม่ให้ตกขอบ */
+.muchalinda-hero-slider .slider-arrow {
+  position: absolute !important;
+  z-index: 25 !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: 44px !important;
+  height: 44px !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(17, 13, 30, 0.82) !important;
+  color: #fff !important;
+  border: 1px solid rgba(255, 255, 255, 0.45) !important;
+  cursor: pointer !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4) !important;
+  transition: all 0.2s ease !important;
+  box-sizing: border-box !important;
+}
+
+.muchalinda-hero-slider .slider-arrow.prev {
+  left: 20px !important;
+  right: auto !important;
+}
+
+.muchalinda-hero-slider .slider-arrow.next {
+  right: 20px !important;
+  left: auto !important;
+}
+
+.muchalinda-hero-slider .slider-arrow:hover {
+  background: var(--gold, #cba64b) !important;
+  color: var(--ink, #171329) !important;
+  border-color: var(--gold, #cba64b) !important;
+}
+
+@media (max-width: 768px) {
+  .muchalinda-hero-slider .slider-arrow {
+    width: 38px !important;
+    height: 38px !important;
+    font-size: 1.25rem !important;
+  }
+  .muchalinda-hero-slider .slider-arrow.prev {
+    left: 12px !important;
+    right: auto !important;
+  }
+  .muchalinda-hero-slider .slider-arrow.next {
+    right: 12px !important;
+    left: auto !important;
+  }
+}
+
+/* ปรับปุ่มอัพเดทในสไลด์โครงการบูรณะสระมุจลินท์ให้กะทัดรัด สวยงาม ไม่ยาวเกินไป */
+.muchalinda-hero-slider .section-slider-update,
+.muchalinda-donation-media .section-slider-update {
+  position: absolute !important;
+  top: 14px !important;
+  right: 14px !important;
+  left: auto !important;
+  bottom: auto !important;
+  width: auto !important;
+  max-width: max-content !important;
+  min-width: 0 !important;
+  height: 34px !important;
+  min-height: 34px !important;
+  padding: 0 16px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0.82rem !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  border-radius: 999px !important;
+  border: 1px solid rgba(239, 217, 142, 0.6) !important;
+  background: rgba(17, 13, 30, 0.88) !important;
+  color: var(--gold-light, #efd98e) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  cursor: pointer !important;
+  z-index: 8 !important;
+  transition: all 0.2s ease !important;
+}
+
+.muchalinda-hero-slider .section-slider-update:hover,
+.muchalinda-donation-media .section-slider-update:hover {
+  background: var(--gold, #cba64b) !important;
+  color: var(--ink, #171329) !important;
+  border-color: var(--gold, #cba64b) !important;
+  transform: translateY(-1px) !important;
+}
+
+@media (max-width: 600px) {
+  .support-project-hero-media,
+  .muchalinda-hero-slider .media-stage {
+    min-height: 0 !important;
+    aspect-ratio: 16/9 !important;
+  }
+  .muchalinda-hero-slider .section-slider-update,
+  .muchalinda-donation-media .section-slider-update {
+    top: 10px !important;
+    right: 10px !important;
+    height: 30px !important;
+    min-height: 30px !important;
+    padding: 0 12px !important;
+    font-size: 0.76rem !important;
+  }
+}
