@@ -889,6 +889,7 @@ function _initUiHelpers() {
       const isYt = src.includes("youtube.com") || src.includes("youtube-nocookie.com");
       const isDrive = src.includes("drive.google.com");
       const isFb = src.includes("facebook.com") || src.includes("fb.watch");
+      const isTikTok = src.includes("tiktok.com");
 
       // A. สำหรับ YouTube: ใช้คำสั่ง pauseVideo เท่านั้น ห้ามส่ง stopVideo
       // เพื่อพักวิดีโอไว้ที่เฟรมปัจจุบันอย่างนุ่มนวล โดยไม่ทำให้หน้าจอกลายเป็นสีดำ
@@ -900,9 +901,9 @@ function _initUiHelpers() {
         return;
       }
 
-      // B. สำหรับ Google Drive หรือ Facebook:
+      // B. สำหรับ Google Drive, Facebook หรือ TikTok:
       // จัดการเฉพาะเมื่อวิดีโอถูกเริ่มเล่นแล้วเท่านั้น
-      if ((isDrive || isFb) && isActivated) {
+      if ((isDrive || isFb || isTikTok) && isActivated) {
         let cleanSrc = src.replace(/[?&]autoplay=[^&]+/g, "").replace(/[?&]rel=0/g, "");
         if (cleanSrc.endsWith("?") || cleanSrc.endsWith("&")) {
           cleanSrc = cleanSrc.slice(0, -1);
@@ -953,7 +954,8 @@ function _initUiHelpers() {
     "video",
     "iframe[src*='youtube']",
     "iframe[src*='drive.google.com']",
-    "iframe[src*='facebook.com']"
+    "iframe[src*='facebook.com']",
+    "iframe[src*='tiktok.com']"
   ].join(", ");
 
   // ==========================================================================
