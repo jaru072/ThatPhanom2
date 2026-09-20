@@ -649,8 +649,14 @@
               <div><strong id="treeLinkedContentTitle"></strong><span id="treeLinkedContentMeta"></span></div>
               <button class="button secondary" id="openLinkedContentButton" type="button">เปิดข้อมูลเดิมที่เชื่อม</button>
             </div>
-            <label>ลิงก์ปลายทาง (ถ้ามี)
-              <input id="treeNodeUrl" type="url" placeholder="https://...">
+            <label>ลิงก์เว็บไซต์โครงการ / ซับโดเมน (ถ้ามี)
+              <input id="treeNodeUrl" type="url" placeholder="เช่น https://muchalin.thatphanom.org หรือ https://...">
+            </label>
+            <label>รูปแบบการเปิดโครงการ
+              <select id="treeNodeOpenBehavior">
+                <option value="center">เปิดแสดงในแถบกลางของระบบนี้ (In-App Center View)</option>
+                <option value="external">เปิดไปยังเว็บไซต์อิสระภายนอก (Open External Link ↗)</option>
+              </select>
             </label>
             <label class="tree-publish-control"><input id="treeNodePublished" type="checkbox"><span>พร้อมเผยแพร่เมื่อเปิดใช้ผังนี้ในเว็บไซต์</span></label>
             <div class="tree-position-actions">

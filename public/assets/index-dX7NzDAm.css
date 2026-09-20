@@ -1495,3 +1495,113 @@ footer#siteFooter {
     min-height: 34px;
   }
 }
+
+
+/* ==========================================================================
+   SUPPORT PROJECT IN-APP CENTER FEED & 3-COLUMN INTEGRATION
+   ========================================================================== */
+
+/* Maintain full 3-column desktop layout when project is opened */
+@media (min-width: 1161px) {
+  body.support-project-open .social-layout {
+    display: grid !important;
+    grid-template-columns: 250px minmax(0, 1fr) 300px !important;
+    gap: 16px !important;
+    width: min(1560px, 100%) !important;
+    max-width: 1560px !important;
+    margin: 0 auto !important;
+    padding: 16px 16px 24px !important;
+  }
+  body.support-project-open .desktop-sidebar {
+    display: block !important;
+  }
+  body.support-project-open .right-rail {
+    display: block !important;
+  }
+}
+
+/* Medium screens (1024px to 1160px): Keep sidebar and center column */
+@media (min-width: 1024px) and (max-width: 1160px) {
+  body.support-project-open .social-layout {
+    display: grid !important;
+    grid-template-columns: 240px minmax(0, 1fr) !important;
+    gap: 14px !important;
+    padding: 16px 14px 24px !important;
+  }
+  body.support-project-open .desktop-sidebar {
+    display: block !important;
+  }
+}
+
+/* Muchalinda project card styling inside center feed */
+.support-project-detail {
+  margin: 0 !important;
+  border-radius: 14px !important;
+  border: 1px solid rgba(18, 67, 54, 0.16) !important;
+  box-shadow: 0 6px 24px rgba(7, 59, 49, 0.08) !important;
+  background: #ffffff !important;
+  overflow: hidden !important;
+}
+
+/* Navigation tabs inside support project */
+.support-project-tabs {
+  position: sticky;
+  top: 70px;
+  z-index: 15;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(23, 19, 41, 0.08);
+  padding: 8px 16px;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+.support-project-tabs a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(23, 19, 41, 0.1);
+  background: #f8fafc;
+  color: #334155;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.support-project-tabs a:hover,
+.support-project-tabs a.active {
+  background: #073b31;
+  color: #f1d889;
+  border-color: #073b31;
+}
+
+/* Breadcrumb bar at the top of support project */
+.support-project-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  background: #f1f7f5;
+  border-bottom: 1px solid rgba(7, 59, 49, 0.1);
+  font-size: 0.82rem;
+  font-weight: 500;
+}
+
+.support-project-breadcrumb a {
+  color: #073b31;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.support-project-breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+/* Return button in top nav when viewing project */
+.top-nav a[href="#top"]:has(span) {
+  font-weight: 600;
+}
