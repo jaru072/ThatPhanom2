@@ -708,13 +708,52 @@
           <option value="video">วิดีโอ / YouTube / Facebook / Reels / Google Drive</option>
         </select>
       </label>
-      <label>ชื่อหรือคำบรรยาย
-        <input id="mediaTitle" type="text" maxlength="160" required placeholder="เช่น พิธีแห่ผ้าห่มพระธาตุ">
-      </label>
-      <label>ข้อความประกอบใต้รูปภาพ
-        <textarea id="mediaDescription" rows="4" maxlength="1000" placeholder="เพิ่มรายละเอียดหรือเรื่องราวของภาพ (ไม่บังคับ)"></textarea>
-        <small>ข้อความนี้จะแสดงใต้ภาพเมื่อผู้ชมคลิกขยายรูป</small>
-      </label>
+      <!-- แถบเลือกภาษาและปุ่มแปลอัตโนมัติ -->
+      <div class="rail-lang-header-row">
+        <div class="rail-lang-switcher" role="tablist">
+          <button type="button" class="media-lang-tab rail-lang-tab active" data-media-tab="th">ภาษาไทย (หลัก)</button>
+          <button type="button" class="media-lang-tab rail-lang-tab" data-media-tab="lo">ພາສາລາວ (ภาษาลาว)</button>
+          <button type="button" class="media-lang-tab rail-lang-tab" data-media-tab="en">English (ภาษาอังกฤษ)</button>
+        </div>
+        <button type="button" class="rail-auto-translate-btn" id="mediaAutoTranslateBtn" title="กดปุ่มนี้เพื่อแปลเป็นภาษาลาวและภาษาอังกฤษจากข้อความภาษาไทย">
+          <span aria-hidden="true">🌐</span> แปลภาษาลาวและอังกฤษ
+        </button>
+      </div>
+      <div class="rail-translate-status" id="mediaTranslateStatus" hidden>
+        <span id="mediaTranslateStatusText"></span>
+      </div>
+      <p class="rail-lang-note">กรอกข้อมูลภาษาไทยเป็นหลัก แล้วกดปุ่ม “แปลภาษาลาวและอังกฤษ” เพื่อสร้างคำแปล สามารถกดสลับแท็บเพื่อตรวจสอบหรือแก้ไขเพิ่มเติมได้</p>
+
+      <!-- กลุ่มข้อมูลภาษาไทย -->
+      <div class="media-lang-pane rail-lang-pane active" id="mediaPaneTh">
+        <label>ชื่อหรือคำบรรยาย (ภาษาไทย) *
+          <input id="mediaTitle" type="text" maxlength="160" required placeholder="เช่น พิธีแห่ผ้าห่มพระธาตุ">
+        </label>
+        <label>ข้อความประกอบใต้รูปภาพ (ภาษาไทย)
+          <textarea id="mediaDescription" rows="3" maxlength="1000" placeholder="เพิ่มรายละเอียดหรือเรื่องราวของภาพ (ไม่บังคับ)"></textarea>
+          <small>ข้อความนี้จะแสดงใต้ภาพเมื่อผู้ชมคลิกขยายรูป</small>
+        </label>
+      </div>
+
+      <!-- กลุ่มข้อมูลภาษาลาว -->
+      <div class="media-lang-pane rail-lang-pane" id="mediaPaneLo" hidden>
+        <label>ชื่อหรือคำบรรยาย (ພາສາລາວ)
+          <input id="mediaTitleLo" type="text" maxlength="160" placeholder="ບໍ່ບັງຄັບ — ຖ້າຫວ່າງຈະສະແດງພາສາໄທແທນ">
+        </label>
+        <label>ข้อความประกอบใต้รูปภาพ (ພາສາລາວ)
+          <textarea id="mediaDescriptionLo" rows="3" maxlength="1000" placeholder="ບໍ່ບັງຄັບ — ຖ້າຫວ່າງຈະສະແດງພາສາໄທແທນ"></textarea>
+        </label>
+      </div>
+
+      <!-- กลุ่มข้อมูลภาษาอังกฤษ -->
+      <div class="media-lang-pane rail-lang-pane" id="mediaPaneEn" hidden>
+        <label>ชื่อหรือคำบรรยาย (English)
+          <input id="mediaTitleEn" type="text" maxlength="160" placeholder="Optional — falls back to Thai if blank">
+        </label>
+        <label>ข้อความประกอบใต้รูปภาพ (English)
+          <textarea id="mediaDescriptionEn" rows="3" maxlength="1000" placeholder="Optional — falls back to Thai if blank"></textarea>
+        </label>
+      </div>
       <label>ลิงก์รูปภาพหรือวิดีโอ
         <input id="mediaUrl" type="url" placeholder="https://... หรือวางลิงก์ YouTube / Facebook / TikTok / Google Drive">
         <small>รองรับ YouTube, Facebook Videos/Reels, TikTok, Google Drive และลิงก์วิดีโอทั่วไป (วางลิงก์เดียวกันในหลายหัวข้อได้)</small>
@@ -772,14 +811,54 @@
       </header>
       <input id="contentItemId" type="hidden">
       <input id="contentItemKind" type="hidden">
-      <label>ชื่อเรื่อง
-        <input id="contentItemTitle" type="text" maxlength="160" required>
-      </label>
+      <!-- แถบเลือกภาษาและปุ่มแปลอัตโนมัติ -->
+      <div class="rail-lang-header-row">
+        <div class="rail-lang-switcher" role="tablist">
+          <button type="button" class="content-lang-tab rail-lang-tab active" data-content-tab="th">ภาษาไทย (หลัก)</button>
+          <button type="button" class="content-lang-tab rail-lang-tab" data-content-tab="lo">ພາສາລາວ (ภาษาลาว)</button>
+          <button type="button" class="content-lang-tab rail-lang-tab" data-content-tab="en">English (ภาษาอังกฤษ)</button>
+        </div>
+        <button type="button" class="rail-auto-translate-btn" id="contentAutoTranslateBtn" title="กดปุ่มนี้เพื่อแปลเป็นภาษาลาวและภาษาอังกฤษจากข้อความภาษาไทย">
+          <span aria-hidden="true">🌐</span> แปลภาษาลาวและอังกฤษ
+        </button>
+      </div>
+      <div class="rail-translate-status" id="contentTranslateStatus" hidden>
+        <span id="contentTranslateStatusText"></span>
+      </div>
+      <p class="rail-lang-note">กรอกข้อมูลภาษาไทยเป็นหลัก แล้วกดปุ่ม “แปลภาษาลาวและอังกฤษ” เพื่อสร้างคำแปล สามารถกดสลับแท็บเพื่อตรวจสอบหรือแก้ไขเพิ่มเติมได้</p>
+
+      <!-- กลุ่มข้อมูลภาษาไทย -->
+      <div class="content-lang-pane rail-lang-pane active" id="contentPaneTh">
+        <label>ชื่อเรื่อง (ภาษาไทย) *
+          <input id="contentItemTitle" type="text" maxlength="160" required placeholder="ชื่อเรื่องหรือหัวข้อ">
+        </label>
+        <label>รายละเอียด (ภาษาไทย) *
+          <textarea id="contentItemDescription" rows="5" maxlength="5000" required placeholder="รายละเอียดเนื้อหา..."></textarea>
+        </label>
+      </div>
+
+      <!-- กลุ่มข้อมูลภาษาลาว -->
+      <div class="content-lang-pane rail-lang-pane" id="contentPaneLo" hidden>
+        <label>ชื่อเรื่อง (ພາສາລາວ)
+          <input id="contentItemTitleLo" type="text" maxlength="160" placeholder="ບໍ່ບັງຄັບ — ຖ້າຫວ່າງຈະສະແດງພາສາໄທແທນ">
+        </label>
+        <label>รายละเอียด (ພາສາລາວ)
+          <textarea id="contentItemDescriptionLo" rows="5" maxlength="5000" placeholder="ບໍ່ບັງຄັບ — ຖ້າຫວ່າງຈະສະແດງພາສາໄທແທນ"></textarea>
+        </label>
+      </div>
+
+      <!-- กลุ่มข้อมูลภาษาอังกฤษ -->
+      <div class="content-lang-pane rail-lang-pane" id="contentPaneEn" hidden>
+        <label>ชื่อเรื่อง (English)
+          <input id="contentItemTitleEn" type="text" maxlength="160" placeholder="Optional — falls back to Thai if blank">
+        </label>
+        <label>รายละเอียด (English)
+          <textarea id="contentItemDescriptionEn" rows="5" maxlength="5000" placeholder="Optional — falls back to Thai if blank"></textarea>
+        </label>
+      </div>
+
       <label id="contentDateField">วันที่กิจกรรมหรือเผยแพร่
         <input id="contentItemDate" type="date">
-      </label>
-      <label>รายละเอียด
-        <textarea id="contentItemDescription" rows="7" maxlength="5000" required></textarea>
       </label>
       <label id="contentImageUrlField">ลิงก์รูปภาพประกอบ
         <input id="contentItemImageUrl" type="url" placeholder="https://...">
@@ -1531,20 +1610,69 @@
       <form id="sectionEditorForm" onsubmit="return false;" style="margin: 16px 0; display: flex; flex-direction: column; gap: 14px;">
         <input type="hidden" id="sectionEditorTargetId">
 
-        <label style="display: flex; flex-direction: column; font-size: 0.85rem; gap: 4px;">
-          <span>หัวข้อย่อย / คำโปรย (Kicker)</span>
-          <input type="text" id="sectionEditorKicker" placeholder="เช่น เรื่องราวแห่งศรัทธา หรือ สู่มรดกโลก" style="padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px;">
-        </label>
+        <!-- แถบเลือกภาษาและปุ่มแปลอัตโนมัติ -->
+        <div class="rail-lang-header-row" style="margin-bottom: 4px;">
+          <div class="rail-lang-switcher" role="tablist">
+            <button type="button" class="sec-lang-tab rail-lang-tab active" data-sec-tab="th">ภาษาไทย (หลัก)</button>
+            <button type="button" class="sec-lang-tab rail-lang-tab" data-sec-tab="lo">ພາສາລາວ (ภาษาลาว)</button>
+            <button type="button" class="sec-lang-tab rail-lang-tab" data-sec-tab="en">English (ภาษาอังกฤษ)</button>
+          </div>
+          <button type="button" class="rail-auto-translate-btn" id="secAutoTranslateBtn" title="กดปุ่มนี้เพื่อแปลเป็นภาษาลาวและภาษาอังกฤษจากข้อความภาษาไทย">
+            <span aria-hidden="true">🌐</span> แปลภาษาลาวและอังกฤษ
+          </button>
+        </div>
+        <div class="rail-translate-status" id="secTranslateStatus" hidden>
+          <span id="secTranslateStatusText"></span>
+        </div>
+        <p class="rail-lang-note" style="margin: 0 0 10px;">กรอกข้อมูลภาษาไทยเป็นหลัก แล้วกดปุ่ม “แปลภาษาลาวและอังกฤษ” เพื่อสร้างคำแปล สามารถกดสลับแท็บเพื่อตรวจสอบหรือแก้ไขเพิ่มเติมได้</p>
 
-        <label style="display: flex; flex-direction: column; font-size: 0.85rem; gap: 4px;">
-          <span>หัวข้อหลัก (Title) *</span>
-          <input type="text" id="sectionEditorTitleInput" required style="padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px; font-weight: 600;">
-        </label>
+        <!-- กลุ่มข้อมูลภาษาไทย -->
+        <div class="sec-lang-pane rail-lang-pane active" id="secPaneTh">
+          <label style="display: flex; flex-direction: column; font-size: 0.85rem; gap: 4px;">
+            <span>หัวข้อย่อย / คำโปรย (ภาษาไทย)</span>
+            <input type="text" id="sectionEditorKicker" placeholder="เช่น เรื่องราวแห่งศรัทธา หรือ สู่มรดกโลก" style="padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px;">
+          </label>
+          <label style="display: flex; flex-direction: column; font-size: 0.85rem; gap: 4px;">
+            <span>หัวข้อหลัก (ภาษาไทย) *</span>
+            <input type="text" id="sectionEditorTitleInput" required style="padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px; font-weight: 600;">
+          </label>
+          <label style="display: flex; flex-direction: column; font-size: 0.85rem; gap: 4px;">
+            <span>เนื้อหารายละเอียด (ภาษาไทย)</span>
+            <textarea id="sectionEditorContent" rows="5" style="padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: inherit; line-height: 1.6; resize: vertical;"></textarea>
+          </label>
+        </div>
 
-        <label style="display: flex; flex-direction: column; font-size: 0.85rem; gap: 4px;">
-          <span>เนื้อหารายละเอียด (Description / Story)</span>
-          <textarea id="sectionEditorContent" rows="6" style="padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: inherit; line-height: 1.6; resize: vertical;"></textarea>
-        </label>
+        <!-- กลุ่มข้อมูลภาษาลาว -->
+        <div class="sec-lang-pane rail-lang-pane" id="secPaneLo" hidden>
+          <label style="display: flex; flex-direction: column; font-size: 0.85rem; gap: 4px;">
+            <span>หัวข้อย่อย / คำโปรย (ພາສາລາວ)</span>
+            <input type="text" id="sectionEditorKickerLo" placeholder="ບໍ່ບັງຄັບ — ຖ້າຫວ່າງຈະສະແດງພາສາໄທແທນ" style="padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px;">
+          </label>
+          <label style="display: flex; flex-direction: column; font-size: 0.85rem; gap: 4px;">
+            <span>หัวข้อหลัก (ພາສາລາວ)</span>
+            <input type="text" id="sectionEditorTitleLo" placeholder="ບໍ່ບັງຄັບ — ຖ້າຫວ່າງຈະສະແດງພາສາໄທແທນ" style="padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px; font-weight: 600;">
+          </label>
+          <label style="display: flex; flex-direction: column; font-size: 0.85rem; gap: 4px;">
+            <span>เนื้อหารายละเอียด (ພາສາລາວ)</span>
+            <textarea id="sectionEditorContentLo" rows="5" placeholder="ບໍ່ບັງຄັບ — ຖ້າຫວ່າງຈະສະແດງພາສາໄທແທນ" style="padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: inherit; line-height: 1.6; resize: vertical;"></textarea>
+          </label>
+        </div>
+
+        <!-- กลุ่มข้อมูลภาษาอังกฤษ -->
+        <div class="sec-lang-pane rail-lang-pane" id="secPaneEn" hidden>
+          <label style="display: flex; flex-direction: column; font-size: 0.85rem; gap: 4px;">
+            <span>หัวข้อย่อย / คำโปรย (English)</span>
+            <input type="text" id="sectionEditorKickerEn" placeholder="Optional — falls back to Thai if blank" style="padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px;">
+          </label>
+          <label style="display: flex; flex-direction: column; font-size: 0.85rem; gap: 4px;">
+            <span>หัวข้อหลัก (English)</span>
+            <input type="text" id="sectionEditorTitleEn" placeholder="Optional — falls back to Thai if blank" style="padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px; font-weight: 600;">
+          </label>
+          <label style="display: flex; flex-direction: column; font-size: 0.85rem; gap: 4px;">
+            <span>เนื้อหารายละเอียด (English)</span>
+            <textarea id="sectionEditorContentEn" rows="5" placeholder="Optional — falls back to Thai if blank" style="padding: 10px; border: 1px solid #ccc; border-radius: 6px; font-family: inherit; line-height: 1.6; resize: vertical;"></textarea>
+          </label>
+        </div>
 
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
           <label style="display: flex; flex-direction: column; font-size: 0.85rem; gap: 4px;">
