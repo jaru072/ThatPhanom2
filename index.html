@@ -44,11 +44,10 @@
       <a href="#projects" data-nav-target="projects"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h6l2 3h8v11H4z"></path></svg><span data-i18n="navResources">โครงการ</span></a>
     </nav>
     <div class="header-actions">
-      <button class="portal-refresh-btn" id="portalRefreshBtn" type="button" title="กดเพื่อรีเฟรชข้อมูลล่าสุด" aria-label="รีเฟรชข้อมูล">
+      <button class="portal-refresh-btn portal-admin-only" id="portalRefreshBtn" type="button" title="กดเพื่อรีเฟรชข้อมูลล่าสุด" aria-label="รีเฟรชข้อมูล" hidden>
         <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
           <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>
         </svg>
-        <span class="refresh-label">รีเฟรช</span>
       </button>
       <button class="account-button" id="accountButton" type="button" data-i18n="accountLoginBtn">เข้าสู่ระบบ</button>
       <div class="language-dropdown" id="languageDropdown">
@@ -388,10 +387,22 @@
           <div><p class="kicker" data-i18n="mediaKicker">ภาพและวิดีโอ</p><h3 data-i18n="mediaTitle">คลังสื่อทั้งหมด</h3><p data-i18n="mediaIntro">รวบรวมสื่อจากทุกหัวข้อของโครงการ ค้นดูเรื่องราวผ่านภาพและวิดีโอได้จากที่เดียว</p></div>
           <div class="resource-admin-actions portal-admin-only" hidden><span class="resource-status"></span><button class="button secondary portal-manage-button" type="button" data-manage-kind="media" data-i18n="generalManageBtn">จัดการ</button></div>
         </header>
-        <div class="resource-filter" id="mediaLibraryFilter" role="group" aria-label="กรองประเภทสื่อ">
-          <button type="button" class="active" data-media-filter="all" data-i18n="filterAll">ทั้งหมด</button>
-          <button type="button" data-media-filter="image" data-i18n="filterImages">รูปภาพ</button>
-          <button type="button" data-media-filter="video" data-i18n="filterVideos">วิดีโอ</button>
+        <div class="resource-filter" id="mediaLibraryFilter" role="group" aria-label="กรองประเภทสื่อ" style="display:flex; flex-wrap:wrap; align-items:center; gap:12px; margin-bottom:18px;">
+          <div class="filter-type-buttons" style="display:inline-flex; gap:8px;">
+            <button type="button" class="active" data-media-filter="all" data-i18n="filterAll">ทั้งหมด</button>
+            <button type="button" data-media-filter="image" data-i18n="filterImages">รูปภาพ</button>
+            <button type="button" data-media-filter="video" data-i18n="filterVideos">วิดีโอ</button>
+          </div>
+          <div id="mediaTopicFilterWrapper" style="display:none; align-items:center; gap:8px;">
+            <label for="mediaTopicSelect" style="font-size:0.85rem; color:var(--muted,#666); white-space:nowrap; margin:0;">หัวข้อ:</label>
+            <select id="mediaTopicSelect" class="input-select" style="min-height:36px; padding:6px 14px; border-radius:999px; border:1px solid rgba(23,19,41,0.18); background:#fff; font-size:0.85rem; cursor:pointer; outline:none; color:inherit;">
+              <option value="all">ทุกหัวข้อ</option>
+            </select>
+          </div>
+          <label id="mediaShowCaptionLabel" style="display:inline-flex; align-items:center; gap:6px; font-size:0.85rem; color:inherit; cursor:pointer; margin:0; margin-left:auto; user-select:none;">
+            <input type="checkbox" id="mediaShowCaptionCheckbox" checked style="width:16px; height:16px; cursor:pointer; accent-color:var(--gold,#cca43b);">
+            <span>แสดงข้อความ</span>
+          </label>
         </div>
         <div class="portal-media-grid" id="portalMediaGrid"><p class="resource-empty" data-i18n="emptyMedia">กำลังเตรียมคลังสื่อ...</p></div>
       </section>

@@ -871,7 +871,6 @@ function _initUiHelpers() {
         if (!v.paused) {
           v.pause();
         }
-        v.currentTime = 0;
       } catch (_) {}
     });
 
@@ -882,6 +881,8 @@ function _initUiHelpers() {
 
       const src = ifr.getAttribute("src") || ifr.src || "";
       if (!src || src === "about:blank") return;
+
+      const isYt = src.includes("youtube.com") || src.includes("youtube-nocookie.com") || src.includes("youtu.be");
 
       // บันทึก URL ต้นฉบับที่สะอาด (ตัด autoplay ออก) ไว้เสมอ
       if (!ifr.dataset.originalSrc || ifr.dataset.originalSrc === "about:blank") {
@@ -900,36 +901,16 @@ function _initUiHelpers() {
         ifr.contentWindow.postMessage(JSON.stringify({ event: "command", func: "stopVideo", args: [] }), "*");
       } catch (_) {}
 
-      // ปลดการเชื่อมต่อ iframe ทันที 100% เพื่อตัดสัญญาณเสียงและวิดีโอที่กำลังเล่นอยู่ทุกประเภท (รวมทั้ง Facebook Reel/Video)
-      ifr.src = "about:blank";
-      ifr.dataset.mediaActivated = "false";
-      ifr.dataset.mediaStopped = "true";
-
-      const slide = ifr.closest(".media-slide");
-      const isDrive = src.includes("drive.google.com");
-      const isTikTok = src.includes("tiktok.com");
-      const isYt = src.includes("youtube.com") || src.includes("youtube-nocookie.com");
-
-      // คืนปุ่มกดชมวิดีโอสำหรับ YouTube / Drive / TikTok หากมี
-      if (isYt || isDrive || isTikTok) {
-        const targetSlide = slide || ifr.closest(".media-slide");
-        if (targetSlide && !targetSlide.querySelector(".media-play-button")) {
-          const playBtn = document.createElement("button");
-          playBtn.type = "button";
-          playBtn.className = "media-play-button";
-          playBtn.setAttribute("aria-label", "ชมวิดีโอ");
-          playBtn.innerHTML = '<span aria-hidden="true">▶</span> ชมวิดีโอ';
-          playBtn.addEventListener("click", (e) => {
-            e.stopPropagation();
-            ifr.dataset.mediaActivated = "true";
-            ifr.dataset.mediaStopped = "false";
-            const orig = ifr.dataset.originalSrc || src;
-            const delim = orig.includes("?") ? "&" : "?";
-            ifr.src = orig + delim + "autoplay=1&rel=0";
-            playBtn.remove();
-          });
-          targetSlide.appendChild(playBtn);
+      // สำหรับ YouTube: คำสั่ง postMessage ด้านบนสั่งหยุดเล่นและตัดเสียงเรียบร้อยแล้ว
+      // ห้ามเปลี่ยน src เป็น about:blank และห้ามสร้างปุ่มเล่นซ้อนทับโดยเด็ดขาด
+      // เพื่อคงตัวเล่น YouTube ดั้งเดิมไว้ ไม่ให้เกิดจอดำ จอขาว หรือข้อผิดพลาดเมื่อเลื่อนหน้าจอกลับมา
+      if (isYt) {
+        const slide = ifr.closest(".media-slide, .media-stage, .portal-media-visual") || container;
+        if (slide) {
+          const oldBtn = slide.querySelector(".media-play-button");
+          if (oldBtn) oldBtn.remove();
         }
+        return;
       }
     });
   }
@@ -990,6 +971,11 @@ function _initUiHelpers() {
                 if (orig && (i.src === "about:blank" || !i.src || i.getAttribute("src") === "about:blank")) {
                   i.src = orig;
                 }
+              }
+              const parentBox = i.closest(".media-slide, .media-stage, .portal-media-visual") || target;
+              if (parentBox) {
+                const pb = parentBox.querySelector(".media-play-button");
+                if (pb) pb.remove();
               }
             });
           }
@@ -1067,6 +1053,18 @@ function _initUiHelpers() {
         const ifrs = el.tagName === "IFRAME" ? [el] : Array.from(el.querySelectorAll("iframe"));
         ifrs.forEach((i) => {
           i.dataset.mediaStopped = "false";
+          const parentSlide = i.closest(".media-slide");
+          if (!parentSlide || parentSlide.classList.contains("active")) {
+            const orig = i.dataset.originalSrc;
+            if (orig && (i.src === "about:blank" || !i.src || i.getAttribute("src") === "about:blank")) {
+              i.src = orig;
+            }
+          }
+          const parentBox = i.closest(".media-slide, .media-stage, .portal-media-visual") || el;
+          if (parentBox) {
+            const pb = parentBox.querySelector(".media-play-button");
+            if (pb) pb.remove();
+          }
         });
       }
     });
@@ -1114,8 +1112,33 @@ function _initUiHelpers() {
 
   // ลงทะเบียนองค์ประกอบเป้าหมายเข้าสู่ตัวตรวจจับระดับที่ 1
   function registerTargets(root) {
+    const scope = root || document;
+
+    // ทำความสะอาดปุ่มจำลองที่อาจตกค้างอยู่ใน DOM
+    scope.querySelectorAll(".media-play-button").forEach((btn) => btn.remove());
+
+    // ตรวจสอบและเปิดใช้งาน enablejsapi=1 สำหรับ iframe ยูทูบ เพื่อให้ postMessage ควบคุมการหยุดเล่นได้เสมอ
+    const ifrs = scope.querySelectorAll("iframe");
+    ifrs.forEach((ifr) => {
+      try {
+        const src = ifr.getAttribute("src") || ifr.src || "";
+        const isYt = src.includes("youtube.com") || src.includes("youtube-nocookie.com") || src.includes("youtu.be");
+        if (isYt && src !== "about:blank" && !src.includes("enablejsapi=1")) {
+          const delim = src.includes("?") ? "&" : "?";
+          ifr.src = src + delim + "enablejsapi=1";
+        }
+        if (isYt && (!ifr.dataset.originalSrc || ifr.dataset.originalSrc === "about:blank")) {
+          ifr.dataset.originalSrc = ifr.getAttribute("src") || ifr.src;
+        }
+        // หาก iframe เคยถูกตั้งเป็น about:blank ให้คืนค่า URL ดั้งเดิมทันที
+        if (isYt && (src === "about:blank" || !src) && ifr.dataset.originalSrc) {
+          ifr.src = ifr.dataset.originalSrc;
+        }
+      } catch (_) {}
+    });
+
     if (!sightObserver) return;
-    const targets = (root || document).querySelectorAll(TARGET_SELECTOR);
+    const targets = scope.querySelectorAll(TARGET_SELECTOR);
     targets.forEach((target) => {
       // ไม่ลงทะเบียนองค์ประกอบที่อยู่ใน dialog ขยายวิดีโอ
       if (isElementInOpenDialog(target)) return;
