@@ -1,3 +1,42 @@
+// Circular-safe JSON.stringify guard
+(function() {
+  if (window.__jsonSafeInstalled) return;
+  window.__jsonSafeInstalled = true;
+  const _orig = JSON.stringify;
+  JSON.stringify = function(val, replacer, space) {
+    const seen = new WeakSet();
+    const safeReplacer = function(k, v) {
+      if (v !== null && typeof v === "object") {
+        if (typeof v.toDate === "function") {
+          try { return v.toDate().toISOString(); } catch (_) {}
+        }
+        if (typeof v.path === "string" && v.firestore) return v.path;
+        if (seen.has(v)) return undefined;
+        seen.add(v);
+      }
+      if (typeof replacer === "function") return replacer.call(this, k, v);
+      return v;
+    };
+    try {
+      if (Array.isArray(replacer)) return _orig(val, replacer, space);
+      return _orig(val, safeReplacer, space);
+    } catch (_) {
+      try {
+        const seen2 = new WeakSet();
+        return _orig(val, (k, v) => {
+          if (v !== null && typeof v === "object") {
+            if (seen2.has(v)) return undefined;
+            seen2.add(v);
+          }
+          return v;
+        }, space);
+      } catch (__) {
+        return "{}";
+      }
+    }
+  };
+})();
+
 // Internationalization & Language Switcher
 const I18N_TH = {
   "trialLabel": "รุ่นทดลอง",
@@ -896,9 +935,9 @@ function _initUiHelpers() {
       // พยายามส่งคำสั่ง pause & stop ผ่าน postMessage
       try {
         ifr.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":""}', "*");
-        ifr.contentWindow.postMessage(JSON.stringify({ event: "command", func: "pauseVideo", args: [] }), "*");
+        ifr.contentWindow.postMessage('{"event":"command","func":"pauseVideo","args":[]}', "*");
         ifr.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":""}', "*");
-        ifr.contentWindow.postMessage(JSON.stringify({ event: "command", func: "stopVideo", args: [] }), "*");
+        ifr.contentWindow.postMessage('{"event":"command","func":"stopVideo","args":[]}', "*");
       } catch (_) {}
 
       // สำหรับ YouTube: คำสั่ง postMessage ด้านบนสั่งหยุดเล่นและตัดเสียงเรียบร้อยแล้ว
@@ -1272,6 +1311,132 @@ function _initUiHelpers() {
     registerTargets();
     scheduleCoordinateCheck();
   }
+})();
+
+// ============================================================================
+// ตัวควบคุมสไลเดอร์โครงการบูรณะสระมุจลินท์ และสไลเดอร์แบบกำหนดเอง
+// ============================================================================
+(function initMuchalindaCustomSliders() {
+  function setupSlider(slider) {
+    if (!slider || slider.dataset.customSliderActive === "true") return;
+    slider.dataset.customSliderActive = "true";
+
+    const slides = Array.from(slider.querySelectorAll(".media-slide"));
+    if (slides.length <= 1) return;
+
+    const prevBtn = slider.querySelector(".slider-arrow.prev");
+    const nextBtn = slider.querySelector(".slider-arrow.next");
+    const counter = slider.querySelector(".slider-counter");
+
+    let currentIndex = slides.findIndex((s) => s.classList.contains("active"));
+    if (currentIndex < 0) currentIndex = 0;
+
+    function goToSlide(idx) {
+      if (idx < 0) idx = slides.length - 1;
+      if (idx >= slides.length) idx = 0;
+      currentIndex = idx;
+
+      slides.forEach((s, i) => {
+        s.classList.toggle("active", i === currentIndex);
+      });
+
+      if (counter) {
+        counter.textContent = `${currentIndex + 1} / ${slides.length}`;
+        counter.setAttribute("aria-label", `สไลด์ที่ ${currentIndex + 1} จากทั้งหมด ${slides.length}`);
+      }
+    }
+
+    if (prevBtn) {
+      prevBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        goToSlide(currentIndex - 1);
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        goToSlide(currentIndex + 1);
+      });
+    }
+
+    if (counter) {
+      counter.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        goToSlide(currentIndex + 1);
+      });
+      counter.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          goToSlide(currentIndex + 1);
+        }
+      });
+    }
+
+    // รองรับปุ่มลูกศรคีย์บอร์ด ซ้าย/ขวา
+    slider.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        goToSlide(currentIndex - 1);
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        goToSlide(currentIndex + 1);
+      }
+    });
+  }
+
+  function scanSliders() {
+    document.querySelectorAll("[data-slider-custom]").forEach(setupSlider);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", scanSliders);
+  } else {
+    scanSliders();
+  }
+  window.addEventListener("load", scanSliders);
+
+  document.addEventListener(
+    "click",
+    (e) => {
+      const arrow = e.target.closest(".slider-arrow.prev, .slider-arrow.next, .slider-counter");
+      if (arrow) {
+        const slider = arrow.closest("[data-slider-custom]");
+        if (slider && slider.dataset.customSliderActive !== "true") {
+          setupSlider(slider);
+        }
+      }
+    },
+    true
+  );
+  // รองรับการคลิกปุ่ม "อัพเดท" (media-update-button) ของกล่องสไลด์และกล่องการ์ดโครงการสระมุจลินท์
+  document.addEventListener("click", (e) => {
+    const updateBtn = e.target.closest(".media-update-button");
+    if (!updateBtn) return;
+    const section = updateBtn.dataset.section;
+    if (!section) return;
+
+    if (typeof window._openMediaManager === "function") {
+      e.preventDefault();
+      e.stopPropagation();
+      window._openMediaManager(section);
+    } else {
+      const manageDlg = document.getElementById("manageDialog");
+      if (manageDlg && typeof manageDlg.showModal === "function") {
+        e.preventDefault();
+        e.stopPropagation();
+        const titleEl = document.getElementById("manageDialogTitle");
+        const secSelect = document.getElementById("mediaSection");
+        const secNames = window._MEDIA_SECTION_NAMES || {};
+        if (titleEl) titleEl.textContent = `อัพเดท — ${secNames[section] || section}`;
+        if (secSelect) secSelect.value = section;
+        manageDlg.showModal();
+      }
+    }
+  });
 })();
 
 if (document.readyState === "loading") {

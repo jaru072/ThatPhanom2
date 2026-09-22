@@ -16,6 +16,51 @@
 
 
 
+  <script>
+    (function() {
+      const _origStringify = JSON.stringify;
+      JSON.stringify = function(value, replacer, space) {
+        const seen = new WeakSet();
+        const safeReplacer = function(key, val) {
+          if (val !== null && typeof val === "object") {
+            if (typeof val.toDate === "function") {
+              try { return val.toDate().toISOString(); } catch (_) {}
+            }
+            if (typeof val.path === "string" && val.firestore) {
+              return val.path;
+            }
+            if (seen.has(val)) {
+              return undefined;
+            }
+            seen.add(val);
+          }
+          if (typeof replacer === "function") {
+            return replacer.call(this, key, val);
+          }
+          return val;
+        };
+        try {
+          if (Array.isArray(replacer)) {
+            return _origStringify(value, replacer, space);
+          }
+          return _origStringify(value, safeReplacer, space);
+        } catch (e) {
+          try {
+            const seen2 = new WeakSet();
+            return _origStringify(value, function(k, v) {
+              if (v !== null && typeof v === "object") {
+                if (seen2.has(v)) return undefined;
+                seen2.add(v);
+              }
+              return v;
+            }, space);
+          } catch (_) {
+            return "{}";
+          }
+        }
+      };
+    })();
+  </script>
   <script type="module" crossorigin src="/assets/index-D4DSCKUz.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/index-dX7NzDAm.css">
 </head>
@@ -166,27 +211,59 @@
           <a href="#muchalinda-progress"><span aria-hidden="true">⌁</span><b data-i18n="projectProgress">ความคืบหน้า</b></a>
           <a href="#muchalinda-donation"><span aria-hidden="true">♡</span><b data-i18n="projectDonation">ร่วมบุญ</b></a>
         </nav>
-        <div class="support-project-content" id="muchalinda-overview">
-          <article class="support-project-story has-admin-gear" id="muchalinda-history">
-            <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="muchalindaHistory" title="จัดการความเป็นมาโครงการสระมุจลินท์" aria-label="จัดการความเป็นมาโครงการสระมุจลินท์" hidden>⚙</button>
-            <div class="support-project-card-title"><span aria-hidden="true">▤</span><h3 data-i18n="projectHistory">ความเป็นมา</h3></div>
-            <div class="support-project-story-body">
-              <figure class="support-project-story-image">
-                <img src="/assets/muchalinda-hero-C-214kxm.webp" alt="ภาพประกอบแนวคิดสระมุจลินท์เมื่อปรับปรุงภูมิทัศน์แล้ว">
-                <figcaption data-i18n="muchalindaConceptCaption">ภาพประกอบแนวคิด ไม่ใช่ภาพบันทึกสภาพปัจจุบัน</figcaption>
-              </figure>
-              <div><p class="kicker" data-i18n="projectHistoryKicker">กว่า 1,000 ปีแห่งศรัทธา</p><h4 data-i18n="muchalindaHistoryTitle">ความเป็นมาและความสำคัญ</h4><p data-i18n="muchalindaHistoryText">สระมุจลินท์ หรือสระพังทอง ตั้งอยู่ทางทิศตะวันตกเฉียงใต้ขององค์พระธาตุพนม ตามตำนานอุรังคธาตุ ชุมชนในอดีตขุดสระเพื่อนำดินไปทำอิฐสำหรับสร้างและบูรณะองค์พระธาตุพนม ต่อมาสระแห่งนี้ยังเป็นแหล่งน้ำของชุมชนและได้รับการเคารพว่าเป็นบ่อน้ำศักดิ์สิทธิ์</p></div>
+        <div class="support-project-content muchalinda-showcase-section" id="muchalinda-overview">
+          <!-- กล่องสไลด์ข้างบน สไตล์หมุดหมายสำคัญ -->
+          <div class="milestones-overview-media muchalinda-overview-media" id="muchalinda-history" aria-label="สไลด์ภาพโครงการบูรณะสระมุจลินท์">
+            <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="muchalindaHistory" title="จัดการสื่อสไลด์โครงการสระมุจลินท์" aria-label="จัดการสื่อสไลด์โครงการสระมุจลินท์" hidden>⚙</button>
+            <button class="media-update-button milestones-overview-update role-only" type="button" data-section="muchalindaShowcase" title="อัพเดทรูปภาพหรือวิดีโอ" aria-label="อัพเดทสื่อ: สไลด์ภาพและแนวคิดโครงการสระมุจลินท์" hidden>อัพเดท</button>
+            <div class="media-slider milestones-overview-slider" id="muchalindaShowcaseSlider" data-slider="muchalindaShowcase" data-slider-custom="muchalindaShowcase" aria-label="สไลด์ภาพและแนวคิดโครงการสระมุจลินท์" tabindex="0">
+              <div class="media-stage">
+                <figure class="media-slide active" data-slide-index="0">
+                  <img src="/assets/muchalinda-hero-C-214kxm.webp" alt="ภาพจำลองแนวคิดโครงการบูรณะสระมุจลินท์ สระพังทอง" loading="lazy">
+                  <figcaption class="media-caption">
+                    <h4 style="color:var(--gold);margin:0 0 6px;font-size:1.2rem;letter-spacing:0.02em;">โครงการบูรณะสระมุจลินท์ (สระพังทอง)</h4>
+                    <p style="margin:0;color:#f0ecf6;font-size:0.92rem;line-height:1.55;">พลิกฟื้นแหล่งน้ำศักดิ์สิทธิ์อายุกว่า 1,000 ปี เพื่ออนุรักษ์ภูมิทัศน์ประวัติศาสตร์และสนับสนุนเส้นทางพระธาตุพนมสู่มรดกโลก</p>
+                  </figcaption>
+                </figure>
+                <figure class="media-slide" data-slide-index="1">
+                  <img src="/assets/muchalinda-hero-C-214kxm.webp" alt="สระน้ำศักดิ์สิทธิ์และแหล่งดินอิฐโบราณพระธาตุพนม" loading="lazy" style="filter:brightness(0.9) contrast(1.08);">
+                  <figcaption class="media-caption">
+                    <h4 style="color:var(--gold);margin:0 0 6px;font-size:1.2rem;letter-spacing:0.02em;">สระน้ำศักดิ์สิทธิ์และดินอิฐพันปีแห่งภูกำพร้า</h4>
+                    <p style="margin:0;color:#f0ecf6;font-size:0.92rem;line-height:1.55;">ตามตำนานอุรังคธาตุ ชุมชนโบราณขุดสระเพื่อนำดินไปทำอิฐสร้างและบูรณะองค์พระธาตุพนม ต่อเนื่องเป็นแหล่งน้ำศักดิ์สิทธิ์คู่สองฝั่งโขง</p>
+                  </figcaption>
+                </figure>
+              </div>
+              <button type="button" class="slider-arrow prev" aria-label="ภาพก่อนหน้า">‹</button>
+              <button type="button" class="slider-arrow next" aria-label="ภาพถัดไป">›</button>
+              <span class="slider-counter" role="button" tabindex="0" title="คลิกเพื่อเปลี่ยนสไลด์" aria-label="สไลด์ที่ 1 จากทั้งหมด 2">1 / 2</span>
             </div>
-          </article>
-          <aside class="support-project-facts has-admin-gear" id="muchalindaFacts" aria-label="ข้อมูลโครงการ">
-            <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="muchalindaFacts" title="จัดการข้อมูลโครงการสระมุจลินท์" aria-label="จัดการข้อมูลโครงการสระมุจลินท์" hidden>⚙</button>
-            <div class="support-project-card-title"><span aria-hidden="true">▤</span><h3 data-i18n="projectFacts">ข้อมูลโครงการ</h3></div>
-            <ul>
-              <li><strong data-i18n="projectLocationLabel">สถานที่</strong><span data-i18n="projectLocation">วัดพระธาตุพนมวรมหาวิหาร จังหวัดนครพนม</span></li>
-              <li><strong data-i18n="projectStartLabel">เริ่มดำเนินการ</strong><span data-i18n="projectStart">1 พฤษภาคม 2568</span></li>
-              <li><strong data-i18n="projectPurposeLabel">ความเชื่อมโยง</strong><span data-i18n="projectPurpose">อนุรักษ์ภูมิทัศน์และคุณค่าที่เกี่ยวเนื่องกับพระธาตุพนม</span></li>
-            </ul>
-          </aside>
+          </div>
+
+          <!-- กล่องการ์ด 2 กล่องด้านล่าง เหมือนหัวข้อย่อย หมุดหมายสำคัญ หน้าหลัก -->
+          <ol class="timeline muchalinda-cards-grid" id="muchalindaFacts" aria-label="หมุดหมายสำคัญโครงการบูรณะสระมุจลินท์">
+            <li class="milestone-media-card" id="muchalindaCardHistory">
+              <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="muchalindaHistory" title="จัดการเนื้อหาความเป็นมา" aria-label="จัดการเนื้อหาความเป็นมา" hidden>⚙</button>
+              <div class="milestone-card-media" id="muchalindaCardHistoryMedia"></div>
+
+              <b class="milestone-number">1</b>
+              <div class="milestone-card-copy">
+                <time>กว่า 1,000 ปีแห่งศรัทธา</time>
+                <strong>ความเป็นมาและความสำคัญ</strong>
+                <span>ตามตำนานอุรังคธาตุ สระมุจลินท์ หรือสระพังทอง ขุดขึ้นเพื่อนำดินไปทำอิฐสร้างองค์พระธาตุพนม และเป็นแหล่งน้ำศักดิ์สิทธิ์ของชุมชนสองฝั่งโขงสืบเนื่องมาอย่างยาวนาน</span>
+              </div>
+            </li>
+            <li class="milestone-media-card" id="muchalindaCardRestoration">
+              <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="muchalindaFacts" title="จัดการเนื้อหาและแผนงาน" aria-label="จัดการเนื้อหาและแผนงาน" hidden>⚙</button>
+              <div class="milestone-card-media" id="muchalindaCardRestorationMedia"></div>
+
+              <b class="milestone-number">2</b>
+              <div class="milestone-card-copy">
+                <time>พ.ศ. 2568 เป็นต้นไป</time>
+                <strong>การฟื้นฟูและอนุรักษ์ภูมิทัศน์</strong>
+                <span>ฟื้นฟูระบบน้ำ ปรับปรุงภูมิทัศน์โดยรอบให้ร่มรื่น และประดิษฐานพระพุทธอุรังคธาตุพนมนาคา มหาจักรีสิรินธร ณ เกาะกลางสระ เพื่อสืบสานพุทธศรัทธาและรองรับผู้มาเยือนจากทั่วโลก</span>
+              </div>
+            </li>
+          </ol>
         </div>
         <section class="support-project-objectives has-admin-gear" id="muchalinda-objectives" aria-labelledby="muchalindaObjectivesTitle">
           <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="muchalindaObjectives" title="จัดการเป้าหมายการบูรณะสระมุจลินท์" aria-label="จัดการเป้าหมายการบูรณะสระมุจลินท์" hidden>⚙</button>
@@ -716,6 +793,9 @@
           <option value="milestones">หมุดหมายสำคัญ</option>
           <option value="videos">คลังวิดีโอจาก Google Drive / Facebook / YouTube</option>
           <option value="muchalindaHero">ภาพนำ — โครงการบูรณะสระมุจลินท์</option>
+          <option value="muchalindaShowcase">สไลด์ภาพและแนวคิด — โครงการบูรณะสระมุจลินท์</option>
+          <option value="muchalindaCardHistory">ความเป็นมาและความสำคัญ (สระมุจลินท์ การ์ด 1)</option>
+          <option value="muchalindaCardRestoration">การฟื้นฟูและอนุรักษ์ภูมิทัศน์ (สระมุจลินท์ การ์ด 2)</option>
           <option value="muchalindaDonation">ร่วมบุญ — โครงการบูรณะสระมุจลินท์</option>
         </select>
       </label>
