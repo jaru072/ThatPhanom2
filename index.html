@@ -64,6 +64,91 @@
   <script type="module" crossorigin src="/assets/index-D4DSCKUz.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/index-dX7NzDAm.css">
   <style id="interactive-sitemap-styles">
+    /* Compact 5-character Login Button */
+    .account-button[data-user-logged-in="true"],
+    .social-topbar .account-button[data-user-logged-in="true"] {
+      max-width: 68px !important;
+      min-width: 48px !important;
+      padding: 4px 8px !important;
+      font-size: 0.8rem !important;
+      text-align: center !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: clip !important;
+    }
+
+    /* Google Translate styles - anti-slop, clean layout without banner offset */
+    body {
+      top: 0px !important;
+      position: static !important;
+    }
+    .skiptranslate iframe,
+    .goog-te-banner-frame,
+    #goog-gt-tt,
+    .goog-te-balloon-frame {
+      display: none !important;
+      visibility: hidden !important;
+    }
+    .goog-text-highlight {
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+    #google_translate_element {
+      display: none !important;
+    }
+    .global-lang-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border: 1px solid rgba(23, 19, 41, 0.12);
+      border-radius: 999px;
+      background: #fdfbf7;
+      color: #3c3745;
+      font-size: 0.82rem;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      white-space: nowrap;
+    }
+    .global-lang-chip:hover {
+      border-color: #9f731c;
+      background: #fbf3dc;
+      color: #7c2637;
+      transform: translateY(-1px);
+    }
+    .global-lang-chip.active {
+      border-color: #9f731c;
+      background: #9f731c;
+      color: #fff;
+      font-weight: 600;
+    }
+    .global-lang-row-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 7px 12px;
+      border: 1px solid rgba(23, 19, 41, 0.08);
+      border-radius: 8px;
+      background: #fff;
+      color: #3c3745;
+      font-size: 0.82rem;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.15s ease;
+    }
+    .global-lang-row-btn:hover {
+      border-color: #9f731c;
+      background: #faf6ed;
+      color: #7c2637;
+    }
+    .global-lang-row-btn.active {
+      border-color: #9f731c;
+      background: #fdf3d7;
+      color: #6b4a13;
+      font-weight: 600;
+    }
+
     /* Interactive Site Map (Admin Drag & Drop) Styles */
     .tree-view-switcher {
       display: flex;
@@ -574,6 +659,11 @@
           <button class="language-option active" type="button" role="option" data-lang="th" aria-selected="true">ไทย</button>
           <button class="language-option" type="button" role="option" data-lang="lo" aria-selected="false">ລາວ</button>
           <button class="language-option" type="button" role="option" data-lang="en" aria-selected="false">English</button>
+          <div style="height: 1px; background: rgba(23,19,41,0.08); margin: 4px 0;"></div>
+          <button class="language-option-global" id="openGlobalTranslateOption" type="button" style="display: flex; align-items: center; gap: 8px; width: 100%; border: 0; border-radius: 8px; padding: 9px 12px; background: rgba(159,115,28,0.08); color: #7c2637; font-weight: 600; font-size: 0.84rem; cursor: pointer; text-align: left;">
+            <span aria-hidden="true" style="font-size: 1.05rem;">🌐</span>
+            <span>ภาษาอื่น ๆ ทั่วโลก...</span>
+          </button>
         </div>
       </div>
     </div>
@@ -2325,6 +2415,63 @@
     </div>
   </dialog>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- หน้าต่างเลือกแปลภาษาทั่วโลก (Google Translate) -->
+  <dialog class="manage-dialog" id="globalTranslateDialog" aria-labelledby="globalTranslateTitle" style="max-width: 680px; width: 94vw;">
+    <div class="dialog-shell" style="max-height: 85vh; display: flex; flex-direction: column;">
+      <div class="dialog-head">
+        <div>
+          <p class="eyebrow" style="color: #9f731c; font-weight: 600;">ระบบแปลภาษาอัตโนมัติ</p>
+          <h2 id="globalTranslateTitle" style="display: flex; align-items: center; gap: 8px; margin: 2px 0 4px;">
+            <span aria-hidden="true">🌐</span> แปลภาษาทั่วโลก
+          </h2>
+          <span style="font-size: 0.85rem; color: #625d69;">เลือกภาษาที่ต้องการแปลเนื้อหาทั้งเว็บไซต์ได้มากกว่า 100 ภาษาผ่านระบบ Google Translate</span>
+        </div>
+        <button class="icon-button" id="closeGlobalTranslateBtn" type="button" aria-label="ปิดหน้าต่าง">×</button>
+      </div>
+
+      <div style="padding: 12px 0 6px; display: flex; flex-direction: column; gap: 12px; overflow: hidden; flex: 1;">
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+          <input type="search" id="globalLangSearchInput" placeholder="พิมพ์ชื่อภาษา เช่น จีน, ญี่ปุ่น, เกาหลี, ฝรั่งเศส, Spanish..." style="flex: 1; min-width: 200px; min-height: 42px; border-radius: 8px; border: 1px solid rgba(23,19,41,0.18); padding: 8px 14px; font-size: 0.9rem;">
+          <button class="button secondary" id="resetTranslateBtn" type="button" style="min-height: 42px; padding: 0 14px; font-size: 0.84rem; white-space: nowrap; border-color: rgba(124,38,55,0.3); color: #7c2637;">
+            ↺ คืนค่าภาษาเดิม (ไทย)
+          </button>
+        </div>
+
+        <div id="globalTranslateActiveBanner" style="display: none; padding: 10px 14px; border-radius: 8px; background: #fdf6e7; border: 1px solid #d4af37; font-size: 0.86rem; color: #6b4a13;">
+          กำลังแสดงผลการแปลภาษา: <strong id="globalTranslateActiveLang"></strong>
+        </div>
+
+        <div>
+          <p style="margin: 0 0 8px; font-size: 0.82rem; font-weight: 600; color: #8a6370; text-transform: uppercase;">ภาษายอดนิยม (กดเพื่อแปลทันที)</p>
+          <div id="popularLangChips" style="display: flex; flex-wrap: wrap; gap: 6px;"></div>
+        </div>
+
+        <div style="flex: 1; min-height: 0; display: flex; flex-direction: column;">
+          <p style="margin: 6px 0 8px; font-size: 0.82rem; font-weight: 600; color: #8a6370; text-transform: uppercase;">ภาษาทั้งหมดทั่วโลก (<span id="globalLangCount">100+</span> ภาษา)</p>
+          <div id="allLangList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 6px; overflow-y: auto; max-height: 36vh; padding: 2px 4px 6px 2px;"></div>
+        </div>
+      </div>
+
+      <div class="dialog-actions" style="margin-top: 10px; padding-top: 12px; border-top: 1px solid rgba(23,19,41,0.08); display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.76rem; color: #8a8594;">ระบบแปลภาษาอัตโนมัติ Google Translate สำหรับเว็บไซต์</span>
+        <button class="button secondary" id="cancelGlobalTranslateBtn" type="button">ปิดหน้าต่าง</button>
+      </div>
+    </div>
+  </dialog>
+
+  <div id="google_translate_element" style="display:none;"></div>
+  <script>
+    window.googleTranslateElementInit = function() {
+      if (window.google && window.google.translate) {
+        new window.google.translate.TranslateElement({
+          pageLanguage: 'th',
+          autoDisplay: false
+        }, 'google_translate_element');
+      }
+    };
+  </script>
+  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async defer></script>
 
   <script src="/script.js"></script>
 </body>

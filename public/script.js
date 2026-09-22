@@ -675,6 +675,9 @@ const I18N_LANGS = {
 };
 
 function setLanguage(lang) {
+  if (typeof window.resetGlobalTranslate === "function" && (lang === "th" || lang === "lo" || lang === "en")) {
+    window.resetGlobalTranslate(false);
+  }
   const config = I18N_LANGS[lang] || I18N_LANGS.th;
   document.documentElement.lang = lang;
   
@@ -695,7 +698,9 @@ function setLanguage(lang) {
     if (el.id === "accountButton") {
       if (isUserLoggedIn) {
         if (authUser && (authUser.displayName || authUser.email)) {
-          el.textContent = authUser.displayName || authUser.email;
+          const rawN = (authUser.displayName || authUser.email || "").trim();
+          el.textContent = rawN.length > 5 ? rawN.slice(0, 5) : rawN;
+          el.title = rawN;
         }
         return;
       }
@@ -773,6 +778,255 @@ window.I18N_LO = I18N_LO;
 window.I18N_EN = I18N_EN;
 window.setLanguage = setLanguage;
 
+const GLOBAL_LANGUAGES = [
+  { code: "zh-CN", nameTh: "จีน (ตัวย่อ)", native: "简体中文", flag: "🇨🇳", popular: true },
+  { code: "zh-TW", nameTh: "จีน (ตัวเต็ม)", native: "繁體中文", flag: "🇹🇼", popular: true },
+  { code: "ja", nameTh: "ญี่ปุ่น", native: "日本語", flag: "🇯🇵", popular: true },
+  { code: "ko", nameTh: "เกาหลี", native: "한국어", flag: "🇰🇷", popular: true },
+  { code: "vi", nameTh: "เวียดนาม", native: "Tiếng Việt", flag: "🇻🇳", popular: true },
+  { code: "fr", nameTh: "ฝรั่งเศส", native: "Français", flag: "🇫🇷", popular: true },
+  { code: "de", nameTh: "เยอรมัน", native: "Deutsch", flag: "🇩🇪", popular: true },
+  { code: "es", nameTh: "สเปน", native: "Español", flag: "🇪🇸", popular: true },
+  { code: "ru", nameTh: "รัสเซีย", native: "Русский", flag: "🇷🇺", popular: true },
+  { code: "ar", nameTh: "อาหรับ", native: "العربية", flag: "🇸🇦", popular: true },
+  { code: "id", nameTh: "อินโดนีเซีย", native: "Bahasa Indonesia", flag: "🇮🇩", popular: true },
+  { code: "my", nameTh: "พม่า", native: "မြန်မာ", flag: "🇲🇲", popular: true },
+  { code: "km", nameTh: "กัมพูชา / เขมร", native: "ភាសាខ្មែរ", flag: "🇰🇭", popular: true },
+  { code: "hi", nameTh: "ฮินดี", native: "हिन्दी", flag: "🇮🇳", popular: true },
+  { code: "it", nameTh: "อิตาลี", native: "Italiano", flag: "🇮🇹", popular: true },
+  { code: "pt", nameTh: "โปรตุเกส", native: "Português", flag: "🇵🇹", popular: true },
+  { code: "ms", nameTh: "มลายู", native: "Bahasa Melayu", flag: "🇲🇾" },
+  { code: "nl", nameTh: "ดัตช์", native: "Nederlands", flag: "🇳🇱" },
+  { code: "pl", nameTh: "โปแลนด์", native: "Polski", flag: "🇵🇱" },
+  { code: "tr", nameTh: "ตุรกี", native: "Türkçe", flag: "🇹🇷" },
+  { code: "sv", nameTh: "สวีเดน", native: "Svenska", flag: "🇸🇪" },
+  { code: "no", nameTh: "นอร์เวย์", native: "Norsk", flag: "🇳🇴" },
+  { code: "da", nameTh: "เดนมาร์ก", native: "Dansk", flag: "🇩🇰" },
+  { code: "fi", nameTh: "ฟินแลนด์", native: "Suomi", flag: "🇫🇮" },
+  { code: "cs", nameTh: "เช็ก", native: "Čeština", flag: "🇨🇿" },
+  { code: "el", nameTh: "กรีก", native: "Ελληνικά", flag: "🇬🇷" },
+  { code: "he", nameTh: "ฮีบรู", native: "עברית", flag: "🇮🇱" },
+  { code: "bn", nameTh: "เบงกาลี", native: "বাংলা", flag: "🇧🇩" },
+  { code: "ta", nameTh: "ทมิฬ", native: "தமிழ்", flag: "🇮🇳" },
+  { code: "te", nameTh: "เตลูกู", native: "తెలుగు", flag: "🇮🇳" },
+  { code: "ur", nameTh: "อูรดู", native: "اردو", flag: "🇵🇰" },
+  { code: "fa", nameTh: "เปอร์เซีย", native: "فارسی", flag: "🇮🇷" },
+  { code: "tl", nameTh: "ฟิลิปปินส์", native: "Tagalog", flag: "🇵🇭" },
+  { code: "uk", nameTh: "ยูเครน", native: "Українська", flag: "🇺🇦" },
+  { code: "hu", nameTh: "ฮังการี", native: "Magyar", flag: "🇭🇺" },
+  { code: "ro", nameTh: "โรมาเนีย", native: "Română", flag: "🇷🇴" },
+  { code: "sk", nameTh: "สโลวัก", native: "Slovenčina", flag: "🇸🇰" },
+  { code: "bg", nameTh: "บัลแกเรีย", native: "Български", flag: "🇧🇬" },
+  { code: "hr", nameTh: "โครเอเชีย", native: "Hrvatski", flag: "🇭🇷" },
+  { code: "sr", nameTh: "เซอร์เบีย", native: "Српски", flag: "🇷🇸" },
+  { code: "sw", nameTh: "สวาฮีลี", native: "Kiswahili", flag: "🇰🇪" },
+  { code: "ne", nameTh: "เนปาล", native: "नेपाली", flag: "🇳🇵" },
+  { code: "si", nameTh: "สิงหล", native: "සිංහල", flag: "🇱🇰" },
+  { code: "mn", nameTh: "มองโกเลีย", native: "Монгол", flag: "🇲🇳" },
+  { code: "ka", nameTh: "จอร์เจีย", native: "ქართული", flag: "🇬🇪" },
+  { code: "hy", nameTh: "อาร์เมเนีย", native: "Հայերեն", flag: "🇦🇲" },
+  { code: "az", nameTh: "อาเซอร์ไบจาน", native: "Azərbaycan", flag: "🇦🇿" },
+  { code: "uz", nameTh: "อุซเบก", native: "O‘zbek", flag: "🇺🇿" },
+  { code: "kk", nameTh: "คาซัค", native: "Қазақша", flag: "🇰🇿" },
+  { code: "af", nameTh: "แอฟริคานส์", native: "Afrikaans", flag: "🇿🇦" },
+  { code: "sq", nameTh: "แอลเบเนีย", native: "Shqip", flag: "🇦🇱" },
+  { code: "am", nameTh: "อัมฮาริก", native: "አማርኛ", flag: "🇪🇹" },
+  { code: "eu", nameTh: "บาสก์", native: "Euskara", flag: "🇪🇸" },
+  { code: "be", nameTh: "เบลารุส", native: "Беларуская", flag: "🇧🇾" },
+  { code: "bs", nameTh: "บอสเนีย", native: "Bosanski", flag: "🇧🇦" },
+  { code: "ca", nameTh: "กาตาลา", native: "Català", flag: "🇪🇸" },
+  { code: "et", nameTh: "เอสโตเนีย", native: "Eesti", flag: "🇪🇪" },
+  { code: "gl", nameTh: "กาลิเซีย", native: "Galego", flag: "🇪🇸" },
+  { code: "gu", nameTh: "คุชราต", native: "ગુજરાતી", flag: "🇮🇳" },
+  { code: "is", nameTh: "ไอซ์แลนด์", native: "Íslenska", flag: "🇮🇸" },
+  { code: "jv", nameTh: "ชวา", native: "Basa Jawa", flag: "🇮🇩" },
+  { code: "kn", nameTh: "กันนาดา", native: "ಕನ್ನಡ", flag: "🇮🇳" },
+  { code: "lv", nameTh: "ลัตเวีย", native: "Latviešu", flag: "🇱🇻" },
+  { code: "lt", nameTh: "ลิทัวเนีย", native: "Lietuvių", flag: "🇱🇹" },
+  { code: "mk", nameTh: "มาซิโดเนีย", native: "Македонски", flag: "🇲🇰" },
+  { code: "ml", nameTh: "มาลายาลัม", native: "മലയാളം", flag: "🇮🇳" },
+  { code: "mr", nameTh: "มราฐี", native: "मराठी", flag: "🇮🇳" },
+  { code: "pa", nameTh: "ปัญจาบ", native: "ਪੰਜਾਬੀ", flag: "🇮🇳" },
+  { code: "sl", nameTh: "สโลวีเนีย", native: "Slovenščina", flag: "🇸🇮" },
+  { code: "so", nameTh: "โซมาลี", native: "Soomaali", flag: "🇸🇴" },
+  { code: "cy", nameTh: "เวลส์", native: "Cymraeg", flag: "🇬🇧" },
+  { code: "yi", nameTh: "ยิดดิช", native: "ייִדיש", flag: "✡️" },
+  { code: "yo", nameTh: "โยรูบา", native: "Yorùbá", flag: "🇳🇬" },
+  { code: "zu", nameTh: "ซูลู", native: "isiZulu", flag: "🇿🇦" }
+];
+
+window.applyGlobalTranslate = function(langCode, langName) {
+  const host = window.location.hostname;
+  document.cookie = "googtrans=/th/" + langCode + "; path=/;";
+  document.cookie = "googtrans=/th/" + langCode + "; path=/; domain=" + host + ";";
+  document.cookie = "googtrans=/th/" + langCode + "; path=/; domain=." + host + ";";
+  localStorage.setItem("thatphanom_global_lang", langCode);
+  localStorage.setItem("thatphanom_global_name", langName);
+
+  const combo = document.querySelector(".goog-te-combo");
+  if (combo) {
+    combo.value = langCode;
+    combo.dispatchEvent(new Event("change"));
+  } else {
+    window.location.reload();
+  }
+
+  const labelEl = document.getElementById("currentLanguageLabel");
+  if (labelEl) {
+    labelEl.textContent = "🌐 " + langName;
+  }
+  document.querySelectorAll(".language-option").forEach((opt) => opt.classList.remove("active"));
+
+  const dlg = document.getElementById("globalTranslateDialog");
+  if (dlg && dlg.open) dlg.close();
+  const menu = document.getElementById("languageMenu");
+  if (menu) menu.hidden = true;
+};
+
+window.resetGlobalTranslate = function(reloadIfNeeded) {
+  const host = window.location.hostname;
+  document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+  document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + host + ";";
+  document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=." + host + ";";
+  localStorage.removeItem("thatphanom_global_lang");
+  localStorage.removeItem("thatphanom_global_name");
+
+  const combo = document.querySelector(".goog-te-combo");
+  if (combo) {
+    combo.value = "";
+    combo.dispatchEvent(new Event("change"));
+  }
+
+  const activeBanner = document.getElementById("globalTranslateActiveBanner");
+  if (activeBanner) activeBanner.style.display = "none";
+  document.querySelectorAll(".global-lang-chip, .global-lang-row-btn").forEach((el) => el.classList.remove("active"));
+
+  if (reloadIfNeeded) {
+    window.location.reload();
+  }
+};
+
+function _initGlobalTranslate() {
+  const openBtn = document.getElementById("openGlobalTranslateOption");
+  const dialog = document.getElementById("globalTranslateDialog");
+  const closeBtn = document.getElementById("closeGlobalTranslateBtn");
+  const cancelBtn = document.getElementById("cancelGlobalTranslateBtn");
+  const resetBtn = document.getElementById("resetTranslateBtn");
+  const searchInput = document.getElementById("globalLangSearchInput");
+  const popularContainer = document.getElementById("popularLangChips");
+  const allContainer = document.getElementById("allLangList");
+  const countEl = document.getElementById("globalLangCount");
+  const activeBanner = document.getElementById("globalTranslateActiveBanner");
+  const activeLangEl = document.getElementById("globalTranslateActiveLang");
+
+  if (!dialog) return;
+
+  function closeDialog() {
+    dialog.close();
+  }
+
+  if (openBtn) {
+    openBtn.onclick = (e) => {
+      e.stopPropagation();
+      const menu = document.getElementById("languageMenu");
+      if (menu) menu.hidden = true;
+      renderDialogState();
+      dialog.showModal();
+      if (searchInput) {
+        searchInput.value = "";
+        searchInput.focus();
+        filterLanguages("");
+      }
+    };
+  }
+
+  if (closeBtn) closeBtn.onclick = closeDialog;
+  if (cancelBtn) cancelBtn.onclick = closeDialog;
+  if (resetBtn) {
+    resetBtn.onclick = () => {
+      window.resetGlobalTranslate(true);
+    };
+  }
+
+  function renderDialogState() {
+    const activeCode = localStorage.getItem("thatphanom_global_lang");
+    const activeName = localStorage.getItem("thatphanom_global_name");
+    if (activeCode && activeBanner && activeLangEl) {
+      activeBanner.style.display = "block";
+      activeLangEl.textContent = activeName || activeCode;
+    } else if (activeBanner) {
+      activeBanner.style.display = "none";
+    }
+  }
+
+  if (popularContainer) {
+    popularContainer.innerHTML = "";
+    GLOBAL_LANGUAGES.filter((l) => l.popular).forEach((lang) => {
+      const chip = document.createElement("button");
+      chip.type = "button";
+      chip.className = "global-lang-chip";
+      chip.innerHTML = `<span>${lang.flag}</span> <span>${lang.nameTh}</span>`;
+      chip.title = `${lang.nameTh} (${lang.native})`;
+      chip.onclick = () => {
+        window.applyGlobalTranslate(lang.code, lang.nameTh);
+      };
+      popularContainer.appendChild(chip);
+    });
+  }
+
+  function filterLanguages(query) {
+    if (!allContainer) return;
+    const q = (query || "").toLowerCase().trim();
+    allContainer.innerHTML = "";
+
+    const filtered = GLOBAL_LANGUAGES.filter((lang) => {
+      if (!q) return true;
+      return (
+        lang.nameTh.toLowerCase().includes(q) ||
+        lang.native.toLowerCase().includes(q) ||
+        lang.code.toLowerCase().includes(q)
+      );
+    });
+
+    if (countEl) countEl.textContent = filtered.length;
+
+    if (filtered.length === 0) {
+      allContainer.innerHTML = `<div style="grid-column: 1 / -1; padding: 16px; text-align: center; color: #8a8594; font-size: 0.88rem;">ไม่พบภาษาที่ค้นหา</div>`;
+      return;
+    }
+
+    const activeCode = localStorage.getItem("thatphanom_global_lang");
+    filtered.forEach((lang) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "global-lang-row-btn" + (activeCode === lang.code ? " active" : "");
+      btn.innerHTML = `<span>${lang.flag || "🌐"} ${lang.nameTh}</span><span style="font-size:0.75rem; color:#8a8594;">${lang.native}</span>`;
+      btn.onclick = () => {
+        window.applyGlobalTranslate(lang.code, lang.nameTh);
+      };
+      allContainer.appendChild(btn);
+    });
+  }
+
+  if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+      filterLanguages(e.target.value);
+    });
+  }
+
+  filterLanguages("");
+
+  const activeCode = localStorage.getItem("thatphanom_global_lang");
+  const activeName = localStorage.getItem("thatphanom_global_name");
+  if (activeCode && activeName) {
+    const labelEl = document.getElementById("currentLanguageLabel");
+    if (labelEl) {
+      labelEl.textContent = "🌐 " + activeName;
+    }
+    document.querySelectorAll(".language-option").forEach((opt) => opt.classList.remove("active"));
+  }
+}
+
 function _initLanguageDropdown() {
   const dropdownBtn = document.getElementById("languageDropdownButton");
   const menu = document.getElementById("languageMenu");
@@ -816,6 +1070,9 @@ function _initLanguageDropdown() {
   // Restore saved language preference or initialize default
   const savedLang = localStorage.getItem("thatphanom_lang") || "th";
   setLanguage(savedLang);
+
+  // Initialize global translation system
+  _initGlobalTranslate();
 }
 
 if (document.readyState === "loading") {
