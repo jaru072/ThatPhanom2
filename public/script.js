@@ -39,7 +39,7 @@
 
 // Internationalization & Language Switcher
 const I18N_TH = {
-  "trialLabel": "รุ่นทดลอง",
+  "trialLabel": "",
   "brand": "พระธาตุพนม สู่มรดกโลก",
   "searchAction": "ค้นหา",
   "navHome": "หน้าหลัก",
@@ -75,7 +75,12 @@ const I18N_TH = {
   "muchalindaConceptCaption": "ภาพประกอบแนวคิด ไม่ใช่ภาพบันทึกสภาพปัจจุบัน",
   "projectHistoryKicker": "กว่า 1,000 ปีแห่งศรัทธา",
   "muchalindaHistoryTitle": "ความเป็นมาและความสำคัญ",
-  "muchalindaHistoryText": "สระมุจลินท์ หรือสระพังทอง ตั้งอยู่ทางทิศตะวันตกเฉียงใต้ขององค์พระธาตุพนม ตามตำนานอุรังคธาตุ ชุมชนในอดีตขุดสระเพื่อนำดินไปทำอิฐสำหรับสร้างและบูรณะองค์พระธาตุพนม ต่อมาสระแห่งนี้ยังเป็นแหล่งน้ำของชุมชนและได้รับการเคารพว่าเป็นบ่อน้ำศักดิ์สิทธิ์",
+  "muchalindaHistoryText": "ตามตำนานอุรังคธาตุ สระมุจลินท์ หรือสระพังทอง ขุดขึ้นเพื่อนำดินไปทำอิฐสร้างองค์พระธาตุพนม และเป็นแหล่งน้ำศักดิ์สิทธิ์ของชุมชนสองฝั่งโขงสืบเนื่องมาอย่างยาวนาน",
+  "muchalindaRestorationKicker": "พ.ศ. 2568 เป็นต้นไป",
+  "muchalindaRestorationTitle": "การฟื้นฟูและอนุรักษ์ภูมิทัศน์",
+  "muchalindaRestorationText": "ฟื้นฟูระบบน้ำ ปรับปรุงภูมิทัศน์โดยรอบให้ร่มรื่น และประดิษฐานพระพุทธอุรังคธาตุพนมนาคา มหาจักรีสิรินธร ณ เกาะกลางสระ เพื่อสืบสานพุทธศรัทธาและรองรับผู้มาเยือนจากทั่วโลก",
+  "muchalindaSlide2Title": "สระน้ำศักดิ์สิทธิ์และดินอิฐพันปีแห่งภูกำพร้า",
+  "muchalindaSlide2Text": "ตามตำนานอุรังคธาตุ ชุมชนโบราณขุดสระเพื่อนำดินไปทำอิฐสร้างและบูรณะองค์พระธาตุพนม ต่อเนื่องเป็นแหล่งน้ำศักดิ์สิทธิ์คู่สองฝั่งโขง",
   "projectFacts": "ข้อมูลโครงการ",
   "projectLocationLabel": "สถานที่",
   "projectLocation": "วัดพระธาตุพนมวรมหาวิหาร จังหวัดนครพนม",
@@ -200,7 +205,7 @@ const I18N_TH = {
   "note": "เว็บไซต์นี้สรุปและเรียบเรียงจากแหล่งข้อมูลที่ระบุ เพื่อเผยแพร่ความรู้ ไม่ใช่เว็บไซต์อย่างเป็นทางการของ UNESCO",
   "sidebarProjectsTitle": "โครงการทั้งหมด",
   "accountLoginBtn": "เข้าสู่ระบบ",
-  "trialBrand": "รุ่นทดลอง พระธาตุพนม สู่มรดกโลก",
+  "trialBrand": "พระธาตุพนม สู่มรดกโลก",
   "menuAndManagement": "เมนูและการจัดการ",
   "avatarVisitor": "ผู้เยี่ยมชม",
   "notLoggedIn": "ยังไม่ได้เข้าสู่ระบบ",
@@ -314,7 +319,7 @@ const I18N_LO = {
   "footerSub": "ອົງຄວາມຮູ້ເພື່ອສັດທາ ແລະການອະນຸລັກຢ່າງຍືນຍົງ",
   "sources": "ແຫຼ່ງຂໍ້ມູນ",
   "note": "ເວັບໄຊນີ້ສະຫຼຸບ ແລະຮຽບຮຽງຈາກແຫຼ່ງຂໍ້ມູນທີ່ລະບຸ ເພື່ອເຜີຍແຜ່ຄວາມຮູ້ ບໍ່ແມ່ນເວັບໄຊທາງການຂອງ UNESCO",
-  "trialLabel": "ຮຸ່ນທົດລອງ",
+  "trialLabel": "",
   "searchAction": "ຄົ້ນຫາ",
   "navHome": "ໜ້າຫຼັກ",
   "navResources": "ໂຄງການ",
@@ -346,9 +351,14 @@ const I18N_LO = {
   "projectStartLabel": "ໄລຍະເລີ່ມຕົ້ນ",
   "projectStart": "ໄລຍະທີ 1 ດຳເນີນການຈັດການແຫຼ່ງນ້ຳ",
   "projectSource": "ແຫຼ່ງຂໍ້ມູນ: ບັນທຶກການບູລະນະ ແລະເອກະສານປະຊາສຳພັນວັດພະທາດພະນົມ",
-  "projectHistoryKicker": "ຄວາມເປັນມາ ແລະບໍລິບົດ",
-  "muchalindaHistoryTitle": "ໜອງນ້ຳສັກສິດພັນປີແຫ່ງນະຄອນພະນົມ",
-  "muchalindaHistoryText": "ສະມຸດຈະລິນ ຫຼືສະພັງທອງ ເປັນໜອງນ້ຳໂບຮານຄູ່ບາຣະມີພະທາດພະນົມ ໃຊ້ປະກອບພິທີກຳສັກສິດມາຫຼາຍຍຸກສະໄໝ ການບູລະນະຄືການຮັກສາຄວາມບໍລິສຸດຂອງສາຍນ້ຳ ແລະຄຸນຄ່າແຫ່ງລຸ່ມນ້ຳຂອງ",
+  "projectHistoryKicker": "ກວ່າ 1,000 ປີແຫ່ງສັດທາ",
+  "muchalindaHistoryTitle": "ຄວາມເປັນມາ ແລະຄວາມສຳຄັນ",
+  "muchalindaHistoryText": "ຕາມຕຳນານອຸຣັງຄະທາດ ສະມຸດຈະລິນ ຫຼືສະພັງທອງ ຂຸດຂຶ້ນເພື່ອນຳດິນໄປເຮັດດິນຈີ່ສ້າງອົງພະທາດພະນົມ ແລະເປັນແຫຼ່ງນ້ຳສັກສິດຂອງຊຸມຊົນສອງຝັ່ງຂອງສືບເນື່ອງມາຢ່າງຍາວນານ",
+  "muchalindaRestorationKicker": "ພ.ສ. 2568 ເປັນຕົ້ນໄປ",
+  "muchalindaRestorationTitle": "ການຟື້ນຟູ ແລະອະນຸລັກພູມທັດ",
+  "muchalindaRestorationText": "ຟື້ນຟູລະບົບນ້ຳ ປັບປຸງພູມທັດອ້ອມຮອບໃຫ້ຮົ່ມເຢັນ ແລະປະດິດສະຖານພະພຸດທະອຸຣັງຄະທາດພະນົມນາຄາ ມະຫາຈັກກຣີສິຣິນທອນ ທີ່ເກາະກາງສະ ເພື່ອສືບສານພຸດທະສັດທາ ແລະຮອງຮັບຜູ້ມາຢ້ຽມຢາມຈາກທົ່ວໂລກ",
+  "muchalindaSlide2Title": "ສະນ້ຳສັກສິດ ແລະດິນຈີ່ພັນປີແຫ່ງພູກຳພ້າ",
+  "muchalindaSlide2Text": "ຕາມຕຳນານອຸຣັງຄະທາດ ຊຸມຊົນບູຮານຂຸດສະເພື່ອນຳດິນໄປເຮັດດິນຈີ່ສ້າງ ແລະບູລະນະອົງພະທາດພະນົມ ຕໍ່ເນື່ອງເປັນແຫຼ່ງນ້ຳສັກສິດຄູ່ສອງຝັ່ງຂອງ",
   "muchalindaConceptCaption": "ແນວຄິດການອອກແບບພູມທັດເຊື່ອມໂຍງສິລະປະພະຍານາກຂະແມແລະລ້ານຊ້າງ",
   "projectObjectivesKicker": "ພາລະກິດ ແລະເປົ້າໝາຍ",
   "projectObjectivesTitle": "ເປົ້າໝາຍການດຳເນີນງານ",
@@ -404,7 +414,7 @@ const I18N_LO = {
   "viewAllProjects": "ເບິ່ງໂຄງການທັງໝົດ",
   "sidebarProjectsTitle": "ໂຄງການທັງໝົດ",
   "accountLoginBtn": "ເຂົ້າສູ່ລະບົບ",
-  "trialBrand": "ລຸ້ນທົດລອງ ພະທາດພະນົມ ສູ່ມໍລະດົກໂລກ",
+  "trialBrand": "ພະທາດພະນົມ ສູ່ມໍລະດົກໂລກ",
   "menuAndManagement": "ເມນູແລະການຈັດການ",
   "avatarVisitor": "ຜູ້ຢ້ຽມຊົມ",
   "notLoggedIn": "ຍັງບໍ່ໄດ້ເຂົ້າສູ່ລະບົບ",
@@ -449,7 +459,7 @@ const I18N_LO = {
 };
 
 const I18N_EN = {
-  "trialLabel": "Beta Version",
+  "trialLabel": "",
   "brand": "Phra That Phanom to World Heritage",
   "searchAction": "Search",
   "navHome": "Home",
@@ -538,9 +548,14 @@ const I18N_EN = {
   "projectStartLabel": "Commencement",
   "projectStart": "Phase 1 - Under active management",
   "projectSource": "Reference: Official restoration records & Buddhist heritage announcements",
-  "projectHistoryKicker": "Origin & Context",
-  "muchalindaHistoryTitle": "A Thousand-Year Sacred Well of Nakhon Phanom",
-  "muchalindaHistoryText": "Muchalinda Pond, locally known as Sa Phang Thong, has served as a sacred water reservoir intertwined with Wat Phra That Phanom ceremonies for centuries. Restoration preserves physical purity and the cultural dignity of the Mekong.",
+  "projectHistoryKicker": "Over 1,000 Years of Faith",
+  "muchalindaHistoryTitle": "Historical Background & Significance",
+  "muchalindaHistoryText": "According to the Urangathat chronicles, Muchalinda Pond (Sa Phang Thong) was excavated to provide clay for bricks to construct Phra That Phanom, and has served as a sacred water reservoir for communities along both banks of the Mekong.",
+  "muchalindaRestorationKicker": "2025 Onwards",
+  "muchalindaRestorationTitle": "Landscape Restoration & Conservation",
+  "muchalindaRestorationText": "Revitalizing the water system, enhancing serene landscape surroundings, and enshrining Phra Phuttha Urangathat Phanom Nakha Maha Chakri Sirindhorn on the central island to sustain Buddhist faith and welcome pilgrims from around the world.",
+  "muchalindaSlide2Title": "Sacred Well and Millennium-Old Brick Clay of Phu Kampha",
+  "muchalindaSlide2Text": "According to the Urangathat chronicles, ancient communities excavated the pond for clay to craft bricks for building and restoring Phra That Phanom, enduring as a sacred reservoir across the Mekong.",
   "muchalindaConceptCaption": "Landscape design conceptualizing traditional Naga ponds in Khmer and Lan Xang iconography",
   "projectObjectivesKicker": "Mission & Goals",
   "projectObjectivesTitle": "Target Outcomes",
@@ -609,7 +624,7 @@ const I18N_EN = {
   "note": "This website compiles information for educational and heritage appreciation purposes and is not an official UNESCO website.",
   "sidebarProjectsTitle": "All Projects",
   "accountLoginBtn": "Sign In",
-  "trialBrand": "Preview: Phra That Phanom to World Heritage",
+  "trialBrand": "Phra That Phanom to World Heritage",
   "menuAndManagement": "Menu & Management",
   "avatarVisitor": "Visitor",
   "notLoggedIn": "Not signed in",
@@ -663,9 +678,50 @@ function setLanguage(lang) {
   const config = I18N_LANGS[lang] || I18N_LANGS.th;
   document.documentElement.lang = lang;
   
+  // Determine if a user is currently logged in
+  const authUser = window._appState?.user;
+  const accountBtn = document.getElementById("accountButton");
+  const isUserLoggedIn = !!(
+    authUser ||
+    (accountBtn && accountBtn.dataset.userLoggedIn === "true") ||
+    (accountBtn && accountBtn.textContent && !["เข้าสู่ระบบ", "Sign In", "ເຂົ້າສູ່ລະບົບ", "กำลังเปิดบัญชี Google..."].includes(accountBtn.textContent.trim()))
+  );
+
   // Update all data-i18n elements
   document.querySelectorAll("[data-i18n]").forEach((el) => {
     const key = el.dataset.i18n;
+
+    // Preserve logged-in user information on account elements
+    if (el.id === "accountButton") {
+      if (isUserLoggedIn) {
+        if (authUser && (authUser.displayName || authUser.email)) {
+          el.textContent = authUser.displayName || authUser.email;
+        }
+        return;
+      }
+    } else if (el.id === "accountName") {
+      if (isUserLoggedIn) {
+        if (authUser && (authUser.displayName || authUser.email)) {
+          el.textContent = authUser.displayName || authUser.email;
+        }
+        return;
+      }
+    } else if (el.id === "loginMenuText") {
+      if (isUserLoggedIn) {
+        const logoutLabels = { th: "ออกจากระบบ", lo: "ອອກຈາກລະບົບ", en: "Sign Out" };
+        el.textContent = logoutLabels[lang] || logoutLabels.th;
+        return;
+      }
+    } else if (el.id === "accountRole") {
+      if (isUserLoggedIn) {
+        return;
+      }
+    } else if (el.id === "accountAvatar") {
+      if (isUserLoggedIn && (el.querySelector("img") || (el.textContent && el.textContent.trim() !== "ผู้เยี่ยมชม"))) {
+        return;
+      }
+    }
+
     if (config.dict && config.dict[key]) {
       el.innerHTML = config.dict[key];
     } else if (I18N_TH[key]) {
@@ -703,11 +759,15 @@ function setLanguage(lang) {
 
   // Dispatch custom event for CMS or dynamic components to re-render
   window.dispatchEvent(new CustomEvent("portal:languageChange", { detail: { lang } }));
+  if (typeof window.updateAuthUI === "function") {
+    try { window.updateAuthUI(); } catch (_) {}
+  }
   if (typeof window.renderSiteSectionsCMS === "function") {
     try { window.renderSiteSectionsCMS(); } catch (_) {}
   }
 }
 
+window.I18N_LANGS = I18N_LANGS;
 window.I18N_TH = I18N_TH;
 window.I18N_LO = I18N_LO;
 window.I18N_EN = I18N_EN;
@@ -788,6 +848,95 @@ function _initUiHelpers() {
   if (scrollBottomBtn) {
     scrollBottomBtn.addEventListener("click", () => {
       window.scrollTo({ top: document.documentElement.scrollHeight, behavior: "smooth" });
+    });
+  }
+
+  // Web Share API บนปุ่มแบ่งปันเว็บไซต์ (#shareButton)
+  const shareBtn = document.getElementById("shareButton");
+  if (shareBtn) {
+    shareBtn.addEventListener("click", async () => {
+      const curLang = document.documentElement.lang || localStorage.getItem("thatphanom_lang") || "th";
+      
+      let shareTitle = document.title || "พระธาตุพนม สู่มรดกโลก";
+      let shareText = "พระธาตุพนม สู่มรดกโลก - ร่วมเรียนรู้คุณค่าและสืบสานจิตวิญญาณแห่งลุ่มน้ำโขง";
+      if (curLang === "lo") {
+        shareTitle = "ພະທາດພະນົມ ສູ່ມໍລະດົກໂລກ";
+        shareText = "ພະທາດພະນົມ ສູ່ມໍລະດົກໂລກ - ຮ່ວມສືບສານປູຊະນີຍະສະຖານອັນເປັນສູນລວມສັດທາແຫ່ງລຸ່ມນ້ຳຂອງ";
+      } else if (curLang === "en") {
+        shareTitle = "Phra That Phanom to World Heritage";
+        shareText = "Phra That Phanom to World Heritage - Discover the spiritual and architectural values of the Sacred Relic.";
+      }
+
+      const shareUrl = window.location.href;
+      const shareData = {
+        title: shareTitle,
+        text: shareText,
+        url: shareUrl
+      };
+
+      const showToastMsg = (msg, tone = "") => {
+        const toast = document.getElementById("toast");
+        if (toast) {
+          toast.textContent = msg;
+          toast.dataset.tone = tone;
+          toast.classList.add("show");
+          clearTimeout(showToastMsg._timer);
+          showToastMsg._timer = setTimeout(() => {
+            toast.classList.remove("show");
+          }, 3000);
+        }
+      };
+
+      const copyFallback = async () => {
+        let copied = false;
+        try {
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            await navigator.clipboard.writeText(shareUrl);
+            copied = true;
+          } else {
+            const tempInput = document.createElement("input");
+            tempInput.value = shareUrl;
+            tempInput.style.position = "fixed";
+            tempInput.style.opacity = "0";
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            copied = document.execCommand("copy");
+            document.body.removeChild(tempInput);
+          }
+        } catch (_) {
+          copied = false;
+        }
+
+        if (copied) {
+          const copyMsg = curLang === "en" 
+            ? "Website link copied to clipboard!" 
+            : curLang === "lo" 
+            ? "ຄັດລອກລິ້ງເວັບໄຊສຳເລັດແລ້ວ!" 
+            : "คัดลอกลิงก์เว็บไซต์เรียบร้อยแล้ว!";
+          showToastMsg(copyMsg);
+        } else {
+          const failMsg = curLang === "en"
+            ? "Unable to share or copy link"
+            : curLang === "lo"
+            ? "ບໍ່ສາມາດແບ່ງປັນຫຼືຄັດລອກລິ້ງໄດ້"
+            : "ไม่สามารถแบ่งปันหรือคัดลอกลิงก์ได้";
+          showToastMsg(failMsg, "error");
+        }
+      };
+
+      if (navigator.share) {
+        try {
+          if (!navigator.canShare || navigator.canShare(shareData)) {
+            await navigator.share(shareData);
+            return;
+          }
+        } catch (err) {
+          if (err && err.name === "AbortError") {
+            return;
+          }
+        }
+      }
+      await copyFallback();
     });
   }
 
