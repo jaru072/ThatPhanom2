@@ -63,6 +63,477 @@
   </script>
   <script type="module" crossorigin src="/assets/index-D4DSCKUz.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/index-dX7NzDAm.css">
+  <style id="interactive-sitemap-styles">
+    /* Interactive Site Map (Admin Drag & Drop) Styles */
+    .tree-view-switcher {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 10px 20px;
+      background: #fbf9f4;
+      border-bottom: 1px solid rgba(23, 19, 41, 0.1);
+    }
+    .tree-view-tabs {
+      display: inline-flex;
+      background: #eeeadf;
+      padding: 3px;
+      border-radius: 8px;
+      gap: 4px;
+    }
+    .tree-view-tab {
+      border: 0;
+      background: transparent;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font: 600 0.85rem inherit;
+      color: #555060;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      min-height: 36px;
+    }
+    .tree-view-tab:hover {
+      color: #171329;
+    }
+    .tree-view-tab.active {
+      background: #fff;
+      color: #171329;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    }
+    .tree-view-hint .hint-pill {
+      font-size: 0.78rem;
+      color: #7a6330;
+      background: rgba(203, 166, 75, 0.15);
+      padding: 4px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(203, 166, 75, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .tree-workspace.mode-sitemap {
+      grid-template-columns: minmax(0, 1.35fr) minmax(320px, 420px);
+    }
+    @media (max-width: 992px) {
+      .tree-workspace.mode-sitemap {
+        grid-template-columns: 1fr;
+      }
+    }
+    .interactive-sitemap {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-height: 0;
+      height: 100%;
+    }
+    .sitemap-toolbar {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: #fff;
+      padding: 12px 14px;
+      border-radius: 8px;
+      border: 1px solid rgba(23, 19, 41, 0.08);
+    }
+    .sitemap-search-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+    .sitemap-search-icon {
+      position: absolute;
+      left: 10px;
+      font-size: 0.88rem;
+      color: #8c8799;
+      pointer-events: none;
+    }
+    .sitemap-search-wrap input {
+      width: 100%;
+      padding: 8px 32px 8px 34px;
+      border: 1px solid rgba(23, 19, 41, 0.15);
+      border-radius: 6px;
+      font-size: 0.88rem;
+      background: #fdfcf9;
+      min-height: 40px;
+    }
+    .sitemap-search-wrap input:focus {
+      outline: none;
+      border-color: #9f731c;
+      box-shadow: 0 0 0 2px rgba(159, 115, 28, 0.2);
+    }
+    .sitemap-clear-search {
+      position: absolute;
+      right: 8px;
+      background: transparent;
+      border: 0;
+      font-size: 1.1rem;
+      color: #8c8799;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+    .sitemap-filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .sitemap-filter-chip {
+      border: 1px solid rgba(23, 19, 41, 0.12);
+      background: #fff;
+      color: #555060;
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      min-height: 32px;
+      display: inline-flex;
+      align-items: center;
+    }
+    .sitemap-filter-chip:hover {
+      border-color: #9f731c;
+      color: #171329;
+    }
+    .sitemap-filter-chip.active {
+      background: #171329;
+      color: #efd98e;
+      border-color: #171329;
+    }
+    .sitemap-board {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      align-items: start;
+      gap: 16px;
+      overflow-y: auto;
+      max-height: calc(88vh - 280px);
+      padding: 4px 4px 24px 2px;
+    }
+    .sitemap-lane {
+      background: #fff;
+      border: 1px solid rgba(23, 19, 41, 0.12);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+    .sitemap-lane.is-dragging {
+      opacity: 0.45;
+      border: 2px dashed #9f731c;
+      transform: scale(0.98);
+    }
+    .sitemap-lane.drag-over {
+      border-color: #9f731c;
+      box-shadow: 0 0 0 3px rgba(159, 115, 28, 0.2);
+    }
+    .sitemap-lane-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(23, 19, 41, 0.08);
+      background: #fdfbf7;
+      border-radius: 10px 10px 0 0;
+    }
+    .sitemap-lane-title-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1;
+    }
+    .sitemap-drag-handle {
+      cursor: grab;
+      color: #9f731c;
+      font-size: 1.15rem;
+      line-height: 1;
+      padding: 4px 6px;
+      user-select: none;
+      touch-action: none;
+      border-radius: 4px;
+    }
+    .sitemap-drag-handle:active {
+      cursor: grabbing;
+      background: rgba(159, 115, 28, 0.12);
+    }
+    .sitemap-lane-num {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: rgba(239, 217, 142, 0.25);
+      color: #9f731c;
+      border: 1px solid rgba(159, 115, 28, 0.3);
+      font-size: 0.74rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .sitemap-lane-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 26px;
+      height: 26px;
+      border-radius: 6px;
+      background: #171329;
+      color: #efd98e;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .sitemap-lane-title {
+      margin: 0;
+      font-size: 0.94rem;
+      font-weight: 700;
+      color: #171329;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sitemap-lane-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .sitemap-lane-actions button {
+      background: transparent;
+      border: 1px solid rgba(23, 19, 41, 0.1);
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 0.76rem;
+      cursor: pointer;
+      color: #555060;
+      min-height: 28px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .sitemap-lane-actions button:hover {
+      background: #f4eee1;
+      color: #171329;
+    }
+    .sitemap-drop-zone {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding: 12px;
+      min-height: 90px;
+      background: #faf8f3;
+      transition: background 0.15s ease, outline 0.15s ease;
+    }
+    .sitemap-drop-zone.drag-over {
+      background: rgba(203, 166, 75, 0.18);
+      outline: 2px dashed #9f731c;
+      outline-offset: -4px;
+    }
+    .sitemap-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 10px 12px;
+      background: #fff;
+      border: 1px solid rgba(23, 19, 41, 0.1);
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+      cursor: pointer;
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .sitemap-card:hover {
+      border-color: #cba64b;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    }
+    .sitemap-card.selected {
+      border-color: #9f731c;
+      background: #fffdf8;
+      box-shadow: 0 0 0 2px rgba(159, 115, 28, 0.3);
+    }
+    .sitemap-card.is-dragging {
+      opacity: 0.4;
+      border: 2px dashed #9f731c;
+    }
+    .sitemap-card.drag-over-top {
+      border-top: 3px solid #9f731c !important;
+    }
+    .sitemap-card.drag-over-bottom {
+      border-bottom: 3px solid #9f731c !important;
+    }
+    .sitemap-card-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+      flex: 1;
+    }
+    .sitemap-card-num {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #9f731c;
+      background: rgba(239, 217, 142, 0.2);
+      padding: 1px 5px;
+      border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .sitemap-card-icon {
+      font-size: 0.85rem;
+      color: #9f731c;
+      flex-shrink: 0;
+    }
+    .sitemap-card-meta {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+    .sitemap-card-title {
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: #171329;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .sitemap-card-sub {
+      font-size: 0.72rem;
+      color: #777282;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .sitemap-badge-pub {
+      display: inline-block;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 0.68rem;
+      font-weight: 600;
+    }
+    .sitemap-badge-pub.published {
+      background: #dcfce7;
+      color: #166534;
+    }
+    .sitemap-badge-pub.draft {
+      background: #fef9c3;
+      color: #854d0e;
+    }
+    .sitemap-badge-link {
+      background: #e0e7ff;
+      color: #3730a3;
+      padding: 1px 5px;
+      border-radius: 4px;
+      font-size: 0.68rem;
+      font-weight: 600;
+    }
+    .sitemap-card-actions {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+    .sitemap-card-btn {
+      background: transparent;
+      border: 0;
+      color: #8c8799;
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      min-width: 24px;
+      min-height: 24px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .sitemap-card-btn:hover {
+      background: #f0ecdf;
+      color: #171329;
+    }
+    .sitemap-lane-foot {
+      padding: 8px 12px;
+      border-top: 1px solid rgba(23, 19, 41, 0.08);
+      background: #fdfbf7;
+      border-radius: 0 0 10px 10px;
+    }
+    .sitemap-add-sub-btn {
+      width: 100%;
+      border: 1px dashed rgba(23, 19, 41, 0.2);
+      background: transparent;
+      color: #7a6330;
+      padding: 6px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      min-height: 34px;
+    }
+    .sitemap-add-sub-btn:hover {
+      background: #fff;
+      border-color: #9f731c;
+      color: #171329;
+    }
+    .sitemap-add-lane-card {
+      border: 2px dashed rgba(23, 19, 41, 0.25);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.5);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px;
+      cursor: pointer;
+      min-height: 180px;
+      transition: all 0.2s ease;
+      color: #7a6330;
+      gap: 8px;
+    }
+    .sitemap-add-lane-card:hover {
+      border-color: #9f731c;
+      background: #fff;
+      color: #171329;
+      transform: translateY(-2px);
+    }
+    .sitemap-empty-lane-hint {
+      padding: 16px 8px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: #8c8799;
+      border: 1px dashed rgba(23, 19, 41, 0.15);
+      border-radius: 6px;
+    }
+    /* Tree node drag handle in list view */
+    .tree-node-drag-handle {
+      cursor: grab;
+      color: #9f731c;
+      font-size: 1.1rem;
+      line-height: 1;
+      padding: 0 4px;
+      user-select: none;
+      opacity: 0.6;
+      border-radius: 4px;
+    }
+    .tree-node:hover .tree-node-drag-handle {
+      opacity: 1;
+    }
+    .tree-node.is-dragging {
+      opacity: 0.45;
+      outline: 2px dashed #9f731c;
+    }
+    .tree-node.drag-over-top {
+      border-top: 3px solid #9f731c !important;
+    }
+    .tree-node.drag-over-bottom {
+      border-bottom: 3px solid #9f731c !important;
+    }
+    .tree-node.drag-over-inside {
+      background: rgba(203, 166, 75, 0.2) !important;
+      border: 1px solid #9f731c !important;
+    }
+  </style>
 </head>
 <body>
   <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
@@ -661,10 +1132,43 @@
         <button class="button secondary" id="treeTrashButton" type="button">ถังขยะ</button>
         <button class="button secondary" id="exportTreeButton" type="button">ส่งออก JSON</button>        <button class="button secondary" id="treeBackupRestoreButton" type="button">💾 สำรอง/กู้คืนข้อมูล</button>
       </div>
-      <div class="tree-workspace">
-        <section class="tree-panel" aria-label="ผังโครงการ">
+      <div class="tree-view-switcher">
+        <div class="tree-view-tabs" role="tablist">
+          <button class="tree-view-tab active" id="treeViewMapBtn" type="button" role="tab" aria-selected="true">
+            <span aria-hidden="true">🗺️</span> ผัง Interactive (ลากวางจัดเรียง)
+          </button>
+          <button class="tree-view-tab" id="treeViewListBtn" type="button" role="tab" aria-selected="false">
+            <span aria-hidden="true">📑</span> ผังรายการต้นไม้
+          </button>
+        </div>
+        <div class="tree-view-hint">
+          <span class="hint-pill">ลากวาง (Drag &amp; Drop) เพื่อจัดเรียงลำดับ หรือลากข้ามโครงการเพื่อย้ายตำแหน่ง</span>
+        </div>
+      </div>
+      <div class="tree-workspace mode-sitemap" id="treeWorkspace">
+        <section class="tree-panel" id="treePanel" aria-label="ผังโครงการ">
           <div class="tree-panel-title"><h3 id="treeListTitle">ผังที่ใช้งาน</h3><span id="treeNodeCount"></span></div>
-          <div class="site-tree" id="siteTree"></div>
+          <div class="interactive-sitemap" id="interactiveSiteMap">
+            <div class="sitemap-toolbar">
+              <div class="sitemap-search-wrap">
+                <span class="sitemap-search-icon" aria-hidden="true">🔍</span>
+                <input type="search" id="sitemapSearchInput" placeholder="ค้นหาชื่อหัวข้อ โครงการ หรือเนื้อหา..." aria-label="ค้นหาหัวข้อในผัง">
+                <button type="button" id="clearSitemapSearch" class="sitemap-clear-search" hidden aria-label="ล้างการค้นหา">×</button>
+              </div>
+              <div class="sitemap-filters" id="sitemapFilterChips">
+                <button type="button" class="sitemap-filter-chip active" data-filter="all">ทั้งหมด</button>
+                <button type="button" class="sitemap-filter-chip" data-filter="project">🏛️ โครงการ</button>
+                <button type="button" class="sitemap-filter-chip" data-filter="page">▤ หน้าเนื้อหา</button>
+                <button type="button" class="sitemap-filter-chip" data-filter="media">▣ สื่อ</button>
+                <button type="button" class="sitemap-filter-chip" data-filter="news">◫ ข่าวสาร</button>
+                <button type="button" class="sitemap-filter-chip" data-filter="donation">♡ ร่วมบุญ</button>
+              </div>
+            </div>
+            <div class="sitemap-board" id="sitemapBoard">
+              <p class="empty-state">กำลังโหลดผังโครงการ...</p>
+            </div>
+          </div>
+          <div class="site-tree" id="siteTree" hidden></div>
         </section>
         <section class="tree-editor-panel" aria-label="แก้ไขโหนด">
           <div class="tree-editor-empty" id="treeEditorEmpty"><strong>เลือกหัวข้อจากผัง</strong><span>หรือกด “เพิ่มโครงการ” เพื่อเริ่มโครงการใหม่</span></div>
@@ -1038,8 +1542,8 @@
         <label>ชื่อหัวข้อ (ภาษาไทย) *
           <input id="railCardTitleTh" type="text" maxlength="120" required placeholder="ชื่อเรื่องหรือหัวข้อหลัก">
         </label>
-        <label>ข้อความรายละเอียด (ภาษาไทย) *
-          <textarea id="railCardDescTh" rows="4" maxlength="2000" required placeholder="รายละเอียดที่ต้องการแจ้งให้ผู้ชมทราบ..."></textarea>
+        <label>ข้อความรายละเอียด (ภาษาไทย)
+          <textarea id="railCardDescTh" rows="4" maxlength="2000" placeholder="รายละเอียดที่ต้องการแจ้งให้ผู้ชมทราบ..."></textarea>
         </label>
         <label>ข้อความบนปุ่มกด (ภาษาไทย)
           <input id="railCardBtnTh" type="text" maxlength="60" placeholder="เช่น ดูรายละเอียด, เข้าร่วม, ดูทั้งหมด">
@@ -1274,8 +1778,8 @@
         <label>ชื่อหัวข้อ (ภาษาไทย) *
           <input id="sidebarItemTitleTh" type="text" maxlength="120" required placeholder="ชื่อเรื่องหรือหัวข้อหลัก">
         </label>
-        <label>ข้อความรายละเอียด (ภาษาไทย) *
-          <textarea id="sidebarItemDescTh" rows="4" maxlength="2000" required placeholder="รายละเอียดที่ต้องการแจ้งให้ผู้ชมทราบ..."></textarea>
+        <label>ข้อความรายละเอียด (ภาษาไทย)
+          <textarea id="sidebarItemDescTh" rows="4" maxlength="2000" placeholder="รายละเอียดที่ต้องการแจ้งให้ผู้ชมทราบ..."></textarea>
         </label>
         <label>ข้อความบนปุ่มกด (ภาษาไทย)
           <input id="sidebarItemBtnTh" type="text" maxlength="60" placeholder="เช่น ดูรายละเอียด, เข้าร่วม, ดูทั้งหมด">

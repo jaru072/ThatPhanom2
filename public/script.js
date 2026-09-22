@@ -1586,6 +1586,851 @@ function _initUiHelpers() {
       }
     }
   });
+
+  // ==========================================
+  // Interactive Site Map (Admin Drag & Drop)
+  // ==========================================
+  function _initInteractiveSiteMap() {
+    const treeDialog = document.getElementById("treeDialog");
+    const treeWorkspace = document.getElementById("treeWorkspace");
+    const mapBtn = document.getElementById("treeViewMapBtn");
+    const listBtn = document.getElementById("treeViewListBtn");
+    const sitemapContainer = document.getElementById("interactiveSiteMap");
+    const siteTree = document.getElementById("siteTree");
+    const boardEl = document.getElementById("sitemapBoard");
+    const searchInput = document.getElementById("sitemapSearchInput");
+    const clearSearchBtn = document.getElementById("clearSitemapSearch");
+    const filterChips = document.getElementById("sitemapFilterChips");
+
+    let currentFilter = "all";
+    let searchQuery = "";
+    let draggedNodeId = null;
+    let draggedSourceParentId = null;
+    let draggedType = null; // 'card' | 'lane'
+
+    // สลับมุมมองระหว่าง ผัง Interactive กับ ผังรายการ
+    function setViewMode(mode) {
+      if (!mapBtn || !listBtn || !sitemapContainer || !siteTree || !treeWorkspace) return;
+      if (mode === "map") {
+        mapBtn.classList.add("active");
+        mapBtn.setAttribute("aria-selected", "true");
+        listBtn.classList.remove("active");
+        listBtn.setAttribute("aria-selected", "false");
+        sitemapContainer.hidden = false;
+        siteTree.hidden = true;
+        treeWorkspace.classList.add("mode-sitemap");
+        renderInteractiveSiteMap();
+      } else {
+        listBtn.classList.add("active");
+        listBtn.setAttribute("aria-selected", "true");
+        mapBtn.classList.remove("active");
+        mapBtn.setAttribute("aria-selected", "false");
+        siteTree.hidden = false;
+        sitemapContainer.hidden = true;
+        treeWorkspace.classList.remove("mode-sitemap");
+        if (typeof window._renderSiteTree === "function") {
+          window._renderSiteTree();
+        }
+      }
+    }
+
+    if (mapBtn && listBtn) {
+      mapBtn.addEventListener("click", () => setViewMode("map"));
+      listBtn.addEventListener("click", () => setViewMode("list"));
+    }
+
+    // ตัวค้นหาและตัวกรอง
+    if (searchInput) {
+      searchInput.addEventListener("input", (e) => {
+        searchQuery = (e.target.value || "").trim().toLowerCase();
+        if (clearSearchBtn) clearSearchBtn.hidden = !searchQuery;
+        renderInteractiveSiteMap();
+      });
+    }
+
+    if (clearSearchBtn && searchInput) {
+      clearSearchBtn.addEventListener("click", () => {
+        searchInput.value = "";
+        searchQuery = "";
+        clearSearchBtn.hidden = true;
+        searchInput.focus();
+        renderInteractiveSiteMap();
+      });
+    }
+
+    if (filterChips) {
+      filterChips.addEventListener("click", (e) => {
+        const chip = e.target.closest(".sitemap-filter-chip");
+        if (!chip) return;
+        filterChips.querySelectorAll(".sitemap-filter-chip").forEach((c) => c.classList.remove("active"));
+        chip.classList.add("active");
+        currentFilter = chip.dataset.filter || "all";
+        renderInteractiveSiteMap();
+      });
+    }
+
+    // ไอคอนและชื่อประเภท
+    const TYPE_ICONS = {
+      project: "🏛️",
+      page: "▤",
+      news: "◫",
+      media: "▣",
+      document: "▧",
+      donation: "♡",
+      folder: "◇",
+      link: "↗",
+    };
+
+    function getNodeIcon(type) {
+      return TYPE_ICONS[type] || "▤";
+    }
+
+    // ฟังก์ชันเรนเดอร์ Interactive Site Map
+    function renderInteractiveSiteMap() {
+      if (!boardEl) return;
+      const appState = window._appState;
+      if (!appState || !Array.isArray(appState.siteNodes)) {
+        boardEl.innerHTML = '<p class="empty-state">กำลังเชื่อมต่อข้อมูลผังโครงการ...</p>';
+        return;
+      }
+
+      const allNodes = appState.siteNodes.filter((n) => !n.deletedAt);
+      if (!allNodes.length) {
+        boardEl.innerHTML =
+          '<div class="sitemap-empty-lane-hint">ยังไม่มีหัวข้อในผัง กดปุ่ม “＋ เพิ่มโครงการ” ด้านบนเพื่อเริ่มต้น</div>';
+        return;
+      }
+
+      // หาโหนดหลักระดับบนสุด (Top-level projects / folders)
+      // โหนดที่เป็น root หรือโหนดที่มี parentId เป็น "" หรือ "site-root" หรือ type === "project"
+      let rootProjects = allNodes.filter(
+        (n) =>
+          n.type === "project" ||
+          n.parentId === "" ||
+          n.parentId === "site-root" ||
+          !allNodes.some((p) => p.id === n.parentId)
+      );
+
+      // เรียงลำดับโครงการหลัก
+      rootProjects.sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0) || String(a.title).localeCompare(String(b.title), "th"));
+
+      // สร้าง Map สำหรับค้นหาโหนดลูก
+      const childrenMap = new Map();
+      allNodes.forEach((n) => {
+        const pid = n.parentId || "";
+        if (!childrenMap.has(pid)) childrenMap.set(pid, []);
+        childrenMap.get(pid).push(n);
+      });
+      childrenMap.forEach((list) => {
+        list.sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0) || String(a.title).localeCompare(String(b.title), "th"));
+      });
+
+      // กรองตามการค้นหาและประเภท
+      boardEl.innerHTML = "";
+
+      let displayedLanesCount = 0;
+
+      rootProjects.forEach((proj, projIdx) => {
+        // หาโหนดลูกทั้งหมดภายใต้โครงการนี้
+        const directChildren = childrenMap.get(proj.id) || [];
+        // รวมโหนดลูกของลูกด้วยถ้ามี
+        const laneItems = [];
+        function collectChildren(parentId) {
+          const subs = childrenMap.get(parentId) || [];
+          subs.forEach((sub) => {
+            laneItems.push(sub);
+            collectChildren(sub.id);
+          });
+        }
+        collectChildren(proj.id);
+
+        // ตรวจสอบตัวกรองและการค้นหา
+        let filteredItems = laneItems.filter((item) => {
+          if (currentFilter !== "all" && item.type !== currentFilter) return false;
+          if (searchQuery) {
+            const matchTitle = (item.title || "").toLowerCase().includes(searchQuery);
+            const matchSlug = (item.slug || "").toLowerCase().includes(searchQuery);
+            const matchDesc = (item.description || "").toLowerCase().includes(searchQuery);
+            if (!matchTitle && !matchSlug && !matchDesc) return false;
+          }
+          return true;
+        });
+
+        const projMatchesSearch =
+          !searchQuery ||
+          (proj.title || "").toLowerCase().includes(searchQuery) ||
+          (proj.slug || "").toLowerCase().includes(searchQuery);
+
+        if (!projMatchesSearch && !filteredItems.length && searchQuery) {
+          return; // ซ่อนโครงการนี้หากไม่ตรงเงื่อนไขค้นหา
+        }
+
+        displayedLanesCount++;
+
+        // สร้างคอลัมน์โครงการ (Lane)
+        const lane = document.createElement("div");
+        lane.className = "sitemap-lane";
+        lane.dataset.laneId = proj.id;
+        lane.dataset.order = String(proj.order || (projIdx + 1) * 10);
+        lane.draggable = true;
+
+        // Lane Header
+        const head = document.createElement("div");
+        head.className = "sitemap-lane-head";
+
+        const titleGroup = document.createElement("div");
+        titleGroup.className = "sitemap-lane-title-group";
+
+        const dragHandle = document.createElement("span");
+        dragHandle.className = "sitemap-drag-handle";
+        dragHandle.title = "ลากเพื่อสลับลำดับโครงการ";
+        dragHandle.textContent = "⠿";
+
+        const numBadge = document.createElement("span");
+        numBadge.className = "sitemap-lane-num";
+        numBadge.textContent = `#${projIdx + 1}`;
+
+        const iconEl = document.createElement("span");
+        iconEl.className = "sitemap-lane-icon";
+        iconEl.textContent = getNodeIcon(proj.type);
+
+        const titleEl = document.createElement("h4");
+        titleEl.className = "sitemap-lane-title";
+        titleEl.textContent = proj.title || "โครงการไม่มีชื่อ";
+        titleEl.title = `${proj.title || ""} (${proj.id})`;
+
+        titleGroup.append(dragHandle, numBadge, iconEl, titleEl);
+
+        const laneActions = document.createElement("div");
+        laneActions.className = "sitemap-lane-actions";
+
+        // ปุ่มเลื่อนโครงการ (สำหรับมือถือ / Touch)
+        const moveLeftBtn = document.createElement("button");
+        moveLeftBtn.type = "button";
+        moveLeftBtn.textContent = "◀";
+        moveLeftBtn.title = "เลื่อนโครงการไปทางซ้าย";
+        moveLeftBtn.disabled = projIdx === 0;
+        moveLeftBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          reorderSiblingNodes(rootProjects, projIdx, -1, "สลับลำดับโครงการหลักแล้ว");
+        });
+
+        const moveRightBtn = document.createElement("button");
+        moveRightBtn.type = "button";
+        moveRightBtn.textContent = "▶";
+        moveRightBtn.title = "เลื่อนโครงการไปทางขวา";
+        moveRightBtn.disabled = projIdx === rootProjects.length - 1;
+        moveRightBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          reorderSiblingNodes(rootProjects, projIdx, 1, "สลับลำดับโครงการหลักแล้ว");
+        });
+
+        // ปุ่มแก้ไขโครงการ
+        const editBtn = document.createElement("button");
+        editBtn.type = "button";
+        editBtn.textContent = "✎ แก้ไข";
+        editBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          if (typeof window._selectTreeNode === "function") {
+            window._selectTreeNode(proj.id);
+          }
+        });
+
+        laneActions.append(moveLeftBtn, moveRightBtn, editBtn);
+        head.append(titleGroup, laneActions);
+
+        // Lane Drop Zone (กล่องสำหรับวางการ์ดลูก)
+        const dropZone = document.createElement("div");
+        dropZone.className = "sitemap-drop-zone";
+        dropZone.dataset.targetParentId = proj.id;
+
+        if (filteredItems.length === 0) {
+          const emptyHint = document.createElement("div");
+          emptyHint.className = "sitemap-empty-lane-hint";
+          emptyHint.textContent = searchQuery
+            ? "ไม่พบหัวข้อย่อยที่ตรงกับการค้นหา"
+            : "ลากหัวข้อมาวางที่นี่ หรือกด ＋ เพิ่มโหนดย่อย";
+          dropZone.append(emptyHint);
+        } else {
+          filteredItems.forEach((item, itemIdx) => {
+            const card = document.createElement("div");
+            card.className = "sitemap-card";
+            if (appState.selectedTreeNodeId === item.id) {
+              card.classList.add("selected");
+            }
+            card.dataset.nodeId = item.id;
+            card.dataset.parentId = item.parentId || proj.id;
+            card.dataset.order = String(item.order || (itemIdx + 1) * 10);
+            card.draggable = true;
+
+            // Card Left
+            const cardLeft = document.createElement("div");
+            cardLeft.className = "sitemap-card-left";
+
+            const cardGrip = document.createElement("span");
+            cardGrip.className = "sitemap-drag-handle";
+            cardGrip.title = "ลากเพื่อจัดลำดับหรือย้ายโครงการ";
+            cardGrip.textContent = "⠿";
+
+            const cardNum = document.createElement("span");
+            cardNum.className = "sitemap-card-num";
+            cardNum.textContent = `#${projIdx + 1}.${itemIdx + 1}`;
+
+            const cardIcon = document.createElement("span");
+            cardIcon.className = "sitemap-card-icon";
+            cardIcon.textContent = getNodeIcon(item.type);
+
+            const cardMeta = document.createElement("div");
+            cardMeta.className = "sitemap-card-meta";
+
+            const cardTitle = document.createElement("span");
+            cardTitle.className = "sitemap-card-title";
+            cardTitle.textContent = item.title || "ไม่มีชื่อ";
+
+            const cardSub = document.createElement("div");
+            cardSub.className = "sitemap-card-sub";
+
+            const pubBadge = document.createElement("span");
+            pubBadge.className = `sitemap-badge-pub ${item.published ? "published" : "draft"}`;
+            pubBadge.textContent = item.published ? "เผยแพร่แล้ว" : "ฉบับร่าง";
+            cardSub.append(pubBadge);
+
+            if (item.contentType && item.contentRef) {
+              const linkBadge = document.createElement("span");
+              linkBadge.className = "sitemap-badge-link";
+              linkBadge.textContent = "เชื่อมข้อมูล";
+              cardSub.append(linkBadge);
+            }
+
+            cardMeta.append(cardTitle, cardSub);
+            cardLeft.append(cardGrip, cardNum, cardIcon, cardMeta);
+
+            // Card Actions
+            const cardActions = document.createElement("div");
+            cardActions.className = "sitemap-card-actions";
+
+            // ปุ่มเลื่อนขึ้น / ลงบนมือถือ
+            const upBtn = document.createElement("button");
+            upBtn.type = "button";
+            upBtn.className = "sitemap-card-btn";
+            upBtn.textContent = "▲";
+            upBtn.title = "เลื่อนขึ้น";
+            upBtn.disabled = itemIdx === 0;
+            upBtn.addEventListener("click", (e) => {
+              e.stopPropagation();
+              reorderSiblingNodes(filteredItems, itemIdx, -1, "เลื่อนลำดับหัวข้อขึ้นแล้ว");
+            });
+
+            const downBtn = document.createElement("button");
+            downBtn.type = "button";
+            downBtn.className = "sitemap-card-btn";
+            downBtn.textContent = "▼";
+            downBtn.title = "เลื่อนลง";
+            downBtn.disabled = itemIdx === filteredItems.length - 1;
+            downBtn.addEventListener("click", (e) => {
+              e.stopPropagation();
+              reorderSiblingNodes(filteredItems, itemIdx, 1, "เลื่อนลำดับหัวข้อลงแล้ว");
+            });
+
+            // ปุ่มย้ายโครงการ (เปิดหน้าต่างเลือกโครงการปลายทาง)
+            const moveBtn = document.createElement("button");
+            moveBtn.type = "button";
+            moveBtn.className = "sitemap-card-btn";
+            moveBtn.textContent = "↔";
+            moveBtn.title = "ย้ายไปโครงการอื่น";
+            moveBtn.addEventListener("click", (e) => {
+              e.stopPropagation();
+              showMoveNodePrompt(item, rootProjects);
+            });
+
+            // ปุ่มแก้ไข
+            const cardEditBtn = document.createElement("button");
+            cardEditBtn.type = "button";
+            cardEditBtn.className = "sitemap-card-btn";
+            cardEditBtn.textContent = "✎";
+            cardEditBtn.title = "แก้ไข";
+            cardEditBtn.addEventListener("click", (e) => {
+              e.stopPropagation();
+              if (typeof window._selectTreeNode === "function") {
+                window._selectTreeNode(item.id);
+              }
+            });
+
+            cardActions.append(upBtn, downBtn, moveBtn, cardEditBtn);
+
+            // คลิกที่การ์ดเพื่อเปิดฟอร์มแก้ไข
+            card.addEventListener("click", () => {
+              if (typeof window._selectTreeNode === "function") {
+                window._selectTreeNode(item.id);
+              }
+            });
+
+            card.append(cardLeft, cardActions);
+            dropZone.append(card);
+          });
+        }
+
+        // Lane Footer (ปุ่มเพิ่มโหนดย่อย)
+        const foot = document.createElement("div");
+        foot.className = "sitemap-lane-foot";
+        const addSubBtn = document.createElement("button");
+        addSubBtn.type = "button";
+        addSubBtn.className = "sitemap-add-sub-btn";
+        addSubBtn.textContent = "＋ เพิ่มโหนดย่อยในโครงการนี้";
+        addSubBtn.addEventListener("click", () => {
+          if (typeof window._addNewTreeNode === "function") {
+            window._addNewTreeNode(proj.id, "page");
+          }
+        });
+        foot.append(addSubBtn);
+
+        lane.append(head, dropZone, foot);
+        boardEl.append(lane);
+      });
+
+      // กล่องปุ่มเพิ่มโครงการใหม่ที่ส่วนท้าย
+      const addLaneCard = document.createElement("button");
+      addLaneCard.type = "button";
+      addLaneCard.className = "sitemap-add-lane-card";
+      addLaneCard.innerHTML =
+        '<span style="font-size:1.8rem;line-height:1;">＋</span><strong style="font-size:0.95rem;">เพิ่มโครงการใหม่</strong><span style="font-size:0.78rem;opacity:0.8;">สร้างหัวข้อโครงการระดับหลัก</span>';
+      addLaneCard.addEventListener("click", () => {
+        if (typeof window._addNewTreeNode === "function") {
+          window._addNewTreeNode("", "project");
+        }
+      });
+      boardEl.append(addLaneCard);
+
+      // ติดตั้งระบบ Drag & Drop บน Board
+      setupDragAndDropEvents();
+    }
+
+    // ฟังก์ชันเลื่อนลำดับด้วยปุ่ม (สำหรับสัมผัสและปุ่มลัด)
+    async function reorderSiblingNodes(list, index, delta, successMsg) {
+      const targetIndex = index + delta;
+      if (targetIndex < 0 || targetIndex >= list.length) return;
+      const current = list[index];
+      const target = list[targetIndex];
+      if (!current || !target) return;
+
+      const updates = [
+        { id: current.id, order: Number(target.order) || (targetIndex + 1) * 10, parentId: current.parentId },
+        { id: target.id, order: Number(current.order) || (index + 1) * 10, parentId: target.parentId },
+      ];
+
+      if (typeof window._saveNodeReorder === "function") {
+        await window._saveNodeReorder(updates, successMsg);
+      }
+    }
+
+    // ฟังก์ชันย้ายโหนดข้ามโครงการแบบมีกล่องเลือก (Move prompt for touch/accessibility)
+    function showMoveNodePrompt(node, projects) {
+      const availableProjects = projects.filter((p) => p.id !== node.id && p.id !== node.parentId);
+      if (!availableProjects.length) {
+        if (typeof window._showPortalToast === "function") {
+          window._showPortalToast("ไม่มีโครงการอื่นให้ย้าย", "error");
+        }
+        return;
+      }
+
+      const promptDialog = document.createElement("dialog");
+      promptDialog.className = "tree-dialog";
+      promptDialog.style.maxWidth = "440px";
+      promptDialog.style.padding = "20px";
+      promptDialog.style.borderRadius = "12px";
+
+      const currentProj = projects.find((p) => p.id === node.parentId);
+      const currentName = currentProj ? currentProj.title : "โหนดหลัก";
+
+      promptDialog.innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:14px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <h3 style="margin:0;font-size:1.1rem;color:#171329;">ย้ายหัวข้อไปยังโครงการอื่น</h3>
+            <button type="button" class="icon-button" style="border:0;background:transparent;font-size:1.2rem;cursor:pointer;">×</button>
+          </div>
+          <p style="margin:0;font-size:0.86rem;color:#555060;">
+            หัวข้อ: <strong>${node.title}</strong><br>
+            ปัจจุบันอยู่ใต้: <em>${currentName}</em>
+          </p>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:0.86rem;font-weight:600;color:#171329;">
+            เลือกโครงการปลายทาง
+            <select id="_targetMoveProjSelect" style="padding:8px 10px;border-radius:6px;border:1px solid #ccc;font-size:0.9rem;">
+              ${availableProjects.map((p) => `<option value="${p.id}">${p.title} (${p.id})</option>`).join("")}
+            </select>
+          </label>
+          <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:8px;">
+            <button type="button" id="_cancelMoveBtn" class="button secondary" style="padding:6px 14px;border-radius:6px;">ยกเลิก</button>
+            <button type="button" id="_confirmMoveBtn" class="button primary" style="padding:6px 14px;border-radius:6px;background:#9f731c;color:#fff;">ยืนยันการย้าย</button>
+          </div>
+        </div>
+      `;
+
+      document.body.appendChild(promptDialog);
+      promptDialog.showModal();
+
+      const closeDialog = () => {
+        promptDialog.close();
+        promptDialog.remove();
+      };
+
+      promptDialog.querySelector(".icon-button").addEventListener("click", closeDialog);
+      promptDialog.querySelector("#_cancelMoveBtn").addEventListener("click", closeDialog);
+
+      promptDialog.querySelector("#_confirmMoveBtn").addEventListener("click", async () => {
+        const select = promptDialog.querySelector("#_targetMoveProjSelect");
+        const newParentId = select ? select.value : "";
+        if (!newParentId) return;
+
+        closeDialog();
+
+        // คำนวณลำดับท้ายสุดของโครงการปลายทาง
+        const appState = window._appState;
+        const targetSiblings = (appState?.siteNodes || []).filter(
+          (n) => (n.parentId || "") === newParentId && !n.deletedAt
+        );
+        const maxOrder = targetSiblings.reduce((max, s) => Math.max(max, Number(s.order) || 0), 0);
+        const newOrder = maxOrder + 10;
+
+        if (typeof window._saveNodeReorder === "function") {
+          await window._saveNodeReorder(
+            [{ id: node.id, parentId: newParentId, order: newOrder }],
+            `ย้ายหัวข้อไปยังโครงการเรียบร้อยแล้ว`
+          );
+        }
+      });
+    }
+
+    // ติดตั้ง Event Drag & Drop
+    function setupDragAndDropEvents() {
+      if (!boardEl) return;
+
+      // 1. จัดการการ์ดย่อย (Cards)
+      const cards = boardEl.querySelectorAll(".sitemap-card");
+      cards.forEach((card) => {
+        card.addEventListener("dragstart", (e) => {
+          draggedNodeId = card.dataset.nodeId;
+          draggedSourceParentId = card.dataset.parentId;
+          draggedType = "card";
+          card.classList.add("is-dragging");
+          e.dataTransfer.effectAllowed = "move";
+          e.dataTransfer.setData("text/plain", draggedNodeId);
+        });
+
+        card.addEventListener("dragend", () => {
+          card.classList.remove("is-dragging");
+          cleanDropIndicators();
+          draggedNodeId = null;
+          draggedSourceParentId = null;
+          draggedType = null;
+        });
+
+        card.addEventListener("dragover", (e) => {
+          if (draggedType !== "card" || !draggedNodeId || draggedNodeId === card.dataset.nodeId) return;
+          e.preventDefault();
+          e.stopPropagation();
+          e.dataTransfer.dropEffect = "move";
+
+          const rect = card.getBoundingClientRect();
+          const midY = rect.top + rect.height / 2;
+          card.classList.remove("drag-over-top", "drag-over-bottom");
+          if (e.clientY < midY) {
+            card.classList.add("drag-over-top");
+          } else {
+            card.classList.add("drag-over-bottom");
+          }
+        });
+
+        card.addEventListener("dragleave", (e) => {
+          card.classList.remove("drag-over-top", "drag-over-bottom");
+        });
+
+        card.addEventListener("drop", async (e) => {
+          if (draggedType !== "card" || !draggedNodeId || draggedNodeId === card.dataset.nodeId) return;
+          e.preventDefault();
+          e.stopPropagation();
+
+          const targetNodeId = card.dataset.nodeId;
+          const targetParentId = card.dataset.parentId;
+          const rect = card.getBoundingClientRect();
+          const isBefore = e.clientY < rect.top + rect.height / 2;
+
+          card.classList.remove("drag-over-top", "drag-over-bottom");
+          await handleCardDrop(draggedNodeId, targetNodeId, targetParentId, isBefore);
+        });
+      });
+
+      // 2. จัดการโซนวางของโครงการ (Lane Drop Zones)
+      const dropZones = boardEl.querySelectorAll(".sitemap-drop-zone");
+      dropZones.forEach((zone) => {
+        zone.addEventListener("dragover", (e) => {
+          if (draggedType !== "card" || !draggedNodeId) return;
+          e.preventDefault();
+          e.dataTransfer.dropEffect = "move";
+          zone.classList.add("drag-over");
+        });
+
+        zone.addEventListener("dragleave", (e) => {
+          zone.classList.remove("drag-over");
+        });
+
+        zone.addEventListener("drop", async (e) => {
+          if (draggedType !== "card" || !draggedNodeId) return;
+          // ถ้า drop ตกที่ตัวการ์ด จะถูกจับโดย card.drop แล้ว
+          if (e.target.closest(".sitemap-card")) return;
+
+          e.preventDefault();
+          e.stopPropagation();
+          zone.classList.remove("drag-over");
+
+          const targetParentId = zone.dataset.targetParentId;
+          if (!targetParentId) return;
+
+          await handleCardDropIntoLane(draggedNodeId, targetParentId);
+        });
+      });
+
+      // 3. จัดการสลับลำดับโครงการหลัก (Lanes)
+      const lanes = boardEl.querySelectorAll(".sitemap-lane");
+      lanes.forEach((lane) => {
+        lane.addEventListener("dragstart", (e) => {
+          // ถ้ากำลังลากการ์ดย่อยในคอลัมน์ ไม่ให้เริ่ม drag ของ lane
+          if (e.target.closest(".sitemap-card")) return;
+          draggedNodeId = lane.dataset.laneId;
+          draggedType = "lane";
+          lane.classList.add("is-dragging");
+          e.dataTransfer.effectAllowed = "move";
+          e.dataTransfer.setData("text/plain", draggedNodeId);
+        });
+
+        lane.addEventListener("dragend", () => {
+          lane.classList.remove("is-dragging");
+          cleanDropIndicators();
+          draggedNodeId = null;
+          draggedType = null;
+        });
+
+        lane.addEventListener("dragover", (e) => {
+          if (draggedType !== "lane" || !draggedNodeId || draggedNodeId === lane.dataset.laneId) return;
+          e.preventDefault();
+          e.dataTransfer.dropEffect = "move";
+          lane.classList.add("drag-over");
+        });
+
+        lane.addEventListener("dragleave", () => {
+          lane.classList.remove("drag-over");
+        });
+
+        lane.addEventListener("drop", async (e) => {
+          if (draggedType !== "lane" || !draggedNodeId || draggedNodeId === lane.dataset.laneId) return;
+          e.preventDefault();
+          lane.classList.remove("drag-over");
+
+          const targetLaneId = lane.dataset.laneId;
+          await handleLaneReorder(draggedNodeId, targetLaneId);
+        });
+      });
+    }
+
+    function cleanDropIndicators() {
+      document.querySelectorAll(".drag-over-top, .drag-over-bottom, .drag-over").forEach((el) => {
+        el.classList.remove("drag-over-top", "drag-over-bottom", "drag-over");
+      });
+    }
+
+    // ประมวลผลเมื่อปล่อยการ์ดลงบนการ์ดอื่น
+    async function handleCardDrop(sourceId, targetId, targetParentId, insertBefore) {
+      const appState = window._appState;
+      if (!appState || !Array.isArray(appState.siteNodes)) return;
+
+      // ตรวจสอบการวนซ้ำ (ห้ามย้ายแม่ไปไว้ใต้ลูกของตัวเอง)
+      if (typeof window._getTreeDescendants === "function") {
+        const descendants = window._getTreeDescendants(sourceId);
+        if (descendants.has(targetParentId) || descendants.has(targetId)) {
+          if (typeof window._showPortalToast === "function") {
+            window._showPortalToast("ไม่สามารถย้ายหัวข้อหลักไปไว้ใต้หัวข้อย่อยของตนเองได้", "error");
+          }
+          return;
+        }
+      }
+
+      // ดึงพี่น้องทั้งหมดในโฟลเดอร์ปลายทาง
+      let siblings = appState.siteNodes
+        .filter((n) => (n.parentId || "") === targetParentId && !n.deletedAt && n.id !== sourceId)
+        .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0) || String(a.title).localeCompare(String(b.title), "th"));
+
+      const targetIdx = siblings.findIndex((s) => s.id === targetId);
+      const insertIdx = targetIdx < 0 ? siblings.length : insertBefore ? targetIdx : targetIdx + 1;
+
+      const sourceNode = appState.siteNodes.find((n) => n.id === sourceId);
+      if (!sourceNode) return;
+
+      const updatedSource = { ...sourceNode, parentId: targetParentId };
+      siblings.splice(insertIdx, 0, updatedSource);
+
+      // กำหนดค่า order ใหม่ทีละ 10
+      const updates = siblings.map((node, idx) => ({
+        id: node.id,
+        order: (idx + 1) * 10,
+        parentId: targetParentId,
+      }));
+
+      const isMovedToDifferentProject = sourceNode.parentId !== targetParentId;
+      const successMsg = isMovedToDifferentProject ? "ย้ายหัวข้อไปยังโครงการใหม่แล้ว" : "จัดเรียงลำดับหัวข้อเรียบร้อยแล้ว";
+
+      if (typeof window._saveNodeReorder === "function") {
+        await window._saveNodeReorder(updates, successMsg);
+      }
+    }
+
+    // ประมวลผลเมื่อปล่อยการ์ดลงบนโซนว่างของโครงการ
+    async function handleCardDropIntoLane(sourceId, targetParentId) {
+      const appState = window._appState;
+      if (!appState || !Array.isArray(appState.siteNodes)) return;
+
+      if (typeof window._getTreeDescendants === "function") {
+        const descendants = window._getTreeDescendants(sourceId);
+        if (descendants.has(targetParentId)) {
+          if (typeof window._showPortalToast === "function") {
+            window._showPortalToast("ไม่สามารถย้ายหัวข้อหลักไปไว้ใต้หัวข้อย่อยของตนเองได้", "error");
+          }
+          return;
+        }
+      }
+
+      const sourceNode = appState.siteNodes.find((n) => n.id === sourceId);
+      if (!sourceNode) return;
+
+      let siblings = appState.siteNodes
+        .filter((n) => (n.parentId || "") === targetParentId && !n.deletedAt && n.id !== sourceId)
+        .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+
+      siblings.push(sourceNode);
+
+      const updates = siblings.map((node, idx) => ({
+        id: node.id,
+        order: (idx + 1) * 10,
+        parentId: targetParentId,
+      }));
+
+      if (typeof window._saveNodeReorder === "function") {
+        await window._saveNodeReorder(updates, "ย้ายหัวข้อเข้าโครงการเรียบร้อยแล้ว");
+      }
+    }
+
+    // ประมวลผลเมื่อสลับโครงการหลัก (Lanes)
+    async function handleLaneReorder(sourceLaneId, targetLaneId) {
+      const appState = window._appState;
+      if (!appState || !Array.isArray(appState.siteNodes)) return;
+
+      let rootProjects = appState.siteNodes
+        .filter(
+          (n) =>
+            !n.deletedAt &&
+            (n.type === "project" ||
+              n.parentId === "" ||
+              n.parentId === "site-root" ||
+              !appState.siteNodes.some((p) => p.id === n.parentId))
+        )
+        .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+
+      const sourceIdx = rootProjects.findIndex((p) => p.id === sourceLaneId);
+      const targetIdx = rootProjects.findIndex((p) => p.id === targetLaneId);
+      if (sourceIdx < 0 || targetIdx < 0) return;
+
+      const [removed] = rootProjects.splice(sourceIdx, 1);
+      rootProjects.splice(targetIdx, 0, removed);
+
+      const updates = rootProjects.map((p, idx) => ({
+        id: p.id,
+        order: (idx + 1) * 10,
+        parentId: p.parentId || "",
+      }));
+
+      if (typeof window._saveNodeReorder === "function") {
+        await window._saveNodeReorder(updates, "จัดเรียงลำดับโครงการหลักเรียบร้อยแล้ว");
+      }
+    }
+
+    // 4. ติดตั้งระบบ Drag & Drop บนผังรายการต้นไม้แบบดั้งเดิม (#siteTree)
+    function setupSiteTreeDragAndDrop() {
+      if (!siteTree) return;
+
+      siteTree.addEventListener("dragstart", (e) => {
+        const nodeBtn = e.target.closest(".tree-node");
+        if (!nodeBtn) return;
+        draggedNodeId = nodeBtn.dataset.nodeId;
+        draggedSourceParentId = nodeBtn.dataset.parentId;
+        nodeBtn.classList.add("is-dragging");
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", draggedNodeId);
+      });
+
+      siteTree.addEventListener("dragend", (e) => {
+        const nodeBtn = e.target.closest(".tree-node");
+        if (nodeBtn) nodeBtn.classList.remove("is-dragging");
+        cleanDropIndicators();
+        draggedNodeId = null;
+        draggedSourceParentId = null;
+      });
+
+      siteTree.addEventListener("dragover", (e) => {
+        const nodeBtn = e.target.closest(".tree-node");
+        if (!nodeBtn || !draggedNodeId || nodeBtn.dataset.nodeId === draggedNodeId) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
+
+        const rect = nodeBtn.getBoundingClientRect();
+        const midY = rect.top + rect.height / 2;
+        nodeBtn.classList.remove("drag-over-top", "drag-over-bottom");
+        if (e.clientY < midY) {
+          nodeBtn.classList.add("drag-over-top");
+        } else {
+          nodeBtn.classList.add("drag-over-bottom");
+        }
+      });
+
+      siteTree.addEventListener("dragleave", (e) => {
+        const nodeBtn = e.target.closest(".tree-node");
+        if (nodeBtn) nodeBtn.classList.remove("drag-over-top", "drag-over-bottom");
+      });
+
+      siteTree.addEventListener("drop", async (e) => {
+        const nodeBtn = e.target.closest(".tree-node");
+        if (!nodeBtn || !draggedNodeId || nodeBtn.dataset.nodeId === draggedNodeId) return;
+        e.preventDefault();
+        nodeBtn.classList.remove("drag-over-top", "drag-over-bottom");
+
+        const targetNodeId = nodeBtn.dataset.nodeId;
+        const targetParentId = nodeBtn.dataset.parentId;
+        const rect = nodeBtn.getBoundingClientRect();
+        const isBefore = e.clientY < rect.top + rect.height / 2;
+
+        await handleCardDrop(draggedNodeId, targetNodeId, targetParentId, isBefore);
+      });
+    }
+
+    setupSiteTreeDragAndDrop();
+
+    // เผยแพร่ฟังก์ชันให้ระบบอื่นเรียกใช้งาน
+    window._renderInteractiveSiteMap = renderInteractiveSiteMap;
+
+    // ตรวจสอบการเปิด dialog
+    if (treeDialog) {
+      const observer = new MutationObserver(() => {
+        if (treeDialog.open) {
+          renderInteractiveSiteMap();
+        }
+      });
+      observer.observe(treeDialog, { attributes: true, attributeFilter: ["open"] });
+    }
+  }
+
+  // เรียกใช้งานทันทีเมื่อโหลดเสร็จ
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", _initInteractiveSiteMap);
+  } else {
+    _initInteractiveSiteMap();
+  }
 })();
 
 if (document.readyState === "loading") {

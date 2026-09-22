@@ -62,15 +62,14 @@ service cloud.firestore {
       allow list: if isGlobalAdmin();
       allow create: if signedIn()
         && request.auth.uid == userId
-        && request.resource.data.email == request.auth.token.email
+        && (request.resource.data.email == request.auth.token.email
+            || ('email' in request.auth.token && request.auth.token.email != null && request.resource.data.email.lower() == request.auth.token.email.lower()))
         && request.resource.data.globalRole == (isDefaultAdmin() ? 'admin' : 'user');
       allow update: if isGlobalAdmin()
         || (signedIn()
           && request.auth.uid == userId
-          && request.resource.data.email == resource.data.email
-          && request.resource.data.globalRole == resource.data.globalRole
           && request.resource.data.diff(resource.data).affectedKeys()
-            .hasOnly(['displayName', 'photoURL', 'lastLoginAt']));
+            .hasOnly(['displayName', 'photoURL', 'lastLoginAt', 'email']));
       allow delete: if isGlobalAdmin() && resource.data.email != 'jaru072@gmail.com';
     }
 
@@ -85,15 +84,14 @@ service cloud.firestore {
             && request.resource.data.role in ['admin', 'manager', 'user'])
           || (signedIn()
             && request.auth.uid == userId
-            && request.resource.data.email == request.auth.token.email
+            && (request.resource.data.email == request.auth.token.email
+                || ('email' in request.auth.token && request.auth.token.email != null && request.resource.data.email.lower() == request.auth.token.email.lower()))
             && request.resource.data.role == (isDefaultAdmin() ? 'admin' : 'user'));
         allow update: if isAdmin(projectId)
           || (signedIn()
             && request.auth.uid == userId
-            && request.resource.data.email == resource.data.email
-            && request.resource.data.role == resource.data.role
             && request.resource.data.diff(resource.data).affectedKeys()
-              .hasOnly(['displayName', 'lastLoginAt']));
+              .hasOnly(['displayName', 'lastLoginAt', 'photoURL', 'email']));
         allow delete: if isAdmin(projectId) && resource.data.email != 'jaru072@gmail.com';
       }
 
