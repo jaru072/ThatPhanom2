@@ -64,7 +64,7 @@ const I18N_TH = {
   "supportingProjects": "โครงการสนับสนุน",
   "muchalindaShort": "บูรณะสระมุจลินท์",
   "supportingWorldHeritage": "โครงการสนับสนุนพระธาตุพนม สู่มรดกโลก",
-  "muchalindaTitle": "โครงการบูรณะสระมุจลินท์ (สระพังทอง)",
+  "muchalindaTitle": "บูรณะสระมุจลินท์",
   "muchalindaLead": "พลิกฟื้นแหล่งน้ำศักดิ์สิทธิ์อายุกว่า 1,000 ปี เพื่ออนุรักษ์ภูมิทัศน์ประวัติศาสตร์และสนับสนุนเส้นทางพระธาตุพนมสู่มรดกโลก",
   "projectInProgress": "กำลังดำเนินงาน",
   "projectOverview": "ภาพรวม",
@@ -334,7 +334,7 @@ const I18N_LO = {
   "supportingProjects": "ໂຄງການສະໜັບສະໜູນ",
   "muchalindaShort": "ບູລະນະສະມຸດຈະລິນ",
   "supportingWorldHeritage": "ໂຄງການສະໜັບສະໜູນພະທາດພະນົມ ສູ່ມໍລະດົກໂລກ",
-  "muchalindaTitle": "ໂຄງການບູລະນະສະມຸດຈະລິນ (ສະພັງທອງ)",
+  "muchalindaTitle": "ບູລະນະສະມຸດຈະລິນ",
   "muchalindaLead": "ຟື້ນຟູແຫຼ່ງນ້ຳສັກສິດອາຍຸກວ່າ 1,000 ປີ ເພື່ອການບໍລິຫານຈັດການນ້ຳຢ່າງຮອບດ້ານ ຄົງໄວ້ເຊິ່ງພູມທັດວັດທະນະທຳ ແລະພື້ນທີ່ຈິດວິນຍານຂອງຊຸມຊົນ",
   "projectInProgress": "ກຳລັງດຳເນີນງານ",
   "projectOverview": "ພາບລວມ",
@@ -531,7 +531,7 @@ const I18N_EN = {
   "muchalindaHome": "Home",
   "muchalindaShort": "Muchalinda Pond Restoration",
   "supportingWorldHeritage": "Supporting Phra That Phanom to World Heritage",
-  "muchalindaTitle": "Muchalinda Pond Restoration Project (Sa Phang Thong)",
+  "muchalindaTitle": "Muchalinda Pond Restoration Project",
   "muchalindaLead": "Revitalizing a sacred water reservoir over 1,000 years old to restore holistic water management, historical dignity, and community spiritual space.",
   "projectInProgress": "In Progress",
   "projectOverview": "Overview",
@@ -855,19 +855,22 @@ const GLOBAL_LANGUAGES = [
   { code: "zu", nameTh: "ซูลู", native: "isiZulu", flag: "🇿🇦" }
 ];
 
-window.applyGlobalTranslate = function(langCode, langName) {
+window.applyGlobalTranslate = function(langCode, langName, isAutoDetected) {
   const host = window.location.hostname;
   document.cookie = "googtrans=/th/" + langCode + "; path=/;";
   document.cookie = "googtrans=/th/" + langCode + "; path=/; domain=" + host + ";";
   document.cookie = "googtrans=/th/" + langCode + "; path=/; domain=." + host + ";";
   localStorage.setItem("thatphanom_global_lang", langCode);
   localStorage.setItem("thatphanom_global_name", langName);
+  if (!isAutoDetected) {
+    localStorage.setItem("thatphanom_user_selected_lang", "true");
+  }
 
   const combo = document.querySelector(".goog-te-combo");
   if (combo) {
     combo.value = langCode;
     combo.dispatchEvent(new Event("change"));
-  } else {
+  } else if (!isAutoDetected) {
     window.location.reload();
   }
 
@@ -1055,6 +1058,7 @@ function _initLanguageDropdown() {
     opt.onclick = (e) => {
       e.stopPropagation();
       const selectedLang = opt.getAttribute("data-lang") || "th";
+      localStorage.setItem("thatphanom_user_selected_lang", "true");
       setLanguage(selectedLang);
       closeMenu();
     };
@@ -1067,12 +1071,137 @@ function _initLanguageDropdown() {
     }
   });
 
-  // Restore saved language preference or initialize default
-  const savedLang = localStorage.getItem("thatphanom_lang") || "th";
-  setLanguage(savedLang);
-
   // Initialize global translation system
   _initGlobalTranslate();
+
+  // Detect and apply default language based on visitor's country and locale
+  _initVisitorDefaultLanguage();
+}
+
+function _detectVisitorLocale() {
+  let tz = "";
+  try {
+    tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+  } catch (_) {}
+
+  const navLang = (navigator.language || (navigator.languages && navigator.languages[0]) || "").toLowerCase();
+  const primaryCode = navLang.split("-")[0];
+
+  // Primary rules for Laos and Thailand
+  if (primaryCode === "lo" || tz === "Asia/Vientiane") {
+    return { type: "core", lang: "lo" };
+  }
+  if (primaryCode === "th" || tz === "Asia/Bangkok") {
+    return { type: "core", lang: "th" };
+  }
+  if (primaryCode === "en") {
+    return { type: "core", lang: "en" };
+  }
+
+  // Chinese traditional vs simplified
+  if (primaryCode === "zh") {
+    if (navLang.includes("tw") || navLang.includes("hk") || tz.includes("Taipei") || tz.includes("Hong_Kong")) {
+      return { type: "global", lang: "zh-TW", name: "จีน (ตัวเต็ม)" };
+    }
+    return { type: "global", lang: "zh-CN", name: "จีน (ตัวย่อ)" };
+  }
+
+  // Match other GLOBAL_LANGUAGES
+  const matched = GLOBAL_LANGUAGES.find((l) => l.code === primaryCode || l.code.startsWith(primaryCode + "-"));
+  if (matched) {
+    return { type: "global", lang: matched.code, name: matched.nameTh };
+  }
+
+  // Timezone-based mappings for countries where browser language might be generic
+  if (tz === "Asia/Tokyo") return { type: "global", lang: "ja", name: "ญี่ปุ่น" };
+  if (tz === "Asia/Seoul") return { type: "global", lang: "ko", name: "เกาหลี" };
+  if (tz === "Asia/Ho_Chi_Minh") return { type: "global", lang: "vi", name: "เวียดนาม" };
+  if (tz === "Asia/Shanghai") return { type: "global", lang: "zh-CN", name: "จีน (ตัวย่อ)" };
+  if (tz === "Asia/Yangon") return { type: "global", lang: "my", name: "พม่า" };
+  if (tz === "Asia/Phnom_Penh") return { type: "global", lang: "km", name: "กัมพูชา / เขมร" };
+  if (tz === "Asia/Jakarta") return { type: "global", lang: "id", name: "อินโดนีเซีย" };
+  if (tz.startsWith("Europe/Paris")) return { type: "global", lang: "fr", name: "ฝรั่งเศส" };
+  if (tz.startsWith("Europe/Berlin")) return { type: "global", lang: "de", name: "เยอรมัน" };
+  if (tz.startsWith("Europe/Madrid")) return { type: "global", lang: "es", name: "สเปน" };
+  if (tz.startsWith("Europe/Moscow")) return { type: "global", lang: "ru", name: "รัสเซีย" };
+
+  return { type: "core", lang: "th" };
+}
+
+function _initVisitorDefaultLanguage() {
+  const hasUserSelected = localStorage.getItem("thatphanom_user_selected_lang") === "true";
+
+  if (hasUserSelected) {
+    const globalLang = localStorage.getItem("thatphanom_global_lang");
+    if (globalLang) {
+      return;
+    }
+    const savedLang = localStorage.getItem("thatphanom_lang") || "th";
+    setLanguage(savedLang);
+    return;
+  }
+
+  // First time visitor: Detect country/locale immediately
+  const detected = _detectVisitorLocale();
+  if (detected.type === "core") {
+    setLanguage(detected.lang);
+  } else if (detected.type === "global") {
+    setTimeout(() => {
+      if (typeof window.applyGlobalTranslate === "function") {
+        window.applyGlobalTranslate(detected.lang, detected.name, true);
+      }
+    }, 450);
+  }
+
+  // Fast asynchronous IP Geolocation fallback
+  try {
+    fetch("https://freeipapi.com/api/json")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!data || !data.countryCode) return;
+        if (localStorage.getItem("thatphanom_user_selected_lang") === "true") return;
+
+        const cCode = data.countryCode.toUpperCase();
+        const countryMapping = {
+          TH: { type: "core", lang: "th" },
+          LA: { type: "core", lang: "lo" },
+          US: { type: "core", lang: "en" },
+          GB: { type: "core", lang: "en" },
+          AU: { type: "core", lang: "en" },
+          CA: { type: "core", lang: "en" },
+          NZ: { type: "core", lang: "en" },
+          CN: { type: "global", lang: "zh-CN", name: "จีน (ตัวย่อ)" },
+          TW: { type: "global", lang: "zh-TW", name: "จีน (ตัวเต็ม)" },
+          HK: { type: "global", lang: "zh-TW", name: "จีน (ตัวเต็ม)" },
+          JP: { type: "global", lang: "ja", name: "ญี่ปุ่น" },
+          KR: { type: "global", lang: "ko", name: "เกาหลี" },
+          VN: { type: "global", lang: "vi", name: "เวียดนาม" },
+          FR: { type: "global", lang: "fr", name: "ฝรั่งเศส" },
+          DE: { type: "global", lang: "de", name: "เยอรมัน" },
+          ES: { type: "global", lang: "es", name: "สเปน" },
+          RU: { type: "global", lang: "ru", name: "รัสเซีย" },
+          MM: { type: "global", lang: "my", name: "พม่า" },
+          KH: { type: "global", lang: "km", name: "กัมพูชา / เขมร" },
+          ID: { type: "global", lang: "id", name: "อินโดนีเซีย" },
+          IN: { type: "global", lang: "hi", name: "ฮินดี" },
+          IT: { type: "global", lang: "it", name: "อิตาลี" },
+          SA: { type: "global", lang: "ar", name: "อาหรับ" },
+          AE: { type: "global", lang: "ar", name: "อาหรับ" }
+        };
+
+        const target = countryMapping[cCode];
+        if (target) {
+          if (target.type === "core" && target.lang !== (localStorage.getItem("thatphanom_lang") || "th")) {
+            setLanguage(target.lang);
+          } else if (target.type === "global" && target.lang !== localStorage.getItem("thatphanom_global_lang")) {
+            if (typeof window.applyGlobalTranslate === "function") {
+              window.applyGlobalTranslate(target.lang, target.name, true);
+            }
+          }
+        }
+      })
+      .catch(() => {});
+  } catch (_) {}
 }
 
 if (document.readyState === "loading") {

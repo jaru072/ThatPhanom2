@@ -618,6 +618,47 @@
       background: rgba(203, 166, 75, 0.2) !important;
       border: 1px solid #9f731c !important;
     }
+
+    /* ย้ายปุ่มอัพเดท กล่องสไลด์บนสุดของทั้ง 2 โครงการไปมุมบนซ้าย เพื่อไม่ให้ทับตัวเลขจำนวนสไลด์ */
+    .hero-update-button,
+    #heroMedia .media-update-button,
+    .hero .media-update-button,
+    .muchalinda-hero-slider .section-slider-update,
+    #muchalindaHeroMedia .media-update-button,
+    #muchalindaHeroMedia .section-slider-update,
+    .support-project-hero-media .media-update-button,
+    .support-project-hero-media .section-slider-update,
+    .muchalinda-overview-media .media-update-button,
+    .muchalinda-overview-media .section-slider-update,
+    .muchalinda-donation-media .section-slider-update,
+    .muchalinda-donation-media .media-update-button {
+      position: absolute !important;
+      top: 16px !important;
+      left: 16px !important;
+      right: auto !important;
+      bottom: auto !important;
+      z-index: 10 !important;
+    }
+
+    @media (max-width: 600px) {
+      .hero-update-button,
+      #heroMedia .media-update-button,
+      .hero .media-update-button,
+      .muchalinda-hero-slider .section-slider-update,
+      #muchalindaHeroMedia .media-update-button,
+      #muchalindaHeroMedia .section-slider-update,
+      .support-project-hero-media .media-update-button,
+      .support-project-hero-media .section-slider-update,
+      .muchalinda-overview-media .media-update-button,
+      .muchalinda-overview-media .section-slider-update,
+      .muchalinda-donation-media .section-slider-update,
+      .muchalinda-donation-media .media-update-button {
+        top: 10px !important;
+        left: 10px !important;
+        right: auto !important;
+        bottom: auto !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -758,7 +799,7 @@
           <div class="support-project-hero-media" id="muchalindaHeroMedia" aria-label="สไลด์ภาพและวิดีโอโครงการสระมุจลินท์"></div>
           <div class="support-project-hero-copy">
             <p class="support-project-parent" data-i18n="supportingWorldHeritage">โครงการสนับสนุนพระธาตุพนม สู่มรดกโลก</p>
-            <h2 id="muchalindaProjectTitle" data-i18n="muchalindaTitle">โครงการบูรณะสระมุจลินท์ (สระพังทอง)</h2>
+            <h2 id="muchalindaProjectTitle" data-i18n="muchalindaTitle">บูรณะสระมุจลินท์</h2>
             <p class="support-project-lead" data-i18n="muchalindaLead">พลิกฟื้นแหล่งน้ำศักดิ์สิทธิ์อายุกว่า 1,000 ปี เพื่ออนุรักษ์ภูมิทัศน์ประวัติศาสตร์และสนับสนุนเส้นทางพระธาตุพนมสู่มรดกโลก</p>
             <span class="support-project-status" data-i18n="projectInProgress">กำลังดำเนินงาน</span>
           </div>
@@ -780,7 +821,7 @@
                 <figure class="media-slide active" data-slide-index="0">
                   <img src="/assets/muchalinda-hero-C-214kxm.webp" alt="ภาพจำลองแนวคิดโครงการบูรณะสระมุจลินท์ สระพังทอง" loading="lazy">
                   <figcaption class="media-caption">
-                    <h4 style="color:var(--gold);margin:0 0 6px;font-size:0.6rem;letter-spacing:0.02em;" data-i18n="muchalindaTitle">โครงการบูรณะสระมุจลินท์ (สระพังทอง)</h4>
+                    <h4 style="color:var(--gold);margin:0 0 6px;font-size:0.6rem;letter-spacing:0.02em;" data-i18n="muchalindaTitle">บูรณะสระมุจลินท์</h4>
                     <p style="margin:0;color:#f0ecf6;font-size:0.69rem;line-height:1.55;" data-i18n="muchalindaLead">พลิกฟื้นแหล่งน้ำศักดิ์สิทธิ์อายุกว่า 1,000 ปี เพื่ออนุรักษ์ภูมิทัศน์ประวัติศาสตร์และสนับสนุนเส้นทางพระธาตุพนมสู่มรดกโลก</p>
                   </figcaption>
                 </figure>
