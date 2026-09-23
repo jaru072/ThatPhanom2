@@ -674,7 +674,45 @@ const I18N_LANGS = {
   en: { label: "English", dict: I18N_EN, title: "Phra That Phanom to World Heritage" }
 };
 
+function syncSiteSectionsCacheToDict() {
+  try {
+    const cachedSec = localStorage.getItem("thatphanom_site_sections_cache");
+    if (cachedSec) {
+      const secList = JSON.parse(cachedSec);
+      if (Array.isArray(secList)) {
+        secList.forEach(s => {
+          if (!s || !s.id) return;
+          if (s.id === "status") {
+            if (typeof s.content === "string") {
+              I18N_TH.statusText = s.content;
+              if (I18N_LANGS.th?.dict) I18N_LANGS.th.dict.statusText = s.content;
+            }
+            if (typeof s.content_lo === "string" && I18N_LANGS.lo?.dict) I18N_LANGS.lo.dict.statusText = s.content_lo;
+            if (typeof s.content_en === "string" && I18N_LANGS.en?.dict) I18N_LANGS.en.dict.statusText = s.content_en;
+
+            if (typeof s.title === "string") {
+              I18N_TH.statusTitle = s.title;
+              if (I18N_LANGS.th?.dict) I18N_LANGS.th.dict.statusTitle = s.title;
+            }
+            if (typeof s.title_lo === "string" && I18N_LANGS.lo?.dict) I18N_LANGS.lo.dict.statusTitle = s.title_lo;
+            if (typeof s.title_en === "string" && I18N_LANGS.en?.dict) I18N_LANGS.en.dict.statusTitle = s.title_en;
+
+            if (typeof s.kicker === "string") {
+              I18N_TH.statusLabel = s.kicker;
+              if (I18N_LANGS.th?.dict) I18N_LANGS.th.dict.statusLabel = s.kicker;
+            }
+            if (typeof s.kicker_lo === "string" && I18N_LANGS.lo?.dict) I18N_LANGS.lo.dict.statusLabel = s.kicker_lo;
+            if (typeof s.kicker_en === "string" && I18N_LANGS.en?.dict) I18N_LANGS.en.dict.statusLabel = s.kicker_en;
+          }
+        });
+      }
+    }
+  } catch (_) {}
+}
+syncSiteSectionsCacheToDict();
+
 function setLanguage(lang) {
+  syncSiteSectionsCacheToDict();
   if (typeof window.resetGlobalTranslate === "function" && (lang === "th" || lang === "lo" || lang === "en")) {
     window.resetGlobalTranslate(false);
   }
