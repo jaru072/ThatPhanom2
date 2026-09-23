@@ -266,6 +266,12 @@ input:checked + .site-toggle-slider:before {
   display: none !important;
 }
 
+/* Portal Refresh Button: Visible ONLY for Admin */
+body.is-admin .portal-refresh-btn,
+body.is-admin #portalRefreshBtn {
+  display: inline-flex !important;
+}
+
 /* Sidebar and Rail toolbars: Visible ONLY for Admin */
 body.is-admin .sidebar-admin-toolbar:not([hidden]),
 body.is-admin #sidebarAdminToolbar:not([hidden]) {
@@ -578,8 +584,10 @@ body.is-admin .project-card .rail-card-gear {
     display: none;
   }
   .portal-refresh-btn {
-    padding: 6px 9px;
-    min-height: 32px;
+    width: 34px;
+    height: 34px;
+    min-height: 34px;
+    padding: 0;
   }
 }
 .sidebar-refresh-btn, .rail-refresh-btn {

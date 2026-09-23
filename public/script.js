@@ -1856,69 +1856,87 @@ function _initUiHelpers() {
     if (!slider || slider.dataset.customSliderActive === "true") return;
     slider.dataset.customSliderActive = "true";
 
-    const slides = Array.from(slider.querySelectorAll(".media-slide"));
-    if (slides.length <= 1) return;
-
     const prevBtn = slider.querySelector(".slider-arrow.prev");
     const nextBtn = slider.querySelector(".slider-arrow.next");
     const counter = slider.querySelector(".slider-counter");
 
-    let currentIndex = slides.findIndex((s) => s.classList.contains("active"));
-    if (currentIndex < 0) currentIndex = 0;
+    function getSlides() {
+      return Array.from(slider.querySelectorAll(".media-slide"));
+    }
 
-    function goToSlide(idx) {
-      if (idx < 0) idx = slides.length - 1;
-      if (idx >= slides.length) idx = 0;
-      currentIndex = idx;
+    function getCurrentActiveIndex(slides) {
+      const idx = slides.findIndex((s) => s.classList.contains("active"));
+      return idx >= 0 ? idx : 0;
+    }
+
+    function goToSlide(targetIdx) {
+      const slides = getSlides();
+      if (slides.length <= 1) return;
+      const total = slides.length;
+      const nextIdx = ((targetIdx % total) + total) % total;
 
       slides.forEach((s, i) => {
-        s.classList.toggle("active", i === currentIndex);
+        s.classList.toggle("active", i === nextIdx);
       });
 
-      if (counter) {
-        counter.textContent = `${currentIndex + 1} / ${slides.length}`;
-        counter.setAttribute("aria-label", `สไลด์ที่ ${currentIndex + 1} จากทั้งหมด ${slides.length}`);
+      const counters = slider.querySelectorAll(".slider-counter");
+      counters.forEach((cnt) => {
+        cnt.textContent = `${nextIdx + 1} / ${total}`;
+        cnt.setAttribute("aria-label", `สไลด์ที่ ${nextIdx + 1} จากทั้งหมด ${total}`);
+      });
+
+      const sliderKey = slider.dataset.slider;
+      if (sliderKey && window._appState && window._appState.slideIndex) {
+        window._appState.slideIndex[sliderKey] = nextIdx;
       }
     }
 
     if (prevBtn) {
       prevBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        e.stopPropagation();
-        goToSlide(currentIndex - 1);
+        const slides = getSlides();
+        const current = getCurrentActiveIndex(slides);
+        goToSlide(current - 1);
       });
     }
 
     if (nextBtn) {
       nextBtn.addEventListener("click", (e) => {
         e.preventDefault();
-        e.stopPropagation();
-        goToSlide(currentIndex + 1);
+        const slides = getSlides();
+        const current = getCurrentActiveIndex(slides);
+        goToSlide(current + 1);
       });
     }
 
     if (counter) {
       counter.addEventListener("click", (e) => {
         e.preventDefault();
-        e.stopPropagation();
-        goToSlide(currentIndex + 1);
+        const slides = getSlides();
+        const current = getCurrentActiveIndex(slides);
+        goToSlide(current + 1);
       });
       counter.addEventListener("keydown", (e) => {
         if (e.key === "Enter" || e.key === " ") {
           e.preventDefault();
-          goToSlide(currentIndex + 1);
+          const slides = getSlides();
+          const current = getCurrentActiveIndex(slides);
+          goToSlide(current + 1);
         }
       });
     }
 
-    // รองรับปุ่มลูกศรคีย์บอร์ด ซ้าย/ขวา
     slider.addEventListener("keydown", (e) => {
       if (e.key === "ArrowLeft") {
         e.preventDefault();
-        goToSlide(currentIndex - 1);
+        const slides = getSlides();
+        const current = getCurrentActiveIndex(slides);
+        goToSlide(current - 1);
       } else if (e.key === "ArrowRight") {
         e.preventDefault();
-        goToSlide(currentIndex + 1);
+        const slides = getSlides();
+        const current = getCurrentActiveIndex(slides);
+        goToSlide(current + 1);
       }
     });
   }
@@ -2824,3 +2842,69 @@ if (document.readyState === "loading") {
 } else {
   _initUiHelpers();
 }
+
+// Sync Admin Portal Refresh Button Visibility
+(function() {
+  function syncPortalRefreshBtn() {
+    let isAdmin = false;
+    try {
+      if (typeof window._checkIsAdmin === "function" && window._checkIsAdmin()) {
+        isAdmin = true;
+      } else if (window._appState && (window._appState.role === "admin" || (window._appState.user && window._appState.user.email === "jaru072@gmail.com"))) {
+        isAdmin = true;
+      } else {
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith("firebase:authUser:")) {
+            const d = JSON.parse(localStorage.getItem(k) || "{}");
+            if (d && d.email && d.email.toLowerCase() === "jaru072@gmail.com") {
+              isAdmin = true;
+              break;
+            }
+          }
+        }
+      }
+    } catch (_) {}
+
+    const refreshBtn = document.getElementById("portalRefreshBtn");
+    if (refreshBtn) {
+      refreshBtn.hidden = !isAdmin;
+      if (isAdmin) {
+        refreshBtn.style.setProperty("display", "inline-flex", "important");
+        if (document.body) document.body.classList.add("is-admin");
+      } else {
+        refreshBtn.style.setProperty("display", "none", "important");
+      }
+      if (!refreshBtn._hasScriptRefreshClick) {
+        refreshBtn._hasScriptRefreshClick = true;
+        refreshBtn.addEventListener("click", function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (typeof window._handleManualRefresh === "function") {
+            window._handleManualRefresh();
+          } else if (typeof window.refreshSiteData === "function") {
+            window.refreshSiteData();
+          }
+        });
+        refreshBtn.addEventListener("touchend", function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          if (typeof window._handleManualRefresh === "function") {
+            window._handleManualRefresh();
+          } else if (typeof window.refreshSiteData === "function") {
+            window.refreshSiteData();
+          }
+        });
+      }
+    }
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", syncPortalRefreshBtn);
+  } else {
+    syncPortalRefreshBtn();
+  }
+  window.addEventListener("load", syncPortalRefreshBtn);
+  window.addEventListener("storage", syncPortalRefreshBtn);
+  window.addEventListener("portal:dataReload", syncPortalRefreshBtn);
+})();
