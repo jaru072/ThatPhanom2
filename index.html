@@ -61,7 +61,7 @@
       };
     })();
   </script>
-  <script type="module" crossorigin src="/assets/index-D4DSCKUz.js"></script>
+  <script type="module" crossorigin src="/assets/index-D4DSCKUz.js?v=20260924-4"></script>
   <link rel="stylesheet" crossorigin href="/assets/index-dX7NzDAm.css">
   <style id="interactive-sitemap-styles">
     /* Compact 5-character Login Button */
@@ -660,6 +660,247 @@
       }
     }
 
+    /* === รูปแบบการ์ดร่วมบุญโครงการสระมุจลินท์ 2 กล่อง === */
+    .support-project-donation {
+      position: relative !important;
+      display: block !important;
+      width: 100% !important;
+      padding: 44px 28px 48px !important;
+      background: linear-gradient(180deg, #fcfbf8 0%, #f6f3eb 100%) !important;
+      border-top: 1px solid rgba(203, 166, 75, 0.25) !important;
+      border-bottom: 1px solid rgba(203, 166, 75, 0.25) !important;
+      box-sizing: border-box !important;
+    }
+
+    .donation-cards-grid {
+      display: grid !important;
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      gap: 32px !important;
+      width: 100% !important;
+      max-width: 1080px !important;
+      margin: 0 auto !important;
+      align-items: start !important;
+      box-sizing: border-box !important;
+    }
+
+    .donation-card {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background: #ffffff;
+      border-radius: 20px;
+      border: 1.5px solid rgba(203, 166, 75, 0.35);
+      box-shadow: 0 10px 30px rgba(7, 59, 49, 0.07);
+      padding: 24px;
+      transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+      box-sizing: border-box;
+      overflow: hidden;
+      min-width: 0;
+      height: fit-content !important;
+    }
+
+    .donation-card:hover {
+      transform: translateY(-4px);
+      border-color: rgba(203, 166, 75, 0.75);
+      box-shadow: 0 16px 40px rgba(7, 59, 49, 0.12);
+    }
+
+    .donation-card-header {
+      margin-bottom: 16px;
+    }
+
+    .donation-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      background: #f1f8f5;
+      color: #073b31;
+      font-size: 0.82rem;
+      font-weight: 700;
+      border-radius: 6px;
+      border: 1px solid rgba(7, 59, 49, 0.18);
+      margin-bottom: 8px;
+    }
+
+    .donation-card-title {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: #073b31;
+      margin: 0;
+      line-height: 1.35;
+      word-break: normal;
+      overflow-wrap: break-word;
+    }
+
+    .donation-card-media {
+      position: relative;
+      width: 100%;
+      height: 240px;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 18px;
+      background: #171329;
+      border: 1px solid rgba(7, 59, 49, 0.12);
+    }
+
+    .donation-card-media-link {
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      cursor: zoom-in;
+      position: relative;
+    }
+
+    .donation-card-media-link::after {
+      content: "🔍 ขยายภาพเต็มจอ";
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(7, 59, 49, 0.88);
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 20px;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .donation-card-media:hover .donation-card-media-link::after {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .donation-card-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease, opacity 0.3s ease;
+      cursor: zoom-in;
+    }
+
+    .donation-card:hover .donation-card-img {
+      transform: scale(1.04);
+    }
+
+    /* Admin Dialog Link Test Button */
+    .action-open-link-btn {
+      display: none;
+      flex-shrink: 0;
+      height: 38px;
+      padding: 0 12px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      text-decoration: none;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      white-space: nowrap;
+      border-radius: 6px;
+      background: #9f731c;
+      color: #ffffff !important;
+      border: 1px solid rgba(159, 115, 28, 0.4);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    }
+
+    .action-open-link-btn:hover {
+      background: #b8861e !important;
+      color: #ffffff !important;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
+    }
+
+    .donation-card-desc {
+      color: #4a4556;
+      font-size: 1rem;
+      line-height: 1.7;
+      margin: 0 0 20px;
+      flex-grow: 1;
+    }
+
+    .donation-card.no-action-btn .donation-card-desc,
+    .donation-card[data-has-action="false"] .donation-card-desc {
+      margin-bottom: 0 !important;
+      flex-grow: 0 !important;
+    }
+
+    .donation-card-footer {
+      margin-top: auto;
+      padding-top: 16px;
+      border-top: 1px dashed rgba(203, 166, 75, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .donation-card.no-action-btn .donation-card-footer,
+    .donation-card[data-has-action="false"] .donation-card-footer,
+    .donation-card-footer[style*="display: none"],
+    .donation-card.no-action-btn .donation-card-action-btn,
+    .donation-card[data-has-action="false"] .donation-card-action-btn {
+      display: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      border: none !important;
+      height: 0 !important;
+      min-height: 0 !important;
+      visibility: hidden !important;
+    }
+
+    .donation-card-action-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 18px;
+      background: #f1f8f5;
+      color: #073b31;
+      border: 1px solid rgba(7, 59, 49, 0.2);
+      border-radius: 8px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .donation-card-action-btn:hover {
+      background: #073b31;
+      color: #f1d889;
+      border-color: #073b31;
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 860px) {
+      .support-project-donation {
+        padding: 28px 16px 36px !important;
+      }
+      .donation-cards-grid {
+        grid-template-columns: 1fr !important;
+        gap: 20px !important;
+      }
+      .donation-card {
+        padding: 20px 18px !important;
+      }
+      .donation-card-media {
+        height: 200px !important;
+        margin-bottom: 14px !important;
+      }
+      .donation-card-title {
+        font-size: 1.3rem !important;
+      }
+      .donation-card-desc {
+        font-size: 0.95rem !important;
+      }
+    }
+
     .tree-popup-toast {
       position: absolute;
       top: 24px;
@@ -921,14 +1162,44 @@
             <li id="progressFourCard"><button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="progressFour" title="จัดการความคืบหน้า 4" aria-label="จัดการความคืบหน้า 4" hidden>⚙</button><time data-i18n="projectTimeFour">ปัจจุบัน</time><strong data-i18n="projectTimeFourTitle">ดำเนินงานต่อเนื่อง</strong><span data-i18n="projectTimeFourText">ก่อสร้าง ตกแต่งสถาปัตยกรรม และเตรียมพื้นที่โดยรอบ</span></li>
           </ol>
         </section>
-        <section class="support-project-donation" id="muchalinda-donation" aria-labelledby="muchalindaDonationTitle">
-          <div class="support-project-donation-copy">
-            <p class="kicker" data-i18n="projectDonationKicker">ร่วมเป็นส่วนหนึ่งของการอนุรักษ์</p>
-            <h3 id="muchalindaDonationTitle" data-i18n="projectDonationTitle">ร่วมบุญกับโครงการ</h3>
-            <p data-i18n="projectDonationText">เลือกดูรายละเอียดบัญชีตามวัตถุประสงค์ของการร่วมบุญ และโปรดตรวจสอบชื่อบัญชีก่อนโอนทุกครั้ง</p>
-            <p class="donation-safety-note" data-i18n="projectDonationSafety">ไม่มี QR Code บนเว็บไซต์ เพื่อให้ผู้ร่วมบุญตรวจสอบเลขบัญชีและชื่อบัญชีจากภาพต้นฉบับได้อย่างชัดเจน</p>
+        <section class="support-project-donation" id="muchalinda-donation" aria-label="ร่วมบุญโครงการสระมุจลินท์">
+          <div class="donation-cards-grid" id="donationCardsGrid">
+            <!-- กล่องที่ 1: บูรณะสระมุจลินท์ -->
+            <article class="donation-card has-admin-gear no-action-btn" id="donationOneCard" data-has-action="false">
+              <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="donationOne" title="จัดการข้อมูล: บูรณะสระมุจลินท์" aria-label="จัดการข้อมูล: บูรณะสระมุจลินท์" hidden>⚙</button>
+              <div class="donation-card-header">
+                <span class="donation-badge" data-i18n="donationOneKicker">ร่วมบุญบริจาค</span>
+                <h4 class="donation-card-title" data-i18n="donationOneTitle">บูรณะสระมุจลินท์</h4>
+              </div>
+              <div class="donation-card-media">
+                <a class="donation-card-media-link" href="https://firebasestorage.googleapis.com/v0/b/that-phanom.firebasestorage.app/o/projects%2Fworld-heritage%2Fcontent%2Fd6x7DSE3HgWiRIqGFDSPRguqiH33%2Fr0sMSsbl92Q69xFzxjwT.webp?alt=media&token=a29c5c9b-e621-4e2c-942c-ebd348e9a34f" target="_blank" rel="noopener" title="คลิกเพื่อดูภาพขนาดจริงเต็มจอ">
+                  <img src="https://firebasestorage.googleapis.com/v0/b/that-phanom.firebasestorage.app/o/projects%2Fworld-heritage%2Fcontent%2Fd6x7DSE3HgWiRIqGFDSPRguqiH33%2Fr0sMSsbl92Q69xFzxjwT.webp?alt=media&token=a29c5c9b-e621-4e2c-942c-ebd348e9a34f" alt="ภาพโครงการบูรณะสระมุจลินท์" class="donation-card-img" loading="lazy">
+                </a>
+              </div>
+              <p class="donation-card-desc" data-i18n="donationOneDesc">ร่วมสมทบทุนขุดลอก ปรับปรุงระบบน้ำธรรมชาติ และฟื้นฟูภูมิทัศน์ประวัติศาสตร์สระมุจลินท์ (สระพังทอง) เพื่อสืบสานพุทธศรัทธาและมรดกทางวัฒนธรรม</p>
+              <div class="donation-card-footer" style="display: none;">
+                <a class="donation-card-action-btn source-link" href="" target="_blank" rel="noopener" data-i18n="viewProjectImage" style="display: none;">ดูภาพและรายละเอียดโครงการ ↗</a>
+              </div>
+            </article>
+
+            <!-- กล่องที่ 2: สร้างถนนรอบสระมุจลินท์ -->
+            <article class="donation-card has-admin-gear no-action-btn" id="donationTwoCard" data-has-action="false">
+              <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="donationTwo" title="จัดการข้อมูล: สร้างถนนรอบสระมุจลินท์" aria-label="จัดการข้อมูล: สร้างถนนรอบสระมุจลินท์" hidden>⚙</button>
+              <div class="donation-card-header">
+                <span class="donation-badge" data-i18n="donationTwoKicker">ร่วมบุญบริจาค</span>
+                <h4 class="donation-card-title" data-i18n="donationTwoTitle">สร้างถนนรอบสระมุจลินท์</h4>
+              </div>
+              <div class="donation-card-media">
+                <a class="donation-card-media-link" href="https://firebasestorage.googleapis.com/v0/b/that-phanom.firebasestorage.app/o/projects%2Fworld-heritage%2Fmedia%2Fd6x7DSE3HgWiRIqGFDSPRguqiH33%2Frail_default-mucha-rail-donate.webp?alt=media&token=d182a96c-aae8-42bd-a3cc-37c0a9a0f60d" target="_blank" rel="noopener" title="คลิกเพื่อดูภาพขนาดจริงเต็มจอ">
+                  <img src="https://firebasestorage.googleapis.com/v0/b/that-phanom.firebasestorage.app/o/projects%2Fworld-heritage%2Fmedia%2Fd6x7DSE3HgWiRIqGFDSPRguqiH33%2Frail_default-mucha-rail-donate.webp?alt=media&token=d182a96c-aae8-42bd-a3cc-37c0a9a0f60d" alt="ภาพโครงการสร้างถนนรอบสระมุจลินท์" class="donation-card-img" loading="lazy">
+                </a>
+              </div>
+              <p class="donation-card-desc" data-i18n="donationTwoDesc">ร่วมสมทบทุนสร้างถนน ทางเดินเท้า และปรับปรุงเส้นทางสัญจรโดยรอบสระมุจลินท์ เพื่อความปลอดภัย ความเป็นระเบียบเรียบร้อย และอำนวยความสะดวกแก่ผู้มาเยือน</p>
+              <div class="donation-card-footer" style="display: none;">
+                <a class="donation-card-action-btn source-link" href="" target="_blank" rel="noopener" data-i18n="viewProjectImage" style="display: none;">ดูภาพและรายละเอียดโครงการ ↗</a>
+              </div>
+            </article>
           </div>
-          <div class="muchalinda-donation-media" id="muchalindaDonationMedia"></div>
         </section>
         <div class="support-project-footer-actions">
           <a href="#projects" data-i18n="backToWorldHeritage">← กลับสู่โครงการพระธาตุพนม สู่มรดกโลก</a>
@@ -1802,8 +2073,11 @@
 
       <!-- ปุ่มและลิงก์ปลายทาง -->
       <div class="rail-field-grid">
-        <label>ลิงก์ปลายทาง (URL หรือ #anchor ภายในเว็บ)
-          <input id="railCardButtonUrl" type="text" placeholder="เช่น #news-events, #donation, หรือ https://...">
+        <label id="railCardButtonUrlLabel">ลิงก์ปลายทาง (URL หรือ #anchor ภายในเว็บ)
+          <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
+            <input id="railCardButtonUrl" type="text" placeholder="เช่น #news-events, #donation, หรือ https://..." style="flex: 1; min-width: 0; margin-top: 0;">
+            <a id="railCardGoLinkBtn" href="#" target="_blank" rel="noopener noreferrer" class="button action-open-link-btn" title="คลิกเพื่อเปิดลิงก์ปลายทาง">เปิดลิงก์ ↗</a>
+          </div>
         </label>
         <label>รูปแบบการเปิดลิงก์
           <select id="railCardOpenExternal">
@@ -2047,7 +2321,10 @@
       <!-- ปุ่มและลิงก์ปลายทาง -->
       <div class="rail-field-grid">
         <label id="sidebarItemUrlLabel">ลิงก์ปลายทาง (URL หรือ #anchor ภายในเว็บ)
-          <input id="sidebarItemUrl" type="text" placeholder="เช่น #history, #milestones, หรือ https://...">
+          <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
+            <input id="sidebarItemUrl" type="text" placeholder="เช่น #history, #milestones, หรือ https://..." style="flex: 1; min-width: 0; margin-top: 0;">
+            <a id="sidebarItemGoLinkBtn" href="#" target="_blank" rel="noopener noreferrer" class="button action-open-link-btn" title="คลิกเพื่อเปิดลิงก์ปลายทาง">เปิดลิงก์ ↗</a>
+          </div>
         </label>
         <label>รูปแบบการเปิดลิงก์
           <select id="sidebarItemOpenExternal">

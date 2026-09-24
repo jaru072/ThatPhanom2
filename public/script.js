@@ -114,6 +114,13 @@ const I18N_TH = {
   "projectDonationTitle": "ร่วมบุญกับโครงการ",
   "projectDonationText": "เลือกดูรายละเอียดบัญชีตามวัตถุประสงค์ของการร่วมบุญ และโปรดตรวจสอบชื่อบัญชีก่อนโอนทุกครั้ง",
   "projectDonationSafety": "ไม่มี QR Code บนเว็บไซต์ เพื่อให้ผู้ร่วมบุญตรวจสอบเลขบัญชีและชื่อบัญชีจากภาพต้นฉบับได้อย่างชัดเจน",
+  "donationOneKicker": "วัตถุประสงค์ที่ ๑",
+  "donationOneTitle": "บูรณะสระมุจลินท์",
+  "donationOneDesc": "ร่วมสมทบทุนขุดลอก ปรับปรุงระบบน้ำธรรมชาติ และฟื้นฟูภูมิทัศน์ประวัติศาสตร์สระมุจลินท์ (สระพังทอง) เพื่อสืบสานพุทธศรัทธาและมรดกทางวัฒนธรรม",
+  "donationTwoKicker": "วัตถุประสงค์ที่ ๒",
+  "donationTwoTitle": "สร้างถนนรอบสระมุจลินท์",
+  "donationTwoDesc": "ร่วมสมทบทุนสร้างถนน ทางเดินเท้า และปรับปรุงเส้นทางสัญจรโดยรอบสระมุจลินท์ เพื่อความปลอดภัย ความเป็นระเบียบเรียบร้อย และอำนวยความสะดวกแก่ผู้มาเยือน",
+  "viewProjectImage": "ดูภาพและรายละเอียดโครงการ ↗",
   "backToWorldHeritage": "← กลับสู่โครงการพระธาตุพนม สู่มรดกโลก",
   "projectSource": "ตรวจสอบข้อมูลจากสำนักงานประชาสัมพันธ์จังหวัดนครพนม ↗",
   "statusLabel": "สถานะปัจจุบัน",
@@ -386,6 +393,15 @@ const I18N_LO = {
   "projectDonationTitle": "ຮ່ວມສົມທົບທຶນບູລະນະສະມຸດຈະລິນ",
   "projectDonationText": "ຮ່ວມເປັນເຈົ້າພາບຈັດຊື້ອຸປະກອນ ລະບົບບຳບັດນ້ຳ ແລະວັດສະດຸກໍ່ສ້າງຕາມກຳລັງສັດທາ",
   "projectDonationSafety": "ເງິນບໍລິຈາກທັງໝົດເຂົ້າບັນຊີໂຄງການວັດພະທາດພະນົມໂດຍກົງ ໂປ່ງໃສ ແລະກວດສອບໄດ້",
+  "donationOneKicker": "ຈຸດປະສົງທີ ໑",
+  "donationOneTitle": "ບູລະນະສະມຸດຈະລິນ",
+  "donationOneDesc": "ຮ່ວມສົມທົບທຶນຂຸດລອກ ປັບປຸງລະບົບນ້ຳທຳມະຊາດ ແລະຟື້ນຟູພູມິທັດປະຫວັດສາດສະມຸດຈະລິນ",
+  "donationOneBank": "ທະນາຄານ ກຸງໄທ",
+  "donationOneAccName": "ວັດພະທາດພະນົມ ວໍລະມະຫາວິຫານ (ບູລະນະສະມຸດຈະລິນ)",
+  "donationTwoKicker": "ຈຸດປະສົງທີ ໒",
+  "donationTwoTitle": "ສ້າງຖະໜົນອ້ອມສະມຸດຈະລິນ",
+  "donationTwoDesc": "ຮ່ວມສົມທົບທຶນສ້າງຖະໜົນ ທາງຍ່າງ ແລະປັບປຸງເສັ້ນທາງສັນຈອນໂດຍຮອບສະມຸດຈະລິນ",
+  "viewProjectImage": "ເບິ່ງຮູບພາບ ແລະລາຍລະອຽດໂຄງການ ↗",
   "supportHeritage": "ສະໜັບສະໜູນພະທາດພະນົມສູ່ມໍລະດົກໂລກ",
   "supportHeritageDesc": "ຮ່ວມເປັນພະລັງໃນການອະນຸລັກ ພັດທະນາ ແລະເຜີຍແຜ່ຄຸນຄ່າພະທາດພະນົມໃຫ້ຍືນຍົງສືບໄປ",
   "donationDetails": "ເບິ່ງລາຍລະອຽດ",
@@ -583,6 +599,10 @@ const I18N_EN = {
   "projectDonationTitle": "Contribute to Muchalinda Restoration",
   "projectDonationText": "Support restoration materials, water purification equipment, and site conservation through official temple channels.",
   "projectDonationSafety": "Contributions directly support designated restoration accounts under Wat Phra That Phanom.",
+  "donationOneKicker": "Objective 1",
+  "donationOneTitle": "Muchalinda Pond Restoration",
+  "donationOneDesc": "Contribute to dredging, natural water system improvement, and historical landscape conservation.",
+  "viewProjectImage": "View Project Details & Image ↗",
   "supportHeritage": "Support Phra That Phanom Heritage",
   "supportHeritageDesc": "Join the merit in conserving sacred monuments, ancient sites, and educational outreach for World Heritage inscription.",
   "donationDetails": "View Details",
@@ -2945,4 +2965,236 @@ if (document.readyState === "loading") {
   window.addEventListener("load", syncPortalRefreshBtn);
   window.addEventListener("storage", syncPortalRefreshBtn);
   window.addEventListener("portal:dataReload", syncPortalRefreshBtn);
+})();
+
+// Donation card image full-screen lightbox handler
+(function() {
+  function initDonationCardLightbox() {
+    document.addEventListener("click", function(e) {
+      const card = e.target.closest(".donation-card");
+      if (!card) return;
+
+      const mediaTrigger = e.target.closest(".donation-card-media, .donation-card-media-link, .donation-card-img");
+      const actionBtn = e.target.closest(".donation-card-action-btn, .source-link");
+
+      let isImageAction = false;
+      let targetUrl = "";
+
+      if (actionBtn) {
+        const href = (actionBtn.getAttribute("href") || "").trim();
+        if (href && (/\.(webp|jpg|jpeg|png|gif|svg)(\?.*)?$/i.test(href) || href.includes("firebasestorage.googleapis.com"))) {
+          isImageAction = true;
+          targetUrl = href;
+        }
+      }
+
+      if (!mediaTrigger && !isImageAction) return;
+
+      e.preventDefault();
+      e.stopPropagation();
+
+      const img = card.querySelector(".donation-card-img, img");
+      const mediaLink = card.querySelector(".donation-card-media-link, a");
+
+      if (!targetUrl) {
+        const linkHref = mediaLink ? (mediaLink.getAttribute("href") || "").trim() : "";
+        if (linkHref && linkHref !== "#") {
+          targetUrl = linkHref;
+        } else if (img) {
+          targetUrl = img.currentSrc || img.src || "";
+        }
+      }
+
+      if (!targetUrl && img) targetUrl = img.currentSrc || img.src || "";
+      if (!targetUrl) return;
+
+      const titleEl = card.querySelector(".donation-card-title, h4, h3");
+      const descEl = card.querySelector(".donation-card-desc, p");
+      const title = titleEl ? titleEl.textContent.trim() : (img ? img.alt : "ภาพโครงการร่วมบุญ");
+      const desc = descEl ? descEl.textContent.trim() : "";
+
+      if (typeof window.openImageLightbox === "function") {
+        try {
+          window.openImageLightbox({ url: targetUrl, title: title, description: desc });
+          return;
+        } catch (_) {}
+      }
+
+      const dlg = document.getElementById("imageLightbox");
+      if (!dlg) {
+        window.open(targetUrl, "_blank", "noopener");
+        return;
+      }
+
+      const imgEl = document.getElementById("lightboxImage");
+      const vidBox = document.getElementById("lightboxVideoContainer");
+      const lightboxTitle = document.getElementById("lightboxTitle");
+      const lightboxDesc = document.getElementById("lightboxDescription");
+      const origLink = document.getElementById("lightboxOriginalLink");
+
+      if (vidBox) {
+        vidBox.style.display = "none";
+        vidBox.innerHTML = "";
+      }
+      if (imgEl) {
+        imgEl.style.display = "block";
+        imgEl.src = targetUrl;
+        imgEl.alt = title;
+      }
+      if (lightboxTitle) lightboxTitle.textContent = title;
+      if (lightboxDesc) {
+        lightboxDesc.textContent = desc;
+        lightboxDesc.hidden = !desc;
+      }
+      if (origLink) {
+        origLink.style.display = "";
+        origLink.href = targetUrl;
+        origLink.textContent = "เปิดภาพขนาดใหญ่ ↗";
+      }
+
+      if (typeof dlg.showModal === "function") {
+        try {
+          dlg.showModal();
+        } catch (_) {
+          dlg.setAttribute("open", "");
+        }
+      } else {
+        dlg.setAttribute("open", "");
+      }
+    }, { capture: true });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initDonationCardLightbox);
+  } else {
+    initDonationCardLightbox();
+  }
+})();
+
+// Admin Rail & Sidebar Dialog Link Button Synchronizer
+(function() {
+  function syncAdminUrlLinkBtn(inputEl, btnEl) {
+    if (!inputEl || !btnEl) return;
+    const raw = (inputEl.value || "").trim();
+    if (raw && raw !== "#") {
+      btnEl.style.display = "inline-flex";
+      let target = raw;
+      if (raw.startsWith("#")) {
+        target = window.location.origin + window.location.pathname + raw;
+      } else if (!/^https?:\/\//i.test(raw) && !raw.startsWith("/") && !raw.startsWith("mailto:") && !raw.startsWith("tel:")) {
+        target = "https://" + raw;
+      }
+      btnEl.href = target;
+    } else {
+      btnEl.style.display = "none";
+      btnEl.removeAttribute("href");
+    }
+  }
+
+  window.syncAdminUrlLinkBtn = syncAdminUrlLinkBtn;
+
+  function syncAllDialogLinkButtons() {
+    const railInp = document.getElementById("railCardButtonUrl");
+    const railBtn = document.getElementById("railCardGoLinkBtn");
+    const sideInp = document.getElementById("sidebarItemUrl");
+    const sideBtn = document.getElementById("sidebarItemGoLinkBtn");
+
+    syncAdminUrlLinkBtn(railInp, railBtn);
+    syncAdminUrlLinkBtn(sideInp, sideBtn);
+  }
+
+  function initAdminLinkButtons() {
+    // Input / Change / Keyup / Paste delegation
+    document.addEventListener("input", function(e) {
+      if (e.target && e.target.id === "railCardButtonUrl") {
+        syncAdminUrlLinkBtn(e.target, document.getElementById("railCardGoLinkBtn"));
+      } else if (e.target && e.target.id === "sidebarItemUrl") {
+        syncAdminUrlLinkBtn(e.target, document.getElementById("sidebarItemGoLinkBtn"));
+      }
+    });
+
+    document.addEventListener("change", function(e) {
+      if (e.target && e.target.id === "railCardButtonUrl") {
+        syncAdminUrlLinkBtn(e.target, document.getElementById("railCardGoLinkBtn"));
+      } else if (e.target && e.target.id === "sidebarItemUrl") {
+        syncAdminUrlLinkBtn(e.target, document.getElementById("sidebarItemGoLinkBtn"));
+      } else if (e.target && (e.target.id === "railCardTemplateSelect" || e.target.id === "sidebarItemTemplateSelect")) {
+        setTimeout(syncAllDialogLinkButtons, 30);
+      }
+    });
+
+    document.addEventListener("keyup", function(e) {
+      if (e.target && (e.target.id === "railCardButtonUrl" || e.target.id === "sidebarItemUrl")) {
+        syncAllDialogLinkButtons();
+      }
+    });
+
+    document.addEventListener("paste", function(e) {
+      if (e.target && (e.target.id === "railCardButtonUrl" || e.target.id === "sidebarItemUrl")) {
+        setTimeout(syncAllDialogLinkButtons, 20);
+      }
+    });
+
+    // Synchronize whenever gear buttons, add buttons, or templates are clicked
+    document.addEventListener("click", function(e) {
+      if (e.target && (
+        e.target.closest(".sidebar-item-gear") ||
+        e.target.closest(".rail-card-gear") ||
+        e.target.closest("#addRailCardBtn") ||
+        e.target.closest("#addSidebarItemBtn") ||
+        e.target.closest("#railNavGearBtn") ||
+        e.target.closest("#sidebarNavGearBtn") ||
+        e.target.closest(".rail-chip-social") ||
+        e.target.closest(".social-icon-select") ||
+        e.target.closest(".rail-chip")
+      )) {
+        setTimeout(syncAllDialogLinkButtons, 30);
+        setTimeout(syncAllDialogLinkButtons, 150);
+      }
+
+      // Handle clicking the test link button safely
+      const testBtn = e.target.closest("#railCardGoLinkBtn, #sidebarItemGoLinkBtn");
+      if (testBtn) {
+        const isRail = testBtn.id === "railCardGoLinkBtn";
+        const inp = document.getElementById(isRail ? "railCardButtonUrl" : "sidebarItemUrl");
+        const raw = (inp && inp.value || "").trim();
+        if (!raw || raw === "#") {
+          e.preventDefault();
+          return;
+        }
+        let url = raw;
+        if (raw.startsWith("#")) {
+          url = window.location.origin + window.location.pathname + raw;
+        } else if (!/^https?:\/\//i.test(raw) && !raw.startsWith("/") && !raw.startsWith("mailto:") && !raw.startsWith("tel:")) {
+          url = "https://" + raw;
+        }
+        testBtn.href = url;
+      }
+    });
+
+    // Observe dialog openings
+    const railDialog = document.getElementById("railCardDialog");
+    const sidebarDialog = document.getElementById("sidebarItemDialog");
+    [railDialog, sidebarDialog].forEach(function(dlg) {
+      if (!dlg) return;
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(m) {
+          if (m.attributeName === "open" && dlg.hasAttribute("open")) {
+            setTimeout(syncAllDialogLinkButtons, 20);
+            setTimeout(syncAllDialogLinkButtons, 100);
+          }
+        });
+      });
+      observer.observe(dlg, { attributes: true });
+    });
+
+    // Initial sync
+    syncAllDialogLinkButtons();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initAdminLinkButtons);
+  } else {
+    initAdminLinkButtons();
+  }
 })();
