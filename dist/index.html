@@ -14,25 +14,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Lao:wght@400;500;600;700&family=Noto+Sans+Thai:wght@400;500;600;700&family=Pridi:wght@400;500;600&display=swap" rel="stylesheet">
 
-  <script>
-    // Global resilience & cross-origin error suppressor
-    window.addEventListener('error', function(event) {
-      if (event && (event.message === 'Script error.' || (!event.filename && event.lineno === 0))) {
-        event.preventDefault();
-        return true;
-      }
-    }, true);
-    window.onerror = function(msg, url, lineNo, columnNo, error) {
-      if (msg === 'Script error.' || (!url && lineNo === 0)) {
-        return true;
-      }
-    };
-    window.addEventListener('unhandledrejection', function(event) {
-      if (event && event.reason && (event.reason.message === 'Script error.' || String(event.reason).includes('Script error'))) {
-        event.preventDefault();
-      }
-    });
-  </script>
+
 
   <script>
     (function() {
@@ -79,7 +61,7 @@
       };
     })();
   </script>
-  <script type="module" crossorigin src="/assets/index-D4DSCKUz.js?v=20260924-6"></script>
+  <script type="module" crossorigin src="/assets/index-D4DSCKUz.js?v=20260924-4"></script>
   <link rel="stylesheet" crossorigin href="/assets/index-dX7NzDAm.css">
   <style id="interactive-sitemap-styles">
     /* Disable faint logo watermark under slide box */
@@ -963,6 +945,7 @@
       border-color: rgba(191, 219, 254, 0.4);
     }
   </style>
+  <script type="module" crossorigin src="/assets/index-B5Qt9EMX.js"></script>
 </head>
 <body>
   <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
@@ -1115,8 +1098,7 @@
         </nav>
         <div class="support-project-content muchalinda-showcase-section" id="muchalinda-overview">
           <!-- กล่องสไลด์ข้างบน สไตล์หมุดหมายสำคัญ -->
-          <div class="milestones-overview-media muchalinda-overview-media has-admin-gear" id="muchalinda-history" aria-label="สไลด์ภาพโครงการบูรณะสระมุจลินท์">
-            <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="muchalindaShowcase" title="จัดการข้อความสไลด์โครงการสระมุจลินท์" aria-label="จัดการข้อความสไลด์โครงการสระมุจลินท์" hidden>⚙</button>
+          <div class="milestones-overview-media muchalinda-overview-media" id="muchalinda-history" aria-label="สไลด์ภาพโครงการบูรณะสระมุจลินท์">
             <button class="media-update-button milestones-overview-update role-only" type="button" data-section="muchalindaShowcase" title="อัพเดทรูปภาพหรือวิดีโอ" aria-label="อัพเดทสื่อ: สไลด์ภาพและแนวคิดโครงการสระมุจลินท์" hidden>อัพเดท</button>
             <div class="media-slider milestones-overview-slider" id="muchalindaShowcaseSlider" data-slider="muchalindaShowcase" data-slider-custom="muchalindaShowcase" aria-label="สไลด์ภาพและแนวคิดโครงการสระมุจลินท์" tabindex="0">
               <div class="media-stage">
@@ -2843,16 +2825,15 @@
   <div id="google_translate_element" style="display:none;"></div>
   <script>
     window.googleTranslateElementInit = function() {
-      try {
-        if (window.google && window.google.translate && window.google.translate.TranslateElement) {
-          new window.google.translate.TranslateElement({
-            pageLanguage: 'th',
-            autoDisplay: false
-          }, 'google_translate_element');
-        }
-      } catch (_) {}
+      if (window.google && window.google.translate) {
+        new window.google.translate.TranslateElement({
+          pageLanguage: 'th',
+          autoDisplay: false
+        }, 'google_translate_element');
+      }
     };
   </script>
+  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async defer></script>
 
   <script src="/script.js"></script>
 </body>
