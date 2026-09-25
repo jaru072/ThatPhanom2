@@ -123,8 +123,13 @@ async function fetchGoogleDriveFolderFiles(folderId: string): Promise<any[]> {
     }
   }
 
-  // Sort files by upload time on Google Drive (oldest upload first: 001, 002, ...)
-  files.sort((a, b) => (Number(a.uploadedTime) || 0) - (Number(b.uploadedTime) || 0) || String(a.name || '').localeCompare(String(b.name || '')));
+  // Sort files by upload time on Google Drive (latest upload first: newest date & time at the beginning on the left)
+  files.sort((a, b) => {
+    const timeA = Number(a.uploadedTime) || (a.createdTime ? new Date(a.createdTime).getTime() : 0);
+    const timeB = Number(b.uploadedTime) || (b.createdTime ? new Date(b.createdTime).getTime() : 0);
+    if (timeA !== timeB) return timeB - timeA;
+    return String(b.name || '').localeCompare(String(a.name || ''), 'th', { numeric: true });
+  });
   return files;
 }
 
