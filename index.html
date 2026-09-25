@@ -79,9 +79,89 @@
       };
     })();
   </script>
-  <script type="module" crossorigin src="/assets/index-D4DSCKUz.js?v=20260924-6"></script>
+  <script type="module" crossorigin src="/assets/index-D4DSCKUz.js?v=20260925-5"></script>
   <link rel="stylesheet" crossorigin href="/assets/index-dX7NzDAm.css">
   <style id="interactive-sitemap-styles">
+    /* Admin Link Dropdown Menu */
+    .admin-link-dropdown-menu {
+      position: fixed;
+      z-index: 10000000;
+      background: #ffffff;
+      border: 1.5px solid #d4af37;
+      border-radius: 8px;
+      box-shadow: 0 12px 32px rgba(23, 19, 41, 0.22);
+      padding: 6px 0;
+      max-height: 280px;
+      overflow-y: auto;
+      font-family: inherit;
+      box-sizing: border-box;
+    }
+    .admin-link-dd-header {
+      padding: 4px 12px 6px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: #887d72;
+      text-transform: uppercase;
+      border-bottom: 1px solid #f0eae1;
+      letter-spacing: 0.5px;
+    }
+    .admin-link-dd-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 12px;
+      cursor: pointer;
+      font-size: 0.84rem;
+      color: #222;
+      gap: 8px;
+      transition: background 0.12s ease, color 0.12s ease;
+      user-select: none;
+      border-bottom: 1px solid #faf7f2;
+    }
+    .admin-link-dd-item:last-child {
+      border-bottom: none;
+    }
+    .admin-link-dd-item:hover, .admin-link-dd-item.selected {
+      background: #fdf5eb;
+      color: #7a4f01;
+    }
+    .admin-link-dd-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 500;
+    }
+    .admin-link-dd-icon {
+      font-size: 1rem;
+      line-height: 1;
+    }
+    .admin-link-dd-badge {
+      font-size: 0.72rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      background: #f4eee5;
+      color: #6a5a4a;
+      padding: 2px 7px;
+      border-radius: 4px;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      white-space: nowrap;
+    }
+    .link-dropdown-input {
+      cursor: pointer;
+    }
+    .link-dropdown-input:focus {
+      cursor: text;
+    }
+    .link-dropdown-arrow {
+      cursor: pointer !important;
+      pointer-events: auto !important;
+      user-select: none;
+      padding: 4px;
+      transition: color 0.15s ease;
+    }
+    .link-dropdown-arrow:hover {
+      color: #7a4f01 !important;
+    }
+
     /* Disable faint logo watermark under slide box */
     .support-project-hero::after,
     .support-project-hero:after {
@@ -962,6 +1042,239 @@
       background: #1e3a8a;
       border-color: rgba(191, 219, 254, 0.4);
     }
+
+    /* === อัลบั้มรูปภาพผู้ร่วมบุญ โครงการบูรณะสระมุจลินท์ === */
+    .support-project-album {
+      position: relative !important;
+      display: block !important;
+      width: 100% !important;
+      padding: 44px 28px 48px !important;
+      background: linear-gradient(180deg, #f6f3eb 0%, #faf8f3 50%, #ffffff 100%) !important;
+      border-top: 1px solid rgba(203, 166, 75, 0.25) !important;
+      border-bottom: 1px solid rgba(203, 166, 75, 0.25) !important;
+      box-sizing: border-box !important;
+    }
+    .support-project-album-header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 20px;
+      max-width: 1080px;
+      margin: 0 auto 28px auto;
+      padding-bottom: 18px;
+      border-bottom: 1.5px solid rgba(203, 166, 75, 0.2);
+    }
+    .album-heading-wrap {
+      flex: 1 1 380px;
+      min-width: 280px;
+    }
+    .album-heading-wrap h3 {
+      font-size: 1.75rem;
+      font-family: 'Pridi', 'Noto Sans Thai', serif;
+      color: #0d382d;
+      margin: 8px 0 10px 0;
+      letter-spacing: -0.01em;
+      line-height: 1.3;
+    }
+    .album-lead {
+      color: #555062;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin: 0;
+      max-width: 680px;
+    }
+    .album-controls {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .album-counter-pill {
+      display: inline-flex;
+      align-items: center;
+      padding: 6px 14px;
+      background: #0f4c3a;
+      color: #f7e7ce;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border-radius: 9999px;
+      box-shadow: 0 2px 8px rgba(15, 76, 58, 0.2);
+      border: 1px solid rgba(203, 166, 75, 0.4);
+    }
+    .album-drive-link-btn, .album-sync-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: 9999px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .album-drive-link-btn {
+      background: #ffffff;
+      color: #0f4c3a;
+      border: 1.5px solid rgba(203, 166, 75, 0.4);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    }
+    .album-drive-link-btn:hover {
+      background: #0f4c3a;
+      color: #ffffff;
+      border-color: #0f4c3a;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(15, 76, 58, 0.2);
+    }
+    .album-sync-btn {
+      background: #cba64b;
+      color: #123024;
+      border: 1px solid #b8933b;
+    }
+    .album-sync-btn:hover {
+      background: #dfbc62;
+      transform: translateY(-2px);
+    }
+    .album-filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      max-width: 1080px;
+      margin: 0 auto 24px auto;
+    }
+    .album-search-wrap {
+      position: relative;
+      flex: 1 1 320px;
+      max-width: 440px;
+    }
+    .album-search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.88rem;
+      color: #8c827a;
+      pointer-events: none;
+    }
+    .album-search-input {
+      width: 100%;
+      padding: 10px 16px 10px 38px;
+      font-size: 0.9rem;
+      border-radius: 9999px;
+      border: 1.5px solid rgba(203, 166, 75, 0.35);
+      background: #ffffff;
+      color: #1a162b;
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .album-search-input:focus {
+      border-color: #0f4c3a;
+      box-shadow: 0 0 0 3px rgba(15, 76, 58, 0.12);
+    }
+    .album-filter-hint {
+      font-size: 0.8rem;
+      color: #7b746d;
+      font-style: italic;
+    }
+    .muchalinda-album-grid {
+      display: grid !important;
+      grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+      gap: 0.2cm !important;
+      padding: 0.2cm !important;
+      max-width: 1080px !important;
+      margin: 0 auto !important;
+      box-sizing: border-box !important;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(203, 166, 75, 0.35);
+      background: #110e1a;
+    }
+    @media (max-width: 960px) {
+      .muchalinda-album-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 0.2cm !important;
+        padding: 0.2cm !important;
+      }
+    }
+    @media (max-width: 640px) {
+      .muchalinda-album-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 0.2cm !important;
+        padding: 0.2cm !important;
+      }
+      .album-heading-wrap h3 {
+        font-size: 1.4rem;
+      }
+    }
+    .album-photo-card {
+      position: relative;
+      background: #110e1a;
+      border-radius: 0 !important;
+      border: none !important;
+      box-shadow: none !important;
+      margin: 0 !important;
+      padding: 0 !important;
+      overflow: hidden;
+      cursor: pointer;
+      display: block;
+      aspect-ratio: 1 / 1;
+      transition: opacity 0.2s ease, transform 0.25s ease;
+    }
+    .album-photo-card:hover {
+      z-index: 2;
+      opacity: 0.92;
+      transform: scale(1.02);
+    }
+    .album-photo-thumb-wrap {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      aspect-ratio: 1 / 1;
+      background: #1e1b2e;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+    }
+    .album-photo-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.35s ease;
+    }
+    .album-photo-card:hover .album-photo-thumb {
+      transform: scale(1.06);
+    }
+    .album-empty-state {
+      max-width: 580px;
+      margin: 24px auto;
+      padding: 36px 24px;
+      text-align: center;
+      background: #ffffff;
+      border-radius: 20px;
+      border: 1.5px dashed rgba(203, 166, 75, 0.5);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+    }
+    .album-empty-icon {
+      font-size: 2.8rem;
+      margin-bottom: 12px;
+    }
+    .album-empty-state h4 {
+      font-size: 1.25rem;
+      color: #0f4c3a;
+      margin: 0 0 10px 0;
+      font-family: 'Pridi', 'Noto Sans Thai', serif;
+    }
+    .album-empty-state p {
+      font-size: 0.9rem;
+      color: #5d5669;
+      line-height: 1.6;
+      margin: 0 0 20px 0;
+    }
   </style>
 </head>
 <body>
@@ -1112,6 +1425,7 @@
           <a href="#muchalinda-objectives"><span aria-hidden="true">◉</span><b data-i18n="projectObjectives">วัตถุประสงค์</b></a>
           <a href="#muchalinda-progress"><span aria-hidden="true">⌁</span><b data-i18n="projectProgress">ความคืบหน้า</b></a>
           <a href="#muchalinda-donation"><span aria-hidden="true">♡</span><b data-i18n="projectDonation">ร่วมบุญ</b></a>
+          <a href="#muchalinda-album"><span aria-hidden="true">📷</span><b data-i18n="projectAlbum">อัลบั้มผู้ร่วมบุญ</b></a>
         </nav>
         <div class="support-project-content muchalinda-showcase-section" id="muchalinda-overview">
           <!-- กล่องสไลด์ข้างบน สไตล์หมุดหมายสำคัญ -->
@@ -1225,6 +1539,47 @@
                 <a class="donation-card-action-btn source-link" href="" target="_blank" rel="noopener" data-i18n="viewProjectImage" style="display: none;">ดูภาพและรายละเอียดโครงการ ↗</a>
               </div>
             </article>
+          </div>
+        </section>
+
+        <!-- อัลบั้มรูปภาพผู้ร่วมบุญ โครงการบูรณะสระมุจลินท์ -->
+        <section class="support-project-album has-admin-gear" id="muchalinda-album" aria-labelledby="muchalindaAlbumTitle">
+          <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="muchalindaAlbum" title="จัดการอัลบั้มรูปภาพผู้ร่วมบุญ" aria-label="จัดการอัลบั้มรูปภาพผู้ร่วมบุญ" hidden>⚙</button>
+          <div class="support-project-album-header">
+            <div class="album-heading-wrap">
+              <span class="donation-badge" data-i18n="muchalindaAlbumBadge">อนุโมทนาบัตรและภาพศรัทธา</span>
+              <h3 id="muchalindaAlbumTitle" data-i18n="muchalindaAlbumTitle">อัลบั้มรูปภาพผู้ร่วมบุญ</h3>
+              <p class="album-lead" data-i18n="muchalindaAlbumDesc">ประมวลภาพและอนุโมทนาบัตรผู้มีจิตศรัทธาร่วมสมทบทุนโครงการบูรณะสระมุจลินท์ (สระพังทอง) เชื่อมโยงข้อมูลอัตโนมัติจาก Google Drive</p>
+            </div>
+            <div class="album-controls">
+              <span class="album-counter-pill" id="muchalindaAlbumCounter">0 ภาพ</span>
+              <a class="album-drive-link-btn" id="muchalindaAlbumDriveBtn" href="https://drive.google.com/drive/folders/1DmhMAaiazfnXIiOZ5Hu4E_du_oCZZNCU" target="_blank" rel="noopener">
+                <span>📂 เปิดโฟลเดอร์ Google Drive ↗</span>
+              </a>
+              <button class="album-sync-btn" id="muchalindaAlbumSyncBtn" type="button" title="สั่งซิงก์ภาพจาก Google Drive">
+                <span>⟳ ซิงก์ภาพจาก Drive</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="album-filter-bar">
+            <div class="album-search-wrap">
+              <span class="album-search-icon" aria-hidden="true">🔍</span>
+              <input type="search" id="muchalindaAlbumSearch" class="album-search-input" placeholder="ค้นหาชื่อผู้ร่วมบุญ หรือชื่อไฟล์ภาพ..." aria-label="ค้นหาภาพในอัลบั้ม">
+            </div>
+          </div>
+
+          <!-- Photo Gallery Grid -->
+          <div class="muchalinda-album-grid" id="muchalindaAlbumGallery" aria-live="polite"></div>
+
+          <!-- Empty State (if no photos yet) -->
+          <div class="album-empty-state" id="muchalindaAlbumEmpty" hidden>
+            <div class="album-empty-icon" aria-hidden="true">📷</div>
+            <h4 data-i18n="muchalindaAlbumEmptyTitle">พร้อมเชื่อมต่ออัลบั้มภาพจาก Google Drive</h4>
+            <p data-i18n="muchalindaAlbumEmptyText">ระบบเตรียมพร้อมดึงภาพจากโฟลเดอร์ <strong>พระธาตุพนม สู่มรดกโลก/โครงการบูรณะสระมุจลินท์/อัลบั้มรูปภาพผู้ร่วมบุญ</strong> เมื่อมีภาพเพิ่มเข้ามาใน Google Drive หรือกดปุ่มซิงก์ ภาพจะปรากฏในหน้านี้ทันที</p>
+            <a class="album-drive-link-btn" href="https://drive.google.com/drive/folders/1DmhMAaiazfnXIiOZ5Hu4E_du_oCZZNCU" target="_blank" rel="noopener">
+              <span>เปิดดูโฟลเดอร์ใน Google Drive ↗</span>
+            </a>
           </div>
         </section>
         <div class="support-project-footer-actions">
@@ -1927,7 +2282,7 @@
         <input id="contentItemImageUrl" type="url" placeholder="https://...">
       </label>
       <label><span id="contentActionUrlLabel">ลิงก์อ่านรายละเอียดเพิ่มเติม</span>
-        <input id="contentItemActionUrl" type="url" placeholder="https://...">
+        <input id="contentItemActionUrl" type="url" placeholder="https://..." style="width: 100%; margin-top: 4px;">
       </label>
       <div class="or-line"><span>หรืออัปโหลดไฟล์</span></div>
       <label><span id="contentFileLabel">รูปภาพประกอบ</span>
@@ -1967,7 +2322,9 @@
             <option value="ceremony">พิธีสำคัญ</option>
             <option value="live">ถ่ายทอดสด</option>
             <option value="document">เอกสารสำคัญ</option>
-            <option value="donation">การร่วมบุญ</option>
+            <option value="donation">การร่วมบุญ (ภาพรวม)</option>
+            <option value="muchalindaDonation">ร่วมบุญสระมุจลินท์ (#muchalinda-donation)</option>
+            <option value="muchalindaAlbum">อัลบั้มรูปภาพผู้ร่วมบุญ (#muchalinda-album)</option>
             <option value="project">ข้อมูลโครงการ</option>
             <option value="quick">ทางลัดเข้าถึงเนื้อหา</option>
           </select>
@@ -2100,10 +2457,13 @@
       <!-- ปุ่มและลิงก์ปลายทาง -->
       <div class="rail-field-grid">
         <label id="railCardButtonUrlLabel">ลิงก์ปลายทาง (URL หรือ #anchor ภายในเว็บ)
-          <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
-            <input id="railCardButtonUrl" type="text" placeholder="เช่น #news-events, #donation, หรือ https://..." style="flex: 1; min-width: 0; margin-top: 0;">
-            <a id="railCardGoLinkBtn" href="#" target="_blank" rel="noopener noreferrer" class="button action-open-link-btn" title="คลิกเพื่อเปิดลิงก์ปลายทาง">เปิดลิงก์ ↗</a>
-          </div>
+          <select id="railCardButtonUrl" class="link-quick-select" style="width: 100%; margin-top: 4px; padding: 9px 12px; border: 1.5px solid #d4af37; border-radius: 6px; background-color: #fdfbf7; font-size: 0.92rem; font-family: inherit; color: #222; cursor: pointer;">
+            <option value="">— ไม่ใส่ลิงก์ (ไม่แสดงปุ่มบนการ์ด) —</option>
+            <option value="#muchalinda-history">#muchalinda-history</option>
+            <option value="#muchalinda-donation">#muchalinda-donation</option>
+            <option value="#muchalinda-album">#muchalinda-album</option>
+            <option value="#muchalinda-objectives">#muchalinda-objectives</option>
+          </select>
         </label>
         <label>รูปแบบการเปิดลิงก์
           <select id="railCardOpenExternal">
@@ -2210,7 +2570,9 @@
             <option value="milestones">หมุดหมายและไทม์ไลน์</option>
             <option value="news">ข่าวสารและกิจกรรม</option>
             <option value="document">คลังเอกสารและรายงาน</option>
-            <option value="donation">ช่องทางร่วมทำบุญ</option>
+            <option value="donation">ช่องทางร่วมทำบุญ (ภาพรวม)</option>
+            <option value="muchalindaDonation">ร่วมบุญสระมุจลินท์ (#muchalinda-donation)</option>
+            <option value="muchalindaAlbum">อัลบั้มรูปภาพผู้ร่วมบุญ (#muchalinda-album)</option>
             <option value="contact">ติดต่อสอบถาม / สื่อสังคม</option>
           </select>
         </label>
@@ -2347,10 +2709,13 @@
       <!-- ปุ่มและลิงก์ปลายทาง -->
       <div class="rail-field-grid">
         <label id="sidebarItemUrlLabel">ลิงก์ปลายทาง (URL หรือ #anchor ภายในเว็บ)
-          <div style="display: flex; gap: 8px; align-items: center; margin-top: 4px;">
-            <input id="sidebarItemUrl" type="text" placeholder="เช่น #history, #milestones, หรือ https://..." style="flex: 1; min-width: 0; margin-top: 0;">
-            <a id="sidebarItemGoLinkBtn" href="#" target="_blank" rel="noopener noreferrer" class="button action-open-link-btn" title="คลิกเพื่อเปิดลิงก์ปลายทาง">เปิดลิงก์ ↗</a>
-          </div>
+          <select id="sidebarItemUrl" class="link-quick-select" style="width: 100%; margin-top: 4px; padding: 9px 12px; border: 1.5px solid #d4af37; border-radius: 6px; background-color: #fdfbf7; font-size: 0.92rem; font-family: inherit; color: #222; cursor: pointer;">
+            <option value="">— ไม่ใส่ลิงก์ (ไม่แสดงปุ่มบนการ์ด) —</option>
+            <option value="#muchalinda-history">#muchalinda-history</option>
+            <option value="#muchalinda-donation">#muchalinda-donation</option>
+            <option value="#muchalinda-album">#muchalinda-album</option>
+            <option value="#muchalinda-objectives">#muchalinda-objectives</option>
+          </select>
         </label>
         <label>รูปแบบการเปิดลิงก์
           <select id="sidebarItemOpenExternal">
@@ -2750,7 +3115,7 @@
           </label>
           <label style="display: flex; flex-direction: column; font-size: 0.85rem; gap: 4px;">
             <span>ลิงก์ปุ่มการดำเนินการ (ถ้ามี)</span>
-            <input type="text" id="sectionEditorActionUrl" placeholder="#milestones หรือ https://..." style="padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px;">
+            <input type="text" id="sectionEditorActionUrl" placeholder="เช่น #muchalinda-donation (เว้นว่างไว้หากไม่ต้องการแสดงปุ่ม)" autocomplete="off" style="width: 100%; padding: 8px 10px; border: 1px solid #ccc; border-radius: 6px; font-size: 0.88rem;">
           </label>
         </div>
 
@@ -2854,6 +3219,6 @@
     };
   </script>
 
-  <script src="/script.js"></script>
+  <script src="/script.js?v=20260925-6"></script>
 </body>
 </html>

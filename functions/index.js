@@ -67,22 +67,59 @@ function getDrive() {
   return drivePromise;
 }
 
+async function resolveFolderId(drive, mapping) {
+  if (mapping.id) return mapping.id;
+  if (mapping.parentFolderId && mapping.folderName) {
+    try {
+      const response = await drive.files.list({
+        q: "'" + mapping.parentFolderId + "' in parents and name = '" + mapping.folderName + "' and mimeType = 'application/vnd.google-apps.folder' and trashed = false",
+        spaces: "drive",
+        pageSize: 1,
+        includeItemsFromAllDrives: true,
+        supportsAllDrives: true,
+        fields: "files(id,name)",
+      });
+      const sub = response.data.files && response.data.files[0];
+      if (sub && sub.id) return sub.id;
+    } catch (error) {
+      logger.warn("Unable to resolve subfolder for mapping", {folderName: mapping.folderName, error: error.message});
+    }
+  }
+  return null;
+}
+
 async function listFolderFiles(drive, mapping) {
   const files = [];
-  let pageToken;
-  do {
-    const response = await drive.files.list({
-      q: "'" + mapping.id + "' in parents and trashed = false",
-      spaces: "drive",
-      pageSize: 1000,
-      pageToken,
-      includeItemsFromAllDrives: true,
-      supportsAllDrives: true,
-      fields: "nextPageToken,files(id,name,mimeType,modifiedTime,createdTime,md5Checksum,size,version,webViewLink,trashed)",
-    });
-    files.push(...(response.data.files || []));
-    pageToken = response.data.nextPageToken || undefined;
-  } while (pageToken);
+  const foldersToScan = [mapping.id];
+  const scannedFolders = new Set();
+
+  while (foldersToScan.length > 0) {
+    const currentFolderId = foldersToScan.shift();
+    if (!currentFolderId || scannedFolders.has(currentFolderId)) continue;
+    scannedFolders.add(currentFolderId);
+
+    let pageToken;
+    do {
+      const response = await drive.files.list({
+        q: "'" + currentFolderId + "' in parents and trashed = false",
+        spaces: "drive",
+        pageSize: 1000,
+        pageToken,
+        includeItemsFromAllDrives: true,
+        supportsAllDrives: true,
+        fields: "nextPageToken,files(id,name,mimeType,modifiedTime,createdTime,md5Checksum,size,version,webViewLink,trashed)",
+      });
+      const items = response.data.files || [];
+      for (const item of items) {
+        if (item.mimeType === "application/vnd.google-apps.folder") {
+          foldersToScan.push(item.id);
+        } else {
+          files.push(item);
+        }
+      }
+      pageToken = response.data.nextPageToken || undefined;
+    } while (pageToken);
+  }
   return files;
 }
 
@@ -219,7 +256,12 @@ async function synchronizeDriveMedia(trigger) {
 
   try {
     const drive = await getDrive();
-    const listings = await Promise.all(FOLDER_MAPPINGS.map(async (mapping) => ({
+    const resolvedMappings = await Promise.all(FOLDER_MAPPINGS.map(async (mapping) => {
+      const folderId = await resolveFolderId(drive, mapping);
+      return folderId ? {...mapping, id: folderId} : null;
+    }));
+    const activeMappings = resolvedMappings.filter(Boolean);
+    const listings = await Promise.all(activeMappings.map(async (mapping) => ({
       mapping,
       files: await listFolderFiles(drive, mapping),
     })));

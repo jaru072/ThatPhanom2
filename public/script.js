@@ -72,6 +72,12 @@ const I18N_TH = {
   "projectObjectives": "วัตถุประสงค์",
   "projectProgress": "ความคืบหน้า",
   "projectDonation": "ร่วมบุญ",
+  "projectAlbum": "อัลบั้มผู้ร่วมบุญ",
+  "muchalindaAlbumBadge": "อนุโมทนาบัตรและภาพศรัทธา",
+  "muchalindaAlbumTitle": "อัลบั้มรูปภาพผู้ร่วมบุญ",
+  "muchalindaAlbumDesc": "ประมวลภาพและอนุโมทนาบัตรผู้มีจิตศรัทธาร่วมสมทบทุนโครงการบูรณะสระมุจลินท์ (สระพังทอง) เชื่อมโยงข้อมูลอัตโนมัติจาก Google Drive",
+  "muchalindaAlbumEmptyTitle": "พร้อมเชื่อมต่ออัลบั้มภาพจาก Google Drive",
+  "muchalindaAlbumEmptyText": "ระบบเตรียมพร้อมดึงภาพจากโฟลเดอร์ พระธาตุพนม สู่มรดกโลก/โครงการบูรณะสระมุจลินท์/อัลบั้มรูปภาพผู้ร่วมบุญ เมื่อมีภาพเพิ่มเข้ามาใน Google Drive หรือกดปุ่มซิงก์ ภาพจะปรากฏในหน้านี้ทันที",
   "muchalindaConceptCaption": "ภาพประกอบแนวคิด ไม่ใช่ภาพบันทึกสภาพปัจจุบัน",
   "projectHistoryKicker": "กว่า 1,000 ปีแห่งศรัทธา",
   "muchalindaHistoryTitle": "ความเป็นมาและความสำคัญ",
@@ -3071,130 +3077,53 @@ if (document.readyState === "loading") {
   }
 })();
 
-// Admin Rail & Sidebar Dialog Link Button Synchronizer
+// Admin Rail & Sidebar Dialog Link Select Manager
 (function() {
-  function syncAdminUrlLinkBtn(inputEl, btnEl) {
-    if (!inputEl || !btnEl) return;
-    const raw = (inputEl.value || "").trim();
-    if (raw && raw !== "#") {
-      btnEl.style.display = "inline-flex";
-      let target = raw;
-      if (raw.startsWith("#")) {
-        target = window.location.origin + window.location.pathname + raw;
-      } else if (!/^https?:\/\//i.test(raw) && !raw.startsWith("/") && !raw.startsWith("mailto:") && !raw.startsWith("tel:")) {
-        target = "https://" + raw;
-      }
-      btnEl.href = target;
-    } else {
-      btnEl.style.display = "none";
-      btnEl.removeAttribute("href");
-    }
-  }
+  function attachDynamicValueHandler(selectId) {
+    const sel = document.getElementById(selectId);
+    if (!sel || sel._valueHandlerAttached) return;
+    sel._valueHandlerAttached = true;
 
-  window.syncAdminUrlLinkBtn = syncAdminUrlLinkBtn;
+    const originalDescriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, "value");
+    if (!originalDescriptor || !originalDescriptor.set) return;
 
-  function syncAllDialogLinkButtons() {
-    const railInp = document.getElementById("railCardButtonUrl");
-    const railBtn = document.getElementById("railCardGoLinkBtn");
-    const sideInp = document.getElementById("sidebarItemUrl");
-    const sideBtn = document.getElementById("sidebarItemGoLinkBtn");
-
-    syncAdminUrlLinkBtn(railInp, railBtn);
-    syncAdminUrlLinkBtn(sideInp, sideBtn);
-  }
-
-  function initAdminLinkButtons() {
-    // Input / Change / Keyup / Paste delegation
-    document.addEventListener("input", function(e) {
-      if (e.target && e.target.id === "railCardButtonUrl") {
-        syncAdminUrlLinkBtn(e.target, document.getElementById("railCardGoLinkBtn"));
-      } else if (e.target && e.target.id === "sidebarItemUrl") {
-        syncAdminUrlLinkBtn(e.target, document.getElementById("sidebarItemGoLinkBtn"));
-      }
-    });
-
-    document.addEventListener("change", function(e) {
-      if (e.target && e.target.id === "railCardButtonUrl") {
-        syncAdminUrlLinkBtn(e.target, document.getElementById("railCardGoLinkBtn"));
-      } else if (e.target && e.target.id === "sidebarItemUrl") {
-        syncAdminUrlLinkBtn(e.target, document.getElementById("sidebarItemGoLinkBtn"));
-      } else if (e.target && (e.target.id === "railCardTemplateSelect" || e.target.id === "sidebarItemTemplateSelect")) {
-        setTimeout(syncAllDialogLinkButtons, 30);
-      }
-    });
-
-    document.addEventListener("keyup", function(e) {
-      if (e.target && (e.target.id === "railCardButtonUrl" || e.target.id === "sidebarItemUrl")) {
-        syncAllDialogLinkButtons();
-      }
-    });
-
-    document.addEventListener("paste", function(e) {
-      if (e.target && (e.target.id === "railCardButtonUrl" || e.target.id === "sidebarItemUrl")) {
-        setTimeout(syncAllDialogLinkButtons, 20);
-      }
-    });
-
-    // Synchronize whenever gear buttons, add buttons, or templates are clicked
-    document.addEventListener("click", function(e) {
-      if (e.target && (
-        e.target.closest(".sidebar-item-gear") ||
-        e.target.closest(".rail-card-gear") ||
-        e.target.closest("#addRailCardBtn") ||
-        e.target.closest("#addSidebarItemBtn") ||
-        e.target.closest("#railNavGearBtn") ||
-        e.target.closest("#sidebarNavGearBtn") ||
-        e.target.closest(".rail-chip-social") ||
-        e.target.closest(".social-icon-select") ||
-        e.target.closest(".rail-chip")
-      )) {
-        setTimeout(syncAllDialogLinkButtons, 30);
-        setTimeout(syncAllDialogLinkButtons, 150);
-      }
-
-      // Handle clicking the test link button safely
-      const testBtn = e.target.closest("#railCardGoLinkBtn, #sidebarItemGoLinkBtn");
-      if (testBtn) {
-        const isRail = testBtn.id === "railCardGoLinkBtn";
-        const inp = document.getElementById(isRail ? "railCardButtonUrl" : "sidebarItemUrl");
-        const raw = (inp && inp.value || "").trim();
-        if (!raw || raw === "#") {
-          e.preventDefault();
+    Object.defineProperty(sel, "value", {
+      get: function() {
+        return originalDescriptor.get.call(this);
+      },
+      set: function(val) {
+        const trimmed = (val == null ? "" : String(val)).trim();
+        if (!trimmed || trimmed === "#") {
+          originalDescriptor.set.call(this, "");
           return;
         }
-        let url = raw;
-        if (raw.startsWith("#")) {
-          url = window.location.origin + window.location.pathname + raw;
-        } else if (!/^https?:\/\//i.test(raw) && !raw.startsWith("/") && !raw.startsWith("mailto:") && !raw.startsWith("tel:")) {
-          url = "https://" + raw;
-        }
-        testBtn.href = url;
-      }
-    });
-
-    // Observe dialog openings
-    const railDialog = document.getElementById("railCardDialog");
-    const sidebarDialog = document.getElementById("sidebarItemDialog");
-    [railDialog, sidebarDialog].forEach(function(dlg) {
-      if (!dlg) return;
-      const observer = new MutationObserver(function(mutations) {
-        mutations.forEach(function(m) {
-          if (m.attributeName === "open" && dlg.hasAttribute("open")) {
-            setTimeout(syncAllDialogLinkButtons, 20);
-            setTimeout(syncAllDialogLinkButtons, 100);
+        let found = false;
+        for (let i = 0; i < this.options.length; i++) {
+          if (this.options[i].value === trimmed) {
+            found = true;
+            break;
           }
-        });
-      });
-      observer.observe(dlg, { attributes: true });
+        }
+        if (!found) {
+          const opt = document.createElement("option");
+          opt.value = trimmed;
+          opt.textContent = trimmed;
+          this.appendChild(opt);
+        }
+        originalDescriptor.set.call(this, trimmed);
+      },
+      configurable: true
     });
+  }
 
-    // Initial sync
-    syncAllDialogLinkButtons();
+  function initLinkManager() {
+    attachDynamicValueHandler("railCardButtonUrl");
+    attachDynamicValueHandler("sidebarItemUrl");
   }
 
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initAdminLinkButtons);
+    document.addEventListener("DOMContentLoaded", initLinkManager);
   } else {
-    initAdminLinkButtons();
+    initLinkManager();
   }
 })();

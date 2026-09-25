@@ -34,6 +34,16 @@ const FOLDER_MAPPINGS = Object.freeze([
     mediaTypes: Object.freeze(["image", "video"]),
   }),
   Object.freeze({
+    key: "muchalindaAlbum",
+    name: "อัลบั้มรูปภาพผู้ร่วมบุญ",
+    id: "1DmhMAaiazfnXIiOZ5Hu4E_du_oCZZNCU",
+    parentFolderId: "1GNmlzvw4LOnykU28T6x7TkxKUNKR-07N",
+    folderName: "อัลบั้มรูปภาพผู้ร่วมบุญ",
+    section: "muchalinda",
+    placement: "album",
+    mediaTypes: Object.freeze(["image"]),
+  }),
+  Object.freeze({
     key: "videos",
     name: "Videos",
     id: "1rcscJ3isoYDk5V15oj-T9UzTdV45S0Tf",

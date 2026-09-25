@@ -13,7 +13,7 @@ const {
   titleFromDriveName,
 } = require("../media-utils");
 
-test("all five Drive folders map to the requested website areas", () => {
+test("all Drive folders map to the requested website areas", () => {
   assert.deepEqual(
     FOLDER_MAPPINGS.map(({key, section, placement}) => ({key, section, placement})),
     [
@@ -21,6 +21,7 @@ test("all five Drive folders map to the requested website areas", () => {
       {key: "story", section: "story", placement: ""},
       {key: "criteria", section: "criteria", placement: ""},
       {key: "muchalinda", section: "muchalinda", placement: "hero"},
+      {key: "muchalindaAlbum", section: "muchalinda", placement: "album"},
       {key: "videos", section: "videos", placement: ""},
     ]
   );
