@@ -740,7 +740,17 @@ syncSiteSectionsCacheToDict();
 function setLanguage(lang) {
   syncSiteSectionsCacheToDict();
   if (typeof window.resetGlobalTranslate === "function" && (lang === "th" || lang === "lo" || lang === "en")) {
+    const wasGlobalActive = !!(
+      localStorage.getItem("thatphanom_global_lang") ||
+      (document.cookie && document.cookie.includes("googtrans="))
+    );
     window.resetGlobalTranslate(false);
+    if (wasGlobalActive) {
+      localStorage.setItem("thatphanom_lang", lang);
+      localStorage.setItem("thatphanom_user_selected_lang", "true");
+      window.location.reload();
+      return;
+    }
   }
   const config = I18N_LANGS[lang] || I18N_LANGS.th;
   document.documentElement.lang = lang;
@@ -922,20 +932,20 @@ const GLOBAL_LANGUAGES = [
 window.applyGlobalTranslate = function(langCode, langName, isAutoDetected) {
   const host = window.location.hostname;
   document.cookie = "googtrans=/th/" + langCode + "; path=/;";
-  document.cookie = "googtrans=/th/" + langCode + "; path=/; domain=" + host + ";";
-  document.cookie = "googtrans=/th/" + langCode + "; path=/; domain=." + host + ";";
+  document.cookie = "googtrans=/auto/" + langCode + "; path=/;";
+  if (host) {
+    document.cookie = "googtrans=/th/" + langCode + "; path=/; domain=" + host + ";";
+    document.cookie = "googtrans=/auto/" + langCode + "; path=/; domain=" + host + ";";
+    if (host.includes(".")) {
+      document.cookie = "googtrans=/th/" + langCode + "; path=/; domain=." + host + ";";
+      document.cookie = "googtrans=/auto/" + langCode + "; path=/; domain=." + host + ";";
+    }
+  }
+
   localStorage.setItem("thatphanom_global_lang", langCode);
   localStorage.setItem("thatphanom_global_name", langName);
   if (!isAutoDetected) {
     localStorage.setItem("thatphanom_user_selected_lang", "true");
-  }
-
-  const combo = document.querySelector(".goog-te-combo");
-  if (combo) {
-    combo.value = langCode;
-    combo.dispatchEvent(new Event("change"));
-  } else if (!isAutoDetected) {
-    window.location.reload();
   }
 
   const labelEl = document.getElementById("currentLanguageLabel");
@@ -943,36 +953,90 @@ window.applyGlobalTranslate = function(langCode, langName, isAutoDetected) {
     labelEl.textContent = "🌐 " + langName;
   }
   document.querySelectorAll(".language-option").forEach((opt) => opt.classList.remove("active"));
-
   const dlg = document.getElementById("globalTranslateDialog");
   if (dlg && dlg.open) dlg.close();
-  const menu = document.getElementById("languageMenu");
-  if (menu) menu.hidden = true;
+  if (typeof window.closeLanguageDropdown === "function") {
+    window.closeLanguageDropdown();
+  } else {
+    const menu = document.getElementById("languageMenu");
+    if (menu) menu.hidden = true;
+    const dropdownBtn = document.getElementById("languageDropdownButton");
+    if (dropdownBtn) dropdownBtn.setAttribute("aria-expanded", "false");
+  }
+
+  function triggerCombo(selectEl) {
+    if (!selectEl) return false;
+    selectEl.value = langCode;
+    selectEl.dispatchEvent(new Event("change"));
+    if (typeof selectEl.onchange === "function") {
+      selectEl.onchange();
+    }
+    return true;
+  }
+
+  const combo = document.querySelector(".goog-te-combo");
+  if (combo && combo.options && combo.options.length > 0) {
+    triggerCombo(combo);
+  } else {
+    if (!document.querySelector('script[src*="translate.google.com"]')) {
+      const s = document.createElement("script");
+      s.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
+      s.async = true;
+      document.body.appendChild(s);
+    }
+    let attempts = 0;
+    const pollInterval = setInterval(() => {
+      attempts++;
+      const lateCombo = document.querySelector(".goog-te-combo");
+      if (lateCombo && lateCombo.options && lateCombo.options.length > 0) {
+        clearInterval(pollInterval);
+        triggerCombo(lateCombo);
+        return;
+      }
+      if (attempts >= 30) {
+        clearInterval(pollInterval);
+        if (!isAutoDetected) {
+          window.location.reload();
+        }
+      }
+    }, 100);
+  }
 };
 
 window.resetGlobalTranslate = function(reloadIfNeeded) {
   const host = window.location.hostname;
   document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
   document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + host + ";";
-  document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=." + host + ";";
+  if (host.includes(".")) {
+    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=." + host + ";";
+  }
   localStorage.removeItem("thatphanom_global_lang");
   localStorage.removeItem("thatphanom_global_name");
-
   const combo = document.querySelector(".goog-te-combo");
   if (combo) {
     combo.value = "";
     combo.dispatchEvent(new Event("change"));
+    if (typeof combo.onchange === "function") {
+      combo.onchange();
+    }
+  }
+  const labelEl = document.getElementById("currentLanguageLabel");
+  if (labelEl) {
+    labelEl.textContent = "ไทย";
+  }
+  const thOpt = document.querySelector('.language-option[data-lang="th"]');
+  if (thOpt) {
+    document.querySelectorAll(".language-option").forEach((opt) => opt.classList.remove("active"));
+    thOpt.classList.add("active");
   }
 
   const activeBanner = document.getElementById("globalTranslateActiveBanner");
   if (activeBanner) activeBanner.style.display = "none";
   document.querySelectorAll(".global-lang-chip, .global-lang-row-btn").forEach((el) => el.classList.remove("active"));
-
   if (reloadIfNeeded) {
     window.location.reload();
   }
 };
-
 function _initGlobalTranslate() {
   const openBtn = document.getElementById("openGlobalTranslateOption");
   const dialog = document.getElementById("globalTranslateDialog");
@@ -992,11 +1056,30 @@ function _initGlobalTranslate() {
     dialog.close();
   }
 
+  function closeDialog() {
+    dialog.close();
+    if (typeof window.closeLanguageDropdown === "function") {
+      window.closeLanguageDropdown();
+    }
+  }
+
+  dialog.addEventListener("close", () => {
+    if (typeof window.closeLanguageDropdown === "function") {
+      window.closeLanguageDropdown();
+    }
+  });
+
   if (openBtn) {
     openBtn.onclick = (e) => {
       e.stopPropagation();
-      const menu = document.getElementById("languageMenu");
-      if (menu) menu.hidden = true;
+      if (typeof window.closeLanguageDropdown === "function") {
+        window.closeLanguageDropdown();
+      } else {
+        const menu = document.getElementById("languageMenu");
+        if (menu) menu.hidden = true;
+        const dropdownBtn = document.getElementById("languageDropdownButton");
+        if (dropdownBtn) dropdownBtn.setAttribute("aria-expanded", "false");
+      }
       renderDialogState();
       dialog.showModal();
       if (searchInput) {
@@ -1011,7 +1094,11 @@ function _initGlobalTranslate() {
   if (cancelBtn) cancelBtn.onclick = closeDialog;
   if (resetBtn) {
     resetBtn.onclick = () => {
-      window.resetGlobalTranslate(true);
+      window.resetGlobalTranslate(false);
+      if (typeof setLanguage === "function") {
+        setLanguage("th");
+      }
+      window.location.reload();
     };
   }
 
@@ -1091,6 +1178,21 @@ function _initGlobalTranslate() {
       labelEl.textContent = "🌐 " + activeName;
     }
     document.querySelectorAll(".language-option").forEach((opt) => opt.classList.remove("active"));
+
+    let attempts = 0;
+    const syncTimer = setInterval(() => {
+      attempts++;
+      const combo = document.querySelector(".goog-te-combo");
+      if (combo && combo.options && combo.options.length > 0) {
+        clearInterval(syncTimer);
+        if (combo.value !== activeCode) {
+          combo.value = activeCode;
+          combo.dispatchEvent(new Event("change"));
+          if (typeof combo.onchange === "function") combo.onchange();
+        }
+      }
+      if (attempts >= 30) clearInterval(syncTimer);
+    }, 100);
   }
 }
 
@@ -1105,10 +1207,17 @@ function _initLanguageDropdown() {
 
   function toggleMenu() {
     if (!menu) return;
-    const isExpanded = dropdownBtn && dropdownBtn.getAttribute("aria-expanded") === "true";
-    menu.hidden = isExpanded;
-    if (dropdownBtn) dropdownBtn.setAttribute("aria-expanded", isExpanded ? "false" : "true");
+    const isClosed = menu.hidden || menu.style.display === "none" || (dropdownBtn && dropdownBtn.getAttribute("aria-expanded") !== "true");
+    if (isClosed) {
+      menu.hidden = false;
+      if (dropdownBtn) dropdownBtn.setAttribute("aria-expanded", "true");
+    } else {
+      menu.hidden = true;
+      if (dropdownBtn) dropdownBtn.setAttribute("aria-expanded", "false");
+    }
   }
+
+  window.closeLanguageDropdown = closeMenu;
 
   if (dropdownBtn) {
     dropdownBtn.onclick = (e) => {
@@ -1122,9 +1231,23 @@ function _initLanguageDropdown() {
     opt.onclick = (e) => {
       e.stopPropagation();
       const selectedLang = opt.getAttribute("data-lang") || "th";
-      localStorage.setItem("thatphanom_user_selected_lang", "true");
-      setLanguage(selectedLang);
       closeMenu();
+      localStorage.setItem("thatphanom_user_selected_lang", "true");
+
+      const wasGlobalActive = !!(
+        localStorage.getItem("thatphanom_global_lang") ||
+        (document.cookie && document.cookie.includes("googtrans="))
+      );
+
+      if (wasGlobalActive) {
+        if (typeof window.resetGlobalTranslate === "function") {
+          window.resetGlobalTranslate(false);
+        }
+        localStorage.setItem("thatphanom_lang", selectedLang);
+        window.location.reload();
+      } else {
+        setLanguage(selectedLang);
+      }
     };
   });
 
@@ -2079,6 +2202,13 @@ function _initUiHelpers() {
     // สลับมุมมองระหว่าง ผัง Interactive กับ ผังรายการ
     function setViewMode(mode) {
       if (!mapBtn || !listBtn || !sitemapContainer || !siteTree || !treeWorkspace) return;
+      if (window._appState && window._appState.treeShowTrash) {
+        window._appState.treeShowTrash = false;
+        const trashBtn = document.getElementById("treeTrashButton");
+        if (trashBtn) trashBtn.textContent = "ถังขยะ";
+        const titleEl = document.getElementById("treeListTitle");
+        if (titleEl) titleEl.textContent = "ผังที่ใช้งาน";
+      }
       if (mode === "map") {
         mapBtn.classList.add("active");
         mapBtn.setAttribute("aria-selected", "true");
@@ -3114,6 +3244,1176 @@ if (document.readyState === "loading") {
       },
       configurable: true
     });
+  }
+
+  
+  // ==========================================
+  // Custom Center Sections CMS (Slider, Cards, Contact, Standard)
+  // ==========================================
+  function _initCustomCenterSections() {
+    const container = document.getElementById("customCenterSectionsContainer");
+    const adminToolbar = document.getElementById("centerAdminToolbar");
+    const addSectionBtn = document.getElementById("centerAddSectionBtn");
+    const trashBtn = document.getElementById("centerTrashButton");
+    const refreshBtn = document.getElementById("centerRefreshBtn");
+    const trashCountEl = document.getElementById("centerTrashCount");
+
+    // Dialogs
+    const centerSecDlg = document.getElementById("centerSectionDialog");
+    const centerTrashDlg = document.getElementById("centerTrashDialog");
+    const centerCardsDlg = document.getElementById("centerCardsManageDialog");
+    const centerSliderDlg = document.getElementById("centerSliderManageDialog");
+
+    // Helper: Copy anchor link to clipboard
+    function copyAnchorText(text, label) {
+      if (!text) return;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          if (typeof window._showPortalToast === "function") {
+            window._showPortalToast(`คัดลอกลิงก์ ${text} เรียบร้อยแล้ว นำไปวางในเมนูบนสุดได้ทันที`, "success");
+          } else {
+            alert(`คัดลอกลิงก์ ${text} เรียบร้อยแล้ว`);
+          }
+        }).catch(() => fallbackCopy(text));
+      } else {
+        fallbackCopy(text);
+      }
+      function fallbackCopy(val) {
+        const ta = document.createElement("textarea");
+        ta.value = val;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand("copy");
+          if (typeof window._showPortalToast === "function") {
+            window._showPortalToast(`คัดลอกลิงก์ ${val} เรียบร้อยแล้ว`, "success");
+          }
+        } catch (_) {}
+        document.body.removeChild(ta);
+      }
+    }
+
+    // Connect core sectionEditorDialog anchor copy button
+    const copyCoreSecBtn = document.getElementById("copySecEditorAnchorBtn");
+    if (copyCoreSecBtn && !copyCoreSecBtn._bound) {
+      copyCoreSecBtn._bound = true;
+      copyCoreSecBtn.addEventListener("click", () => {
+        const display = document.getElementById("secEditorAnchorDisplay");
+        const val = display ? display.textContent.trim() : "";
+        copyAnchorText(val);
+      });
+    }
+
+    // Connect centerSecDialog anchor copy button
+    const copyCenterSecBtn = document.getElementById("copyCenterSecAnchorBtn");
+    if (copyCenterSecBtn && !copyCenterSecBtn._bound) {
+      copyCenterSecBtn._bound = true;
+      copyCenterSecBtn.addEventListener("click", () => {
+        const display = document.getElementById("centerSecAnchorDisplay");
+        const val = display ? display.textContent.trim() : "";
+        copyAnchorText(val);
+      });
+    }
+
+    // Slug live preview updater
+    const slugInput = document.getElementById("centerSecSlugInput");
+    const slugDisplay = document.getElementById("centerSecAnchorDisplay");
+    if (slugInput && slugDisplay && !slugInput._bound) {
+      slugInput._bound = true;
+      slugInput.addEventListener("input", () => {
+        let v = (slugInput.value || "").trim().toLowerCase().replace(/[^a-z0-9_-]/g, "-").replace(/-+/g, "-");
+        if (v.startsWith("-")) v = v.substring(1);
+        slugInput.value = v;
+        slugDisplay.textContent = v ? `#${v}` : "#";
+      });
+    }
+
+    // Type selector change handler
+    const typeSelect = document.getElementById("centerSecTypeSelect");
+    const contactFields = document.getElementById("centerSecContactFields");
+    const slideUrlsGroup = document.getElementById("centerSecSlideUrlsGroup");
+    const imageLabel = document.getElementById("centerSecImageLabel");
+    const typeHint = document.getElementById("centerSecTypeHint");
+    if (typeSelect && !typeSelect._bound) {
+      typeSelect._bound = true;
+      typeSelect.addEventListener("change", () => {
+        const val = typeSelect.value;
+        if (contactFields) contactFields.style.display = val === "contact" ? "block" : "none";
+        if (slideUrlsGroup) slideUrlsGroup.style.display = val === "slider" ? "block" : "none";
+        if (imageLabel) {
+          imageLabel.textContent = val === "slider" ? "รูปภาพหลัก / ภาพแรกของสไลด์ (URL ภาพ)" : "ลิงก์รูปภาพประกอบ (URL ภาพ)";
+        }
+        if (typeHint) {
+          if (val === "slider") typeHint.textContent = "กล่องสไลด์แสดงภาพชุดเลื่อนสไลด์ พร้อมปุ่มอัพเดทสไลด์ในแถบกลาง";
+          else if (val === "cards") typeHint.textContent = "กล่องการ์ดเนื้อหาจัดเป็นแถวการ์ด พร้อมปุ่มอัพเดทการ์ดในแถบกลาง";
+          else if (val === "contact") typeHint.textContent = "กล่องข้อมูลติดต่อ โทรศัพท์ แผนที่ และปุ่มสื่อสังคมออนไลน์ (Facebook, Line, TikTok, YouTube)";
+          else typeHint.textContent = "กล่องเนื้อหาทั่วไป แสดงคำโปรย หัวข้อหลัก ข้อความบรรยาย และปุ่มกด";
+        }
+      });
+    }
+
+    // Pull existing contact data button
+    const pullContactBtn = document.getElementById("pullExistingContactBtn");
+    if (pullContactBtn && !pullContactBtn._bound) {
+      pullContactBtn._bound = true;
+      pullContactBtn.addEventListener("click", () => {
+        const sidebarItems = (window._appState && Array.isArray(window._appState.sidebarItems)) ? window._appState.sidebarItems : [];
+        const contactItem = sidebarItems.find(s => s && (s.template === "contact" || s.title === "ติดต่อเรา" || s.title_th === "ติดต่อเรา"));
+        if (contactItem) {
+          const phoneInput = document.getElementById("centerSecPhone");
+          const addrInput = document.getElementById("centerSecAddress");
+          const fbInput = document.getElementById("centerSecFb");
+          const lineInput = document.getElementById("centerSecLine");
+          const tiktokInput = document.getElementById("centerSecTiktok");
+          const ytInput = document.getElementById("centerSecYoutube");
+
+          if (phoneInput && !phoneInput.value) {
+            phoneInput.value = "098 795 6539";
+          }
+          if (addrInput && !addrInput.value) {
+            addrInput.value = contactItem.description || "วัดพระธาตุพนมวรมหาวิหาร กุฏิพระครูศรีพนมวรคุณ ผู้ช่วยเจ้าอาวาส ข้างกุฏิเจ้าอาวาส";
+          }
+          if (Array.isArray(contactItem.socialLinks)) {
+            contactItem.socialLinks.forEach(link => {
+              if (link.icon === "facebook" && fbInput && !fbInput.value) fbInput.value = link.url;
+              if (link.icon === "line" && lineInput && !lineInput.value) lineInput.value = link.url;
+              if (link.icon === "tiktok" && tiktokInput && !tiktokInput.value) tiktokInput.value = link.url;
+              if (link.icon === "youtube" && ytInput && !ytInput.value) ytInput.value = link.url;
+            });
+          }
+          if (fbInput && !fbInput.value && contactItem.url) fbInput.value = contactItem.url;
+          if (typeof window._showPortalToast === "function") {
+            window._showPortalToast("ดึงข้อมูลจาก 'ติดต่อเรา' เดิมเรียบร้อยแล้ว", "success");
+          }
+        } else {
+          // Provide sensible default
+          const phoneInput = document.getElementById("centerSecPhone");
+          const addrInput = document.getElementById("centerSecAddress");
+          const fbInput = document.getElementById("centerSecFb");
+          if (phoneInput && !phoneInput.value) phoneInput.value = "098 795 6539";
+          if (addrInput && !addrInput.value) addrInput.value = "วัดพระธาตุพนมวรมหาวิหาร กุฏิพระครูศรีพนมวรคุณ ผู้ช่วยเจ้าอาวาส ข้างกุฏิเจ้าอาวาส";
+          if (fbInput && !fbInput.value) fbInput.value = "https://www.facebook.com/ToWorldHeritage";
+          if (typeof window._showPortalToast === "function") {
+            window._showPortalToast("ใส่ข้อมูลติดต่อเริ่มต้นเรียบร้อยแล้ว", "success");
+          }
+        }
+      });
+    }
+
+    // Language tabs in centerSecDialog
+    document.querySelectorAll(".center-sec-lang-tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        const lang = tab.dataset.tab;
+        document.querySelectorAll(".center-sec-lang-tab").forEach(t => t.classList.toggle("active", t === tab));
+        const paneTh = document.getElementById("centerSecPaneTh");
+        const paneLo = document.getElementById("centerSecPaneLo");
+        const paneEn = document.getElementById("centerSecPaneEn");
+        if (paneTh) paneTh.hidden = lang !== "th";
+        if (paneLo) paneLo.hidden = lang !== "lo";
+        if (paneEn) paneEn.hidden = lang !== "en";
+      });
+    });
+
+    // Auto translate in centerSecDialog
+    const autoTransBtn = document.getElementById("centerSecAutoTranslateBtn");
+    if (autoTransBtn && !autoTransBtn._bound) {
+      autoTransBtn._bound = true;
+      autoTransBtn.addEventListener("click", async () => {
+        const titleTh = document.getElementById("centerSecTitleTh")?.value.trim() || "";
+        const kickerTh = document.getElementById("centerSecKickerTh")?.value.trim() || "";
+        const contentTh = document.getElementById("centerSecContentTh")?.value.trim() || "";
+        const statusText = document.getElementById("centerSecTranslateStatusText");
+        const statusBox = document.getElementById("centerSecTranslateStatus");
+
+        if (!titleTh && !kickerTh && !contentTh) {
+          if (typeof window._showPortalToast === "function") window._showPortalToast("กรุณากรอกข้อมูลภาษาไทยก่อนทำการแปล", "error");
+          return;
+        }
+
+        if (statusBox && statusText) {
+          statusBox.hidden = false;
+          statusText.textContent = "กำลังแปลภาษาลาวและอังกฤษ...";
+        }
+        autoTransBtn.disabled = true;
+
+        try {
+          const transLo = typeof window._translateThToLo === "function" ? window._translateThToLo : async t => t;
+          const transEn = typeof window._translateThToEn === "function" ? window._translateThToEn : async t => t;
+
+          const [titleLo, titleEn, kickerLo, kickerEn, contentLo, contentEn] = await Promise.all([
+            titleTh ? transLo(titleTh) : "",
+            titleTh ? transEn(titleTh) : "",
+            kickerTh ? transLo(kickerTh) : "",
+            kickerTh ? transEn(kickerTh) : "",
+            contentTh ? transLo(contentTh) : "",
+            contentTh ? transEn(contentTh) : ""
+          ]);
+
+          const titleLoEl = document.getElementById("centerSecTitleLo");
+          const titleEnEl = document.getElementById("centerSecTitleEn");
+          const kickerLoEl = document.getElementById("centerSecKickerLo");
+          const kickerEnEl = document.getElementById("centerSecKickerEn");
+          const contentLoEl = document.getElementById("centerSecContentLo");
+          const contentEnEl = document.getElementById("centerSecContentEn");
+
+          if (titleLoEl && titleLo) titleLoEl.value = titleLo;
+          if (titleEnEl && titleEn) titleEnEl.value = titleEn;
+          if (kickerLoEl && kickerLo) kickerLoEl.value = kickerLo;
+          if (kickerEnEl && kickerEn) kickerEnEl.value = kickerEn;
+          if (contentLoEl && contentLo) contentLoEl.value = contentLo;
+          if (contentEnEl && contentEn) contentEnEl.value = contentEn;
+
+          if (statusText) statusText.textContent = "แปลภาษาเรียบร้อยแล้ว";
+          setTimeout(() => { if (statusBox) statusBox.hidden = true; }, 3000);
+        } catch (err) {
+          console.error("Auto translate error:", err);
+          if (statusText) statusText.textContent = "แปลภาษาไม่สำเร็จ กรุณากรอกเอง";
+        } finally {
+          autoTransBtn.disabled = false;
+        }
+      });
+    }
+
+    // Add slide URL item in centerSecSlideUrlsList
+    function addSlideUrlInput(val = "") {
+      const list = document.getElementById("centerSecSlideUrlsList");
+      if (!list) return;
+      const row = document.createElement("div");
+      row.style.cssText = "display: flex; gap: 6px; align-items: center;";
+      row.innerHTML = `
+        <input type="text" class="center-slide-url-input" value="${val ? String(val).replace(/"/g, '&quot;') : ''}" placeholder="https://... หรือ assets/..." style="flex:1; padding:6px 8px; border:1px solid #ccc; border-radius:4px; font-size:0.84rem;">
+        <button type="button" class="button secondary small remove-slide-url-btn" style="padding:4px 8px; color:#cf1322;">✕</button>
+      `;
+      row.querySelector(".remove-slide-url-btn").addEventListener("click", () => row.remove());
+      list.appendChild(row);
+    }
+    const addSlideUrlBtn = document.getElementById("addCenterSecSlideUrlBtn");
+    if (addSlideUrlBtn && !addSlideUrlBtn._bound) {
+      addSlideUrlBtn._bound = true;
+      addSlideUrlBtn.addEventListener("click", () => addSlideUrlInput(""));
+    }
+
+    // Open centerSectionDialog
+    function openCenterSectionEditor(mode = "new", secId = "") {
+      if (!centerSecDlg) return;
+      let allSecs = (window._siteSections && Array.isArray(window._siteSections)) ? window._siteSections : ((window._appState && Array.isArray(window._appState.siteSections)) ? window._appState.siteSections : []);
+      if (!allSecs.length) {
+        try {
+          const cached = localStorage.getItem("thatphanom_site_sections_cache");
+          if (cached) allSecs = JSON.parse(cached);
+        } catch (_) {}
+      }
+      const secData = mode === "edit" ? allSecs.find(s => s && s.id === secId) : null;
+
+      document.getElementById("centerSecEditMode").value = mode;
+      document.getElementById("centerSecOriginalId").value = secId || "";
+
+      const titleDlg = document.getElementById("centerSecDialogTitle");
+      const delBtn = document.getElementById("centerSecDeleteBtn");
+      if (titleDlg) titleDlg.textContent = mode === "edit" ? "แก้ไขหัวข้อในแถบกลาง" : "เพิ่มหัวข้อใหม่ในแถบกลาง";
+      if (delBtn) delBtn.style.display = mode === "edit" ? "inline-block" : "none";
+
+      const slugIn = document.getElementById("centerSecSlugInput");
+      const anchorDisp = document.getElementById("centerSecAnchorDisplay");
+      const typeSel = document.getElementById("centerSecTypeSelect");
+      const titleThIn = document.getElementById("centerSecTitleTh");
+      const titleLoIn = document.getElementById("centerSecTitleLo");
+      const titleEnIn = document.getElementById("centerSecTitleEn");
+      const kickerThIn = document.getElementById("centerSecKickerTh");
+      const kickerLoIn = document.getElementById("centerSecKickerLo");
+      const kickerEnIn = document.getElementById("centerSecKickerEn");
+      const contentThIn = document.getElementById("centerSecContentTh");
+      const contentLoIn = document.getElementById("centerSecContentLo");
+      const contentEnIn = document.getElementById("centerSecContentEn");
+      const imgIn = document.getElementById("centerSecImageUrl");
+      const actionTextIn = document.getElementById("centerSecActionText");
+      const actionUrlIn = document.getElementById("centerSecActionUrl");
+      const pubIn = document.getElementById("centerSecPublished");
+      const orderIn = document.getElementById("centerSecOrder");
+
+      // Contact fields
+      const phoneIn = document.getElementById("centerSecPhone");
+      const addrIn = document.getElementById("centerSecAddress");
+      const fbIn = document.getElementById("centerSecFb");
+      const lineIn = document.getElementById("centerSecLine");
+      const tiktokIn = document.getElementById("centerSecTiktok");
+      const ytIn = document.getElementById("centerSecYoutube");
+
+      // Reset
+      const slideList = document.getElementById("centerSecSlideUrlsList");
+      if (slideList) slideList.innerHTML = "";
+
+      if (secData) {
+        if (slugIn) slugIn.value = secData.slug || secData.id || "";
+        if (anchorDisp) anchorDisp.textContent = `#${secData.slug || secData.id || ""}`;
+        if (typeSel) {
+          typeSel.value = secData.type || "standard";
+          typeSel.dispatchEvent(new Event("change"));
+        }
+        if (titleThIn) titleThIn.value = secData.title_th || secData.title || "";
+        if (titleLoIn) titleLoIn.value = secData.title_lo || "";
+        if (titleEnIn) titleEnIn.value = secData.title_en || "";
+        if (kickerThIn) kickerThIn.value = secData.kicker_th || secData.kicker || "";
+        if (kickerLoIn) kickerLoIn.value = secData.kicker_lo || "";
+        if (kickerEnIn) kickerEnIn.value = secData.kicker_en || "";
+        if (contentThIn) contentThIn.value = secData.content_th || secData.content || "";
+        if (contentLoIn) contentLoIn.value = secData.content_lo || "";
+        if (contentEnIn) contentEnIn.value = secData.content_en || "";
+        if (imgIn) imgIn.value = secData.imageUrl || "";
+        if (actionTextIn) actionTextIn.value = secData.actionBtnText || "";
+        if (actionUrlIn) actionUrlIn.value = secData.actionUrl || "";
+        if (pubIn) pubIn.checked = secData.published !== false;
+        if (orderIn) orderIn.value = secData.order || 100;
+
+        if (phoneIn) phoneIn.value = secData.phone || "";
+        if (addrIn) addrIn.value = secData.address || "";
+        if (Array.isArray(secData.socialLinks)) {
+          secData.socialLinks.forEach(l => {
+            if (l.icon === "facebook" && fbIn) fbIn.value = l.url;
+            if (l.icon === "line" && lineIn) lineIn.value = l.url;
+            if (l.icon === "tiktok" && tiktokIn) tiktokIn.value = l.url;
+            if (l.icon === "youtube" && ytIn) ytIn.value = l.url;
+          });
+        }
+        if (Array.isArray(secData.imageUrls)) {
+          secData.imageUrls.forEach(url => addSlideUrlInput(url));
+        }
+      } else {
+        const initialSlug = `section-${Date.now().toString(36)}`;
+        if (slugIn) slugIn.value = initialSlug;
+        if (anchorDisp) anchorDisp.textContent = `#${initialSlug}`;
+        if (typeSel) {
+          typeSel.value = "slider";
+          typeSel.dispatchEvent(new Event("change"));
+        }
+        if (titleThIn) titleThIn.value = "";
+        if (titleLoIn) titleLoIn.value = "";
+        if (titleEnIn) titleEnIn.value = "";
+        if (kickerThIn) kickerThIn.value = "";
+        if (kickerLoIn) kickerLoIn.value = "";
+        if (kickerEnIn) kickerEnIn.value = "";
+        if (contentThIn) contentThIn.value = "";
+        if (contentLoIn) contentLoIn.value = "";
+        if (contentEnIn) contentEnIn.value = "";
+        if (imgIn) imgIn.value = "";
+        if (actionTextIn) actionTextIn.value = "";
+        if (actionUrlIn) actionUrlIn.value = "";
+        if (pubIn) pubIn.checked = true;
+        if (orderIn) orderIn.value = 100;
+
+        if (phoneIn) phoneIn.value = "";
+        if (addrIn) addrIn.value = "";
+        if (fbIn) fbIn.value = "";
+        if (lineIn) lineIn.value = "";
+        if (tiktokIn) tiktokIn.value = "";
+        if (ytIn) ytIn.value = "";
+      }
+
+      centerSecDlg.showModal();
+    }
+
+    // Save Center Section Form
+    const centerSecForm = document.getElementById("centerSectionForm");
+    if (centerSecForm && !centerSecForm._bound) {
+      centerSecForm._bound = true;
+      centerSecForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const mode = document.getElementById("centerSecEditMode").value;
+        const origId = document.getElementById("centerSecOriginalId").value;
+        let slug = (document.getElementById("centerSecSlugInput").value || "").trim().toLowerCase().replace(/[^a-z0-9_-]/g, "-").replace(/-+/g, "-");
+        if (slug.startsWith("-")) slug = slug.substring(1);
+        if (!slug) slug = `sec-${Date.now().toString(36)}`;
+
+        const titleTh = document.getElementById("centerSecTitleTh").value.trim();
+        if (!titleTh) {
+          if (typeof window._showPortalToast === "function") window._showPortalToast("กรุณากรอกชื่อหัวข้อหลัก", "error");
+          return;
+        }
+
+        const type = document.getElementById("centerSecTypeSelect").value;
+        const submitBtn = document.getElementById("saveCenterSecBtn");
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.textContent = "กำลังบันทึก...";
+        }
+
+        // Collect slides
+        const slideUrls = [];
+        const mainImg = (document.getElementById("centerSecImageUrl")?.value || "").trim();
+        if (mainImg) slideUrls.push(mainImg);
+        document.querySelectorAll(".center-slide-url-input").forEach(input => {
+          const v = input.value.trim();
+          if (v && !slideUrls.includes(v)) slideUrls.push(v);
+        });
+
+        // Collect social links
+        const socialLinks = [];
+        const fb = (document.getElementById("centerSecFb")?.value || "").trim();
+        const line = (document.getElementById("centerSecLine")?.value || "").trim();
+        const tiktok = (document.getElementById("centerSecTiktok")?.value || "").trim();
+        const yt = (document.getElementById("centerSecYoutube")?.value || "").trim();
+        if (fb) socialLinks.push({ icon: "facebook", url: fb });
+        if (line) socialLinks.push({ icon: "line", url: line });
+        if (tiktok) socialLinks.push({ icon: "tiktok", url: tiktok });
+        if (yt) socialLinks.push({ icon: "youtube", url: yt });
+
+        let allSecs = (window._siteSections && Array.isArray(window._siteSections)) ? window._siteSections : ((window._appState && Array.isArray(window._appState.siteSections)) ? window._appState.siteSections : []);
+      if (!allSecs.length) {
+        try {
+          const cached = localStorage.getItem("thatphanom_site_sections_cache");
+          if (cached) allSecs = JSON.parse(cached);
+        } catch (_) {}
+      }
+        const existingData = origId ? allSecs.find(s => s && s.id === origId) : null;
+
+        const payload = {
+          id: slug,
+          slug: slug,
+          isCustom: true,
+          type: type,
+          title: titleTh,
+          title_th: titleTh,
+          title_lo: document.getElementById("centerSecTitleLo").value.trim(),
+          title_en: document.getElementById("centerSecTitleEn").value.trim(),
+          kicker: document.getElementById("centerSecKickerTh").value.trim(),
+          kicker_th: document.getElementById("centerSecKickerTh").value.trim(),
+          kicker_lo: document.getElementById("centerSecKickerLo").value.trim(),
+          kicker_en: document.getElementById("centerSecKickerEn").value.trim(),
+          content: document.getElementById("centerSecContentTh").value.trim(),
+          content_th: document.getElementById("centerSecContentTh").value.trim(),
+          content_lo: document.getElementById("centerSecContentLo").value.trim(),
+          content_en: document.getElementById("centerSecContentEn").value.trim(),
+          imageUrl: mainImg,
+          imageUrls: slideUrls,
+          cards: (existingData && Array.isArray(existingData.cards)) ? existingData.cards : [
+            { title: "เรื่องเด่นที่ 1", desc: "รายละเอียดเนื้อหาของการ์ดใบนี้", imageUrl: mainImg, linkUrl: "" },
+            { title: "เรื่องเด่นที่ 2", desc: "รายละเอียดเนื้อหาของการ์ดใบนี้", imageUrl: "", linkUrl: "" }
+          ],
+          phone: document.getElementById("centerSecPhone").value.trim(),
+          address: document.getElementById("centerSecAddress").value.trim(),
+          socialLinks: socialLinks,
+          actionBtnText: document.getElementById("centerSecActionText").value.trim(),
+          actionUrl: document.getElementById("centerSecActionUrl").value.trim(),
+          order: Number(document.getElementById("centerSecOrder").value) || 100,
+          published: document.getElementById("centerSecPublished").checked,
+          deletedAt: null,
+          updatedAt: new Date().toISOString()
+        };
+
+        try {
+          if (typeof window._saveSiteSectionDoc === "function") {
+            // If slug changed, delete old one
+            if (origId && origId !== slug && typeof window._deleteSiteSectionDoc === "function") {
+              await window._deleteSiteSectionDoc(origId);
+            }
+            await window._saveSiteSectionDoc(slug, payload);
+          } else {
+            console.warn("window._saveSiteSectionDoc not available");
+          }
+          centerSecDlg.close();
+          _renderCustomCenterSections();
+          if (typeof window._showPortalToast === "function") {
+            window._showPortalToast(`บันทึกหัวข้อ #${slug} ในแถบกลางเรียบร้อยแล้ว`, "success");
+          }
+        } catch (err) {
+          console.error("Save custom center section error:", err);
+          if (typeof window._showPortalToast === "function") {
+            window._showPortalToast("บันทึกหัวข้อไม่สำเร็จ: " + (err.message || err), "error");
+          }
+        } finally {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.textContent = "💾 บันทึกหัวข้อ";
+          }
+        }
+      });
+    }
+
+    // Delete (Move to Trash) Center Section
+    const deleteSecBtn = document.getElementById("centerSecDeleteBtn");
+    if (deleteSecBtn && !deleteSecBtn._bound) {
+      deleteSecBtn._bound = true;
+      deleteSecBtn.addEventListener("click", async () => {
+        const origId = document.getElementById("centerSecOriginalId").value;
+        if (!origId) return;
+        if (!confirm("ต้องการย้ายหัวข้อนี้ไปยังถังขยะใช่หรือไม่? (สามารถกู้คืนกลับมาได้ตลอดเวลา)")) return;
+
+        let allSecs = (window._siteSections && Array.isArray(window._siteSections)) ? window._siteSections : ((window._appState && Array.isArray(window._appState.siteSections)) ? window._appState.siteSections : []);
+      if (!allSecs.length) {
+        try {
+          const cached = localStorage.getItem("thatphanom_site_sections_cache");
+          if (cached) allSecs = JSON.parse(cached);
+        } catch (_) {}
+      }
+        const existingData = allSecs.find(s => s && s.id === origId) || { id: origId };
+
+        deleteSecBtn.disabled = true;
+        try {
+          if (typeof window._saveSiteSectionDoc === "function") {
+            await window._saveSiteSectionDoc(origId, {
+              ...existingData,
+              deletedAt: new Date().toISOString()
+            });
+          }
+          centerSecDlg.close();
+          _renderCustomCenterSections();
+          if (typeof window._showPortalToast === "function") {
+            window._showPortalToast("ย้ายหัวข้อไปยังถังขยะเรียบร้อยแล้ว", "success");
+          }
+        } catch (err) {
+          console.error("Move to trash error:", err);
+          alert("ย้ายไปถังขยะไม่สำเร็จ: " + err.message);
+        } finally {
+          deleteSecBtn.disabled = false;
+        }
+      });
+    }
+
+    // Close buttons for centerSecDialog
+    const closeCenterSecBtn = document.getElementById("closeCenterSecDialog");
+    const cancelCenterSecBtn = document.getElementById("cancelCenterSecBtn");
+    if (closeCenterSecBtn) closeCenterSecBtn.addEventListener("click", () => centerSecDlg && centerSecDlg.close());
+    if (cancelCenterSecBtn) cancelCenterSecBtn.addEventListener("click", () => centerSecDlg && centerSecDlg.close());
+
+    // Trash Dialog logic
+    function openCenterTrashDialog() {
+      if (!centerTrashDlg) return;
+      const listEl = document.getElementById("centerTrashList");
+      if (!listEl) return;
+      listEl.innerHTML = "";
+
+      let allSecs = (window._siteSections && Array.isArray(window._siteSections)) ? window._siteSections : ((window._appState && Array.isArray(window._appState.siteSections)) ? window._appState.siteSections : []);
+      if (!allSecs.length) {
+        try {
+          const cached = localStorage.getItem("thatphanom_site_sections_cache");
+          if (cached) allSecs = JSON.parse(cached);
+        } catch (_) {}
+      }
+      const trashed = allSecs.filter(s => s && s.isCustom && s.deletedAt);
+
+      if (!trashed.length) {
+        listEl.innerHTML = '<p class="resource-empty" style="text-align:center; padding:20px; color:#888;">ไม่มีรายการในถังขยะ</p>';
+      } else {
+        trashed.forEach(item => {
+          const row = document.createElement("div");
+          row.className = "rail-trash-row";
+          row.style.cssText = "display:flex; justify-content:space-between; align-items:center; padding:12px 14px; background:#faf8f5; border:1px solid #e8e2d5; border-radius:8px; margin-bottom:8px;";
+
+          let dateStr = "เมื่อสักครู่";
+          if (item.deletedAt) {
+            try {
+              const d = new Date(item.deletedAt);
+              if (!isNaN(d.getTime())) {
+                const yr = d.getFullYear() + 543;
+                dateStr = `${d.getDate().toString().padStart(2, '0')}/${(d.getMonth()+1).toString().padStart(2, '0')}/${yr} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')} น.`;
+              }
+            } catch (_) {}
+          }
+
+          const typeName = item.type === "slider" ? "กล่องสไลด์ภาพ" : item.type === "cards" ? "กล่องการ์ดเนื้อหา" : item.type === "contact" ? "กล่องติดต่อเรา" : "กล่องเนื้อหา";
+
+          row.innerHTML = `
+            <div>
+              <strong style="display:block; font-size:0.95rem; color:#171329;">${item.title || item.title_th || "ไม่มีชื่อหัวข้อ"} <span style="font-size:0.78rem; font-weight:normal; color:#875600; background:#fef3c7; padding:2px 6px; border-radius:4px;">${typeName}</span></strong>
+              <span style="font-size:0.78rem; color:#887d72;">ลิงก์: #${item.slug || item.id} · ย้ายเมื่อ: ${dateStr}</span>
+            </div>
+            <div style="display:flex; gap:6px;">
+              <button type="button" class="button secondary small restore-sec-btn" style="padding:6px 12px; font-weight:600;">กู้คืน</button>
+              <button type="button" class="button danger small perm-delete-sec-btn" style="padding:6px 12px;">ลบถาวร</button>
+            </div>
+          `;
+
+          // Restore
+          row.querySelector(".restore-sec-btn").addEventListener("click", async () => {
+            try {
+              if (typeof window._saveSiteSectionDoc === "function") {
+                await window._saveSiteSectionDoc(item.id, {
+                  ...item,
+                  deletedAt: null
+                });
+              }
+              openCenterTrashDialog();
+              _renderCustomCenterSections();
+              if (typeof window._showPortalToast === "function") {
+                window._showPortalToast(`กู้คืนหัวข้อ “${item.title}” กลับมายังแถบกลางแล้ว`, "success");
+              }
+            } catch (e) {
+              alert("กู้คืนไม่สำเร็จ: " + e.message);
+            }
+          });
+
+          // Permanent Delete
+          row.querySelector(".perm-delete-sec-btn").addEventListener("click", async () => {
+            if (!confirm(`ต้องการลบหัวข้อ “${item.title || item.id}” อย่างถาวรใช่หรือไม่? เมื่อลบแล้วจะไม่สามารถกู้คืนได้อีก`)) return;
+            try {
+              if (typeof window._deleteSiteSectionDoc === "function") {
+                await window._deleteSiteSectionDoc(item.id);
+              }
+              openCenterTrashDialog();
+              _renderCustomCenterSections();
+              if (typeof window._showPortalToast === "function") {
+                window._showPortalToast(`ลบหัวข้อออกจากระบบอย่างถาวรแล้ว`, "success");
+              }
+            } catch (e) {
+              alert("ลบถาวรไม่สำเร็จ: " + e.message);
+            }
+          });
+
+          listEl.appendChild(row);
+        });
+      }
+
+      centerTrashDlg.showModal();
+    }
+
+    if (trashBtn && !trashBtn._bound) {
+      trashBtn._bound = true;
+      trashBtn.addEventListener("click", openCenterTrashDialog);
+    }
+    const closeCenterTrashBtn = document.getElementById("closeCenterTrashDialogBtn");
+    if (closeCenterTrashBtn) closeCenterTrashBtn.addEventListener("click", () => centerTrashDlg && centerTrashDlg.close());
+
+    if (addSectionBtn && !addSectionBtn._bound) {
+      addSectionBtn._bound = true;
+      addSectionBtn.addEventListener("click", () => openCenterSectionEditor("new"));
+    }
+
+    if (refreshBtn && !refreshBtn._bound) {
+      refreshBtn._bound = true;
+      refreshBtn.addEventListener("click", () => {
+        _renderCustomCenterSections();
+        if (typeof window.renderSiteSectionsCMS === "function") window.renderSiteSectionsCMS();
+        if (typeof window._showPortalToast === "function") window._showPortalToast("รีเฟรชข้อมูลแถบกลางเรียบร้อยแล้ว", "success");
+      });
+    }
+
+    // Cards Manager Dialog
+    function openCardsManager(secId) {
+      if (!centerCardsDlg) return;
+      let allSecs = (window._siteSections && Array.isArray(window._siteSections)) ? window._siteSections : ((window._appState && Array.isArray(window._appState.siteSections)) ? window._appState.siteSections : []);
+      if (!allSecs.length) {
+        try {
+          const cached = localStorage.getItem("thatphanom_site_sections_cache");
+          if (cached) allSecs = JSON.parse(cached);
+        } catch (_) {}
+      }
+      const sec = allSecs.find(s => s && s.id === secId);
+      if (!sec) return;
+
+      document.getElementById("centerCardsTargetSectionId").value = secId;
+      const listEl = document.getElementById("centerCardsManageList");
+      if (!listEl) return;
+      listEl.innerHTML = "";
+
+      const cards = Array.isArray(sec.cards) ? sec.cards : [];
+
+      function renderCardRow(card = {}, idx = 0) {
+        const cardBox = document.createElement("div");
+        cardBox.className = "manage-card-row-box";
+        cardBox.style.cssText = "background:#faf8f5; border:1px solid #e0d8c8; border-radius:8px; padding:12px; display:flex; flex-direction:column; gap:8px;";
+        cardBox.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <strong style="font-size:0.88rem; color:#875600;">การ์ดใบที่ <span class="card-num">${idx + 1}</span></strong>
+            <button type="button" class="button secondary small remove-card-row-btn" style="color:#cf1322; padding:3px 8px;">✕ ลบการ์ดนี้</button>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+            <label style="font-size:0.82rem;">
+              <span>ชื่อหัวข้อการ์ด *</span>
+              <input type="text" class="card-item-title" value="${card.title ? String(card.title).replace(/"/g, '&quot;') : ''}" placeholder="เช่น ข่าวประชาสัมพันธ์" style="width:100%; padding:6px 8px; border:1px solid #ccc; border-radius:4px; font-weight:600; margin-top:3px;">
+            </label>
+            <label style="font-size:0.82rem;">
+              <span>ลิงก์รูปภาพการ์ด (URL ภาพ)</span>
+              <input type="text" class="card-item-img" value="${card.imageUrl ? String(card.imageUrl).replace(/"/g, '&quot;') : ''}" placeholder="https://..." style="width:100%; padding:6px 8px; border:1px solid #ccc; border-radius:4px; margin-top:3px;">
+            </label>
+          </div>
+          <label style="font-size:0.82rem;">
+            <span>รายละเอียดของการ์ด</span>
+            <textarea class="card-item-desc" rows="2" placeholder="พิมพ์ข้อความรายละเอียด..." style="width:100%; padding:6px 8px; border:1px solid #ccc; border-radius:4px; margin-top:3px;">${card.desc || card.description || ''}</textarea>
+          </label>
+          <label style="font-size:0.82rem;">
+            <span>ลิงก์ปลายทางของการ์ด (ถ้ามี)</span>
+            <input type="text" class="card-item-link" value="${card.linkUrl || card.url || ''}" placeholder="เช่น #section หรือ https://..." style="width:100%; padding:6px 8px; border:1px solid #ccc; border-radius:4px; margin-top:3px;">
+          </label>
+        `;
+        cardBox.querySelector(".remove-card-row-btn").addEventListener("click", () => {
+          cardBox.remove();
+          listEl.querySelectorAll(".manage-card-row-box").forEach((b, i) => {
+            const num = b.querySelector(".card-num");
+            if (num) num.textContent = i + 1;
+          });
+        });
+        listEl.appendChild(cardBox);
+      }
+
+      if (!cards.length) {
+        renderCardRow({ title: "เรื่องเด่นที่ 1", desc: "รายละเอียดเนื้อหาของการ์ดใบนี้", imageUrl: "", linkUrl: "" }, 0);
+      } else {
+        cards.forEach((c, i) => renderCardRow(c, i));
+      }
+
+      const addBtn = document.getElementById("addCenterCardItemBtn");
+      addBtn.onclick = () => {
+        const curCount = listEl.querySelectorAll(".manage-card-row-box").length;
+        renderCardRow({ title: "", desc: "", imageUrl: "", linkUrl: "" }, curCount);
+      };
+
+      const saveBtn = document.getElementById("saveCenterCardsManageBtn");
+      saveBtn.onclick = async () => {
+        saveBtn.disabled = true;
+        saveBtn.textContent = "กำลังบันทึก...";
+        const newCards = [];
+        listEl.querySelectorAll(".manage-card-row-box").forEach(box => {
+          const t = box.querySelector(".card-item-title")?.value.trim() || "";
+          const img = box.querySelector(".card-item-img")?.value.trim() || "";
+          const desc = box.querySelector(".card-item-desc")?.value.trim() || "";
+          const link = box.querySelector(".card-item-link")?.value.trim() || "";
+          if (t || desc || img) {
+            newCards.push({ title: t, imageUrl: img, desc: desc, linkUrl: link });
+          }
+        });
+
+        try {
+          if (typeof window._saveSiteSectionDoc === "function") {
+            await window._saveSiteSectionDoc(secId, {
+              ...sec,
+              cards: newCards,
+              updatedAt: new Date().toISOString()
+            });
+          }
+          centerCardsDlg.close();
+          _renderCustomCenterSections();
+          if (typeof window._showPortalToast === "function") {
+            window._showPortalToast("บันทึกการ์ดเนื้อหาเรียบร้อยแล้ว", "success");
+          }
+        } catch (err) {
+          alert("บันทึกไม่สำเร็จ: " + err.message);
+        } finally {
+          saveBtn.disabled = false;
+          saveBtn.textContent = "💾 บันทึกการ์ดทั้งหมด";
+        }
+      };
+
+      centerCardsDlg.showModal();
+    }
+    const closeCardsDlgBtn = document.getElementById("closeCenterCardsManageBtn");
+    const cancelCardsDlgBtn = document.getElementById("cancelCenterCardsManageBtn");
+    if (closeCardsDlgBtn) closeCardsDlgBtn.addEventListener("click", () => centerCardsDlg && centerCardsDlg.close());
+    if (cancelCardsDlgBtn) cancelCardsDlgBtn.addEventListener("click", () => centerCardsDlg && centerCardsDlg.close());
+
+    // Slider Manager Dialog
+    function openSliderManager(secId) {
+      if (!centerSliderDlg) return;
+      let allSecs = (window._siteSections && Array.isArray(window._siteSections)) ? window._siteSections : ((window._appState && Array.isArray(window._appState.siteSections)) ? window._appState.siteSections : []);
+      if (!allSecs.length) {
+        try {
+          const cached = localStorage.getItem("thatphanom_site_sections_cache");
+          if (cached) allSecs = JSON.parse(cached);
+        } catch (_) {}
+      }
+      const sec = allSecs.find(s => s && s.id === secId);
+      if (!sec) return;
+
+      document.getElementById("centerSliderTargetSectionId").value = secId;
+      const listEl = document.getElementById("centerSliderManageList");
+      if (!listEl) return;
+      listEl.innerHTML = "";
+
+      const slides = Array.isArray(sec.imageUrls) ? sec.imageUrls : (sec.imageUrl ? [sec.imageUrl] : []);
+
+      function renderSlideRow(url = "", caption = "", idx = 0) {
+        const row = document.createElement("div");
+        row.className = "manage-slide-row-box";
+        row.style.cssText = "background:#faf8f5; border:1px solid #e0d8c8; border-radius:8px; padding:12px; display:flex; gap:12px; align-items:center;";
+        row.innerHTML = `
+          <div style="width:68px; height:50px; border-radius:6px; background:#eee; overflow:hidden; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <img class="slide-thumb" src="${url || '/assets/logo-AxQWlNNP.png'}" alt="" style="width:100%; height:100%; object-fit:cover;">
+          </div>
+          <div style="flex:1; display:flex; flex-direction:column; gap:4px;">
+            <input type="text" class="slide-url-val" value="${url ? String(url).replace(/"/g, '&quot;') : ''}" placeholder="URL รูปภาพ (https://... หรือ assets/...)" style="padding:6px 8px; border:1px solid #ccc; border-radius:4px; font-size:0.84rem;">
+            <input type="text" class="slide-caption-val" value="${caption ? String(caption).replace(/"/g, '&quot;') : ''}" placeholder="คำบรรยายใต้ภาพ (ถ้ามี)" style="padding:4px 8px; border:1px solid #ccc; border-radius:4px; font-size:0.8rem;">
+          </div>
+          <button type="button" class="button secondary small remove-slide-row-btn" style="color:#cf1322; padding:6px 10px;">✕ ลบ</button>
+        `;
+        const urlIn = row.querySelector(".slide-url-val");
+        const thumb = row.querySelector(".slide-thumb");
+        urlIn.addEventListener("input", () => {
+          thumb.src = urlIn.value.trim() || '/assets/logo-AxQWlNNP.png';
+        });
+        row.querySelector(".remove-slide-row-btn").addEventListener("click", () => row.remove());
+        listEl.appendChild(row);
+      }
+
+      if (!slides.length) {
+        renderSlideRow("", "", 0);
+      } else {
+        slides.forEach((item, idx) => {
+          if (typeof item === "string") renderSlideRow(item, "", idx);
+          else renderSlideRow(item.url || item.imageUrl || "", item.caption || "", idx);
+        });
+      }
+
+      const addBtn = document.getElementById("addCenterSliderItemBtn");
+      addBtn.onclick = () => renderSlideRow("", "", listEl.querySelectorAll(".manage-slide-row-box").length);
+
+      const saveBtn = document.getElementById("saveCenterSliderManageBtn");
+      saveBtn.onclick = async () => {
+        saveBtn.disabled = true;
+        saveBtn.textContent = "กำลังบันทึก...";
+        const newSlides = [];
+        listEl.querySelectorAll(".manage-slide-row-box").forEach(box => {
+          const u = box.querySelector(".slide-url-val")?.value.trim() || "";
+          const cap = box.querySelector(".slide-caption-val")?.value.trim() || "";
+          if (u) {
+            newSlides.push(cap ? { url: u, caption: cap } : u);
+          }
+        });
+
+        try {
+          if (typeof window._saveSiteSectionDoc === "function") {
+            await window._saveSiteSectionDoc(secId, {
+              ...sec,
+              imageUrl: typeof newSlides[0] === "string" ? newSlides[0] : (newSlides[0]?.url || ""),
+              imageUrls: newSlides,
+              updatedAt: new Date().toISOString()
+            });
+          }
+          centerSliderDlg.close();
+          _renderCustomCenterSections();
+          if (typeof window._showPortalToast === "function") {
+            window._showPortalToast("บันทึกภาพสไลด์เรียบร้อยแล้ว", "success");
+          }
+        } catch (err) {
+          alert("บันทึกไม่สำเร็จ: " + err.message);
+        } finally {
+          saveBtn.disabled = false;
+          saveBtn.textContent = "💾 บันทึกสไลด์ทั้งหมด";
+        }
+      };
+
+      centerSliderDlg.showModal();
+    }
+    const closeSliderDlgBtn = document.getElementById("closeCenterSliderManageBtn");
+    const cancelSliderDlgBtn = document.getElementById("cancelCenterSliderManageBtn");
+    if (closeSliderDlgBtn) closeSliderDlgBtn.addEventListener("click", () => centerSliderDlg && centerSliderDlg.close());
+    if (cancelSliderDlgBtn) cancelSliderDlgBtn.addEventListener("click", () => centerSliderDlg && centerSliderDlg.close());
+
+    // Main Renderer: Render Custom Center Sections
+    window._renderCustomCenterSections = function _renderCustomCenterSections() {
+      if (!container) return;
+      let allSecs = (window._siteSections && Array.isArray(window._siteSections)) ? window._siteSections : ((window._appState && Array.isArray(window._appState.siteSections)) ? window._appState.siteSections : []);
+      if (!allSecs.length) {
+        try {
+          const cached = localStorage.getItem("thatphanom_site_sections_cache");
+          if (cached) allSecs = JSON.parse(cached);
+        } catch (_) {}
+      }
+      const isAdmin = typeof window._checkIsAdmin === "function" ? window._checkIsAdmin() : (typeof window._isPortalAdmin === "function" ? window._isPortalAdmin() : false);
+
+      // Update trash count
+      const trashed = allSecs.filter(s => s && s.isCustom && s.deletedAt);
+      if (trashCountEl) trashCountEl.textContent = trashed.length;
+
+      // Filter active custom sections
+      const customSecs = allSecs.filter(s => s && s.isCustom && !s.deletedAt);
+      customSecs.sort((a, b) => (Number(a.order) || 100) - (Number(b.order) || 100));
+
+      container.innerHTML = "";
+
+      const rawLang = (document.documentElement.lang || "th").toLowerCase();
+      const curLang = rawLang.startsWith("lo") ? "lo" : (rawLang.startsWith("en") ? "en" : "th");
+
+      customSecs.forEach(sec => {
+        const secId = sec.slug || sec.id;
+        const sectionEl = document.createElement("section");
+        sectionEl.id = secId;
+        sectionEl.className = "section custom-center-section has-admin-gear";
+        sectionEl.dataset.centerSecId = sec.id;
+
+        if (sec.published === false) {
+          if (!isAdmin) return; // Hide for visitors
+          // Admin notice
+          sectionEl.style.cssText = "background:#fffbe6; border:1.5px dashed #faad14; padding:16px 20px;";
+          sectionEl.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <div>
+                <strong style="color:#d46b08; font-size:1rem; display:block;">[ซ่อนการแสดงผล] ${sec.title || secId}</strong>
+                <span style="color:#8c6114; font-size:0.82rem;">หัวข้อนี้ถูกปิดการแสดงผลบนเว็บไซต์ (บุคคลทั่วไปมองไม่เห็น) · ลิงก์: #${secId}</span>
+              </div>
+              <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-custom-gear-id="${sec.id}" title="แก้ไข/เปิดแสดงหัวข้อนี้">⚙</button>
+            </div>
+          `;
+          container.appendChild(sectionEl);
+          return;
+        }
+
+        const title = curLang === "lo" ? (sec.title_lo || sec.title) : (curLang === "en" ? (sec.title_en || sec.title) : (sec.title_th || sec.title));
+        const kicker = curLang === "lo" ? (sec.kicker_lo || sec.kicker) : (curLang === "en" ? (sec.kicker_en || sec.kicker) : (sec.kicker_th || sec.kicker));
+        const content = curLang === "lo" ? (sec.content_lo || sec.content) : (curLang === "en" ? (sec.content_en || sec.content) : (sec.content_th || sec.content));
+
+        // Header
+        const header = document.createElement("div");
+        header.className = "section-heading";
+        header.innerHTML = `
+          ${kicker ? `<p class="kicker">${kicker}</p>` : ''}
+          <h2>${title || ''}</h2>
+          ${content ? `<p>${content}</p>` : ''}
+          <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-custom-gear-id="${sec.id}" title="จัดการหัวข้อนี้">⚙</button>
+        `;
+        sectionEl.appendChild(header);
+
+        // Content based on type
+        if (sec.type === "slider") {
+          // Slide Box
+          const slides = Array.isArray(sec.imageUrls) && sec.imageUrls.length ? sec.imageUrls : (sec.imageUrl ? [sec.imageUrl] : []);
+          const topActions = document.createElement("div");
+          topActions.className = "center-section-top-actions";
+          topActions.innerHTML = `<button type="button" class="media-update-button section-slider-update role-only" data-custom-slider-btn="${sec.id}">อัพเดท</button>`;
+          sectionEl.appendChild(topActions);
+
+          if (!slides.length) {
+            const empty = document.createElement("p");
+            empty.className = "resource-empty";
+            empty.style.cssText = "text-align:center; padding:24px; color:#888; background:#faf8f5; border-radius:8px;";
+            empty.textContent = "ยังไม่มีรูปภาพในสไลด์ กดปุ่ม “อัพเดท” ด้านบนเพื่อเพิ่มรูปภาพ";
+            sectionEl.appendChild(empty);
+          } else {
+            const sliderWrap = document.createElement("div");
+            sliderWrap.className = "center-slider-wrapper";
+
+            const stage = document.createElement("div");
+            stage.className = "center-slider-stage";
+
+            slides.forEach((sl, sIdx) => {
+              const u = typeof sl === "string" ? sl : (sl.url || sl.imageUrl || "");
+              const cap = typeof sl === "string" ? "" : (sl.caption || "");
+              const item = document.createElement("div");
+              item.className = `center-slide-item ${sIdx === 0 ? "active" : ""}`;
+              item.innerHTML = `
+                <img src="${u}" alt="${cap || title || ''}" loading="lazy">
+                ${cap ? `<div class="center-slide-caption">${cap}</div>` : ''}
+              `;
+              stage.appendChild(item);
+            });
+            sliderWrap.appendChild(stage);
+
+            if (slides.length > 1) {
+              const prevBtn = document.createElement("button");
+              prevBtn.className = "center-slider-nav prev";
+              prevBtn.type = "button";
+              prevBtn.innerHTML = "‹";
+              prevBtn.setAttribute("aria-label", "ภาพก่อนหน้า");
+
+              const nextBtn = document.createElement("button");
+              nextBtn.className = "center-slider-nav next";
+              nextBtn.type = "button";
+              nextBtn.innerHTML = "›";
+              nextBtn.setAttribute("aria-label", "ภาพถัดไป");
+
+              const dotsWrap = document.createElement("div");
+              dotsWrap.className = "center-slider-dots";
+
+              slides.forEach((_, dIdx) => {
+                const dot = document.createElement("button");
+                dot.className = `center-slider-dot ${dIdx === 0 ? "active" : ""}`;
+                dot.type = "button";
+                dot.setAttribute("aria-label", `สไลด์ ${dIdx + 1}`);
+                dotsWrap.appendChild(dot);
+              });
+
+              sliderWrap.appendChild(prevBtn);
+              sliderWrap.appendChild(nextBtn);
+              sliderWrap.appendChild(dotsWrap);
+
+              // Slider state
+              let curIdx = 0;
+              function gotoSlide(idx) {
+                const items = stage.querySelectorAll(".center-slide-item");
+                const dots = dotsWrap.querySelectorAll(".center-slider-dot");
+                if (!items.length) return;
+                items[curIdx].classList.remove("active");
+                if (dots[curIdx]) dots[curIdx].classList.remove("active");
+                curIdx = (idx + items.length) % items.length;
+                items[curIdx].classList.add("active");
+                if (dots[curIdx]) dots[curIdx].classList.add("active");
+              }
+
+              prevBtn.addEventListener("click", () => gotoSlide(curIdx - 1));
+              nextBtn.addEventListener("click", () => gotoSlide(curIdx + 1));
+              dotsWrap.querySelectorAll(".center-slider-dot").forEach((d, i) => {
+                d.addEventListener("click", () => gotoSlide(i));
+              });
+
+              // Auto advance
+              let timer = setInterval(() => gotoSlide(curIdx + 1), 6000);
+              sliderWrap.addEventListener("mouseenter", () => clearInterval(timer));
+              sliderWrap.addEventListener("mouseleave", () => {
+                clearInterval(timer);
+                timer = setInterval(() => gotoSlide(curIdx + 1), 6000);
+              });
+            }
+
+            sectionEl.appendChild(sliderWrap);
+          }
+
+        } else if (sec.type === "cards") {
+          // Cards Grid Box
+          const cards = Array.isArray(sec.cards) ? sec.cards : [];
+          const topActions = document.createElement("div");
+          topActions.className = "center-section-top-actions";
+          topActions.innerHTML = `<button type="button" class="media-update-button milestones-overview-update role-only" data-custom-cards-btn="${sec.id}">อัพเดท</button>`;
+          sectionEl.appendChild(topActions);
+
+          if (!cards.length) {
+            const empty = document.createElement("p");
+            empty.className = "resource-empty";
+            empty.style.cssText = "text-align:center; padding:24px; color:#888; background:#faf8f5; border-radius:8px;";
+            empty.textContent = "ยังไม่มีการ์ดในกล่องนี้ กดปุ่ม “อัพเดท” ด้านบนเพื่อเพิ่มการ์ด";
+            sectionEl.appendChild(empty);
+          } else {
+            const grid = document.createElement("div");
+            grid.className = "center-cards-grid";
+
+            cards.forEach(card => {
+              const cardEl = document.createElement("article");
+              cardEl.className = "center-card-item";
+              cardEl.innerHTML = `
+                ${card.imageUrl ? `<img class="center-card-media" src="${card.imageUrl}" alt="${card.title || ''}" loading="lazy">` : ''}
+                <div class="center-card-body">
+                  <h3 class="center-card-title">${card.title || ''}</h3>
+                  ${card.desc || card.description ? `<p class="center-card-desc">${card.desc || card.description}</p>` : ''}
+                  ${card.linkUrl ? `<a class="center-card-btn" href="${card.linkUrl}">${card.linkText || 'ดูรายละเอียด'} ↗</a>` : ''}
+                </div>
+              `;
+              grid.appendChild(cardEl);
+            });
+            sectionEl.appendChild(grid);
+          }
+
+        } else if (sec.type === "contact") {
+          // Contact & Social Box
+          const contactWrap = document.createElement("div");
+          contactWrap.className = "center-contact-container";
+
+          // Phone & Location card
+          const infoCard = document.createElement("div");
+          infoCard.className = "center-contact-info-card";
+
+          if (sec.phone) {
+            const phoneRow = document.createElement("div");
+            phoneRow.className = "center-contact-row";
+            phoneRow.innerHTML = `
+              <span class="center-contact-icon">📞</span>
+              <div class="center-contact-details">
+                <strong>โทรศัพท์ติดต่อสอบถาม</strong>
+                <p><a href="tel:${sec.phone.replace(/[^0-9+]/g, '')}">${sec.phone}</a></p>
+              </div>
+            `;
+            infoCard.appendChild(phoneRow);
+          }
+
+          if (sec.address) {
+            const addrRow = document.createElement("div");
+            addrRow.className = "center-contact-row";
+            addrRow.innerHTML = `
+              <span class="center-contact-icon">🏛️</span>
+              <div class="center-contact-details">
+                <strong>ที่ตั้งและจุดประสานงาน</strong>
+                <p>${sec.address}</p>
+              </div>
+            `;
+            infoCard.appendChild(addrRow);
+          }
+
+          contactWrap.appendChild(infoCard);
+
+          // Social Media Card
+          const socialCard = document.createElement("div");
+          socialCard.className = "center-contact-info-card";
+          socialCard.innerHTML = `
+            <strong>ช่องทางสื่อสังคมออนไลน์</strong>
+            <p style="margin:0; font-size:0.86rem; color:#666;">ติดตามข้อมูล ข่าวสาร และกิจกรรมของโครงการผ่านช่องทางทางการ</p>
+          `;
+
+          const socialGrid = document.createElement("div");
+          socialGrid.className = "center-social-grid";
+
+          const socialLinks = Array.isArray(sec.socialLinks) ? sec.socialLinks : [];
+          if (!socialLinks.length) {
+            // Default links if none
+            socialLinks.push({ icon: "facebook", url: "https://www.facebook.com/ToWorldHeritage" });
+          }
+
+          socialLinks.forEach(item => {
+            if (!item.url) return;
+            const a = document.createElement("a");
+            a.className = `center-social-link badge-${item.icon || 'facebook'}`;
+            a.href = item.url;
+            a.target = "_blank";
+            a.rel = "noopener noreferrer";
+            const iconEmoji = item.icon === "facebook" ? "Facebook" : item.icon === "line" ? "LINE" : item.icon === "tiktok" ? "TikTok" : item.icon === "youtube" ? "YouTube" : "ติดตาม";
+            a.innerHTML = `<span aria-hidden="true">↗</span> ${iconEmoji}`;
+            socialGrid.appendChild(a);
+          });
+          socialCard.appendChild(socialGrid);
+
+          contactWrap.appendChild(socialCard);
+          sectionEl.appendChild(contactWrap);
+
+        } else {
+          // Standard Content Box
+          if (sec.imageUrl) {
+            const imgWrap = document.createElement("div");
+            imgWrap.style.cssText = "width:100%; max-height:420px; border-radius:10px; overflow:hidden; margin-top:12px;";
+            imgWrap.innerHTML = `<img src="${sec.imageUrl}" alt="${title || ''}" style="width:100%; height:100%; object-fit:cover;">`;
+            sectionEl.appendChild(imgWrap);
+          }
+
+          if (sec.actionUrl && sec.actionBtnText) {
+            const btnWrap = document.createElement("div");
+            btnWrap.style.cssText = "margin-top:16px;";
+            btnWrap.innerHTML = `<a class="button primary" href="${sec.actionUrl}">${sec.actionBtnText}</a>`;
+            sectionEl.appendChild(btnWrap);
+          }
+        }
+
+        container.appendChild(sectionEl);
+      });
+
+      // Connect gear buttons
+      container.querySelectorAll("[data-custom-gear-id]").forEach(btn => {
+        btn.addEventListener("click", () => openCenterSectionEditor("edit", btn.dataset.customGearId));
+      });
+
+      // Connect slider update buttons
+      container.querySelectorAll("[data-custom-slider-btn]").forEach(btn => {
+        btn.addEventListener("click", () => openSliderManager(btn.dataset.customSliderBtn));
+      });
+
+      // Connect cards update buttons
+      container.querySelectorAll("[data-custom-cards-btn]").forEach(btn => {
+        btn.addEventListener("click", () => openCardsManager(btn.dataset.customCardsBtn));
+      });
+
+      // Update admin state
+      if (typeof window._updateAdminDOMState === "function") {
+        window._updateAdminDOMState();
+      }
+    }
+
+    window._renderCustomCenterSections = _renderCustomCenterSections;
+
+    // Hook to render on load and state change
+    _renderCustomCenterSections();
+    document.addEventListener("DOMContentLoaded", _renderCustomCenterSections);
+    window.addEventListener("portal:dataReload", _renderCustomCenterSections);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", _initCustomCenterSections);
+  } else {
+    _initCustomCenterSections();
   }
 
   function initLinkManager() {

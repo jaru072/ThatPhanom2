@@ -79,8 +79,8 @@
       };
     })();
   </script>
-  <script type="module" crossorigin src="/assets/index-D4DSCKUz.js?v=20260925-9"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-dX7NzDAm.css">
+  <script type="module" crossorigin src="/assets/index-D4DSCKUz.js?v=20260926-2"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-dX7NzDAm.css?v=20260926-1">
   <style id="interactive-sitemap-styles">
     /* Admin Link Dropdown Menu */
     .admin-link-dropdown-menu {
@@ -1275,6 +1275,303 @@
       line-height: 1.6;
       margin: 0 0 20px 0;
     }
+
+    /* Custom Center Sections Styles */
+    .custom-center-sections {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      width: 100%;
+      margin: 16px 0;
+    }
+    .custom-center-section {
+      position: relative;
+      background: var(--paper, #fff);
+      border: 1px solid rgba(23, 19, 41, 0.08);
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 4px 16px rgba(23, 19, 41, 0.04);
+      transition: box-shadow 0.2s ease;
+      scroll-margin-top: 80px;
+    }
+    .custom-center-section:hover {
+      box-shadow: 0 6px 20px rgba(23, 19, 41, 0.08);
+    }
+    .custom-center-section .section-heading {
+      margin-bottom: 16px;
+      position: relative;
+      padding-right: 50px;
+    }
+    .custom-center-section .section-gear-btn {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      z-index: 10;
+    }
+    .center-admin-toolbar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 18px;
+      background: #fdfaf3;
+      border: 1.5px dashed rgba(203, 166, 75, 0.6);
+      border-radius: 10px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+    body.is-admin .center-admin-toolbar:not([hidden]) {
+      display: flex !important;
+    }
+    .center-add-button {
+      font-weight: 600;
+      min-height: 40px;
+    }
+    .center-trash-button {
+      font-size: 0.88rem;
+      min-height: 40px;
+    }
+    .center-refresh-btn {
+      min-height: 40px;
+    }
+
+    /* Slider Box in Center */
+    .center-slider-wrapper {
+      position: relative;
+      width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #171329;
+      margin-top: 14px;
+    }
+    .center-slider-stage {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      max-height: 480px;
+      overflow: hidden;
+    }
+    .center-slide-item {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #0b0716;
+    }
+    .center-slide-item.active {
+      opacity: 1;
+      z-index: 1;
+    }
+    .center-slide-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .center-slide-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px 20px;
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
+      color: #fff;
+      font-size: 0.95rem;
+      z-index: 2;
+    }
+    .center-slider-nav {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(255,255,255,0.88);
+      color: #171329;
+      border: none;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      z-index: 5;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      font-size: 1.25rem;
+      font-weight: 700;
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+    .center-slider-nav:hover {
+      background: #fff;
+      transform: translateY(-50%) scale(1.08);
+    }
+    .center-slider-nav.prev { left: 12px; }
+    .center-slider-nav.next { right: 12px; }
+    .center-slider-dots {
+      position: absolute;
+      bottom: 10px;
+      right: 16px;
+      display: flex;
+      gap: 6px;
+      z-index: 5;
+    }
+    .center-slider-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+    .center-slider-dot.active {
+      background: var(--gold, #d4af37);
+      width: 22px;
+      border-radius: 5px;
+    }
+
+    /* Cards Grid in Center */
+    .center-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+    .center-card-item {
+      background: #faf8f5;
+      border: 1px solid rgba(23,19,41,0.08);
+      border-radius: 10px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .center-card-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+    }
+    .center-card-media {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      background: #eeeadf;
+    }
+    .center-card-body {
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+    .center-card-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 0 0 6px 0;
+      color: var(--ink, #171329);
+    }
+    .center-card-desc {
+      font-size: 0.86rem;
+      color: var(--muted, #666);
+      margin: 0 0 12px 0;
+      line-height: 1.5;
+      flex: 1;
+    }
+    .center-card-btn {
+      align-self: flex-start;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border-radius: 6px;
+      background: #9f731c;
+      color: #fff;
+      text-decoration: none;
+      transition: background 0.15s ease;
+    }
+    .center-card-btn:hover {
+      background: #7a540b;
+    }
+
+    /* Contact & Social Center Box */
+    .center-contact-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 14px;
+    }
+    .center-contact-info-card {
+      background: #faf8f5;
+      border: 1px solid rgba(203,166,75,0.25);
+      border-radius: 10px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .center-contact-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .center-contact-icon {
+      font-size: 1.4rem;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .center-contact-details strong {
+      display: block;
+      font-size: 0.95rem;
+      color: var(--ink, #171329);
+      margin-bottom: 2px;
+    }
+    .center-contact-details p {
+      margin: 0;
+      font-size: 0.86rem;
+      color: var(--muted, #666);
+      line-height: 1.45;
+    }
+    .center-contact-details a {
+      color: #0958d9;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .center-contact-details a:hover {
+      text-decoration: underline;
+    }
+    .center-social-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    .center-social-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      color: #fff !important;
+      text-decoration: none !important;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: transform 0.15s ease, filter 0.15s ease;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .center-social-link:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.1);
+    }
+    .center-social-link.badge-facebook { background: #1877f2 !important; }
+    .center-social-link.badge-line { background: #06c755 !important; }
+    .center-social-link.badge-tiktok { background: #010101 !important; }
+    .center-social-link.badge-instagram { background: radial-gradient(circle at 30% 107%, #fdf497, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%) !important; }
+    .center-social-link.badge-youtube { background: #ff0000 !important; }
+
+    /* Custom Section Update Header Bar */
+    .center-section-top-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
   </style>
 </head>
 <body>
@@ -1826,6 +2123,16 @@
         <p class="empty-state" data-i18n="emptyComments">ยังไม่มีความคิดเห็น เป็นคนแรกที่ร่วมส่งกำลังใจได้เลย</p>
       </div>
     </section>
+
+    <!-- คอนเทนเนอร์หัวข้อกำหนดเองของแถบกลาง (Custom Center Sections) -->
+    <div class="custom-center-sections" id="customCenterSectionsContainer"></div>
+
+    <!-- แถบเครื่องมือผู้ดูแลระบบสำหรับแถบกลาง (Center Admin Toolbar) -->
+    <div class="center-admin-toolbar portal-admin-only" id="centerAdminToolbar" hidden>
+      <button class="center-add-button button primary" id="centerAddSectionBtn" type="button">＋ เพิ่มหัวข้อใหม่ในแถบกลาง</button>
+      <button class="center-trash-button button secondary" id="centerTrashButton" type="button" title="ถังขยะหัวข้อแถบกลาง"><span aria-hidden="true">🗑</span> ถังขยะ (<span class="center-trash-count" id="centerTrashCount">0</span>)</button>
+      <button class="center-refresh-btn button secondary" id="centerRefreshBtn" type="button" title="กดเพื่อรีเฟรชข้อมูล"><span aria-hidden="true">🔄</span> รีเฟรช</button>
+    </div>
 
     <section class="callout">
       <img src="/assets/logo-AxQWlNNP.png" alt="" aria-hidden="true">
@@ -3044,6 +3351,18 @@
       <form id="sectionEditorForm" onsubmit="return false;" style="margin: 16px 0; display: flex; flex-direction: column; gap: 14px;">
         <input type="hidden" id="sectionEditorTargetId">
 
+        <!-- แถบแสดงชื่อลิงก์ปลายทางชัดเจน -->
+        <div class="target-link-banner" id="secEditorAnchorBanner" style="display:flex; align-items:center; justify-content:space-between; background:#f0f7ff; border:1.5px solid #91caff; border-radius:8px; padding:10px 14px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:1.2rem;">🔗</span>
+            <div>
+              <span style="font-size:0.78rem; color:#595959; display:block;">ชื่อลิงก์ปลายทางสำหรับนำไปใส่ในเมนู (Anchor ID):</span>
+              <strong id="secEditorAnchorDisplay" style="font-size:1.05rem; color:#0958d9; letter-spacing:0.5px;">#history</strong>
+            </div>
+          </div>
+          <button type="button" class="button secondary small" id="copySecEditorAnchorBtn" style="white-space:nowrap; padding:6px 12px; font-weight:600;">📋 คัดลอกลิงก์</button>
+        </div>
+
         <!-- แถบเลือกภาษาและปุ่มแปลอัตโนมัติ -->
         <div class="rail-lang-header-row" style="margin-bottom: 4px;">
           <div class="rail-lang-switcher" role="tablist">
@@ -3134,7 +3453,263 @@
     </div>
   </dialog>
 
-<!-- หน้าจอแจ้งสถานะกำลังพัฒนาสำหรับบุคคลทั่วไป (Maintenance Overlay) -->
+  <!-- หน้าต่างจัดการ/เพิ่มหัวข้อใหม่ในแถบกลาง (Center Section Dialog) สำหรับ Admin -->
+  <dialog class="manage-dialog center-section-dialog" id="centerSectionDialog" aria-labelledby="centerSecDialogTitle">
+    <div class="dialog-shell" style="max-width: 720px; max-height: 90vh; overflow-y: auto;">
+      <div class="dialog-head">
+        <div>
+          <p class="eyebrow">จัดการแถบกลาง (Center Column CMS)</p>
+          <h2 id="centerSecDialogTitle">เพิ่มหัวข้อใหม่ในแถบกลาง</h2>
+          <span id="centerSecDialogSubtitle">เลือกประเภทกล่องเนื้อหา สไลด์ หรือการ์ด และกำหนดลิงก์ปลายทาง</span>
+        </div>
+        <button class="icon-button" id="closeCenterSecDialog" type="button" aria-label="ปิดหน้าต่าง">×</button>
+      </div>
+
+      <form id="centerSectionForm" onsubmit="return false;" style="margin: 16px 0; display: flex; flex-direction: column; gap: 14px;">
+        <input type="hidden" id="centerSecEditMode" value="new">
+        <input type="hidden" id="centerSecOriginalId" value="">
+
+        <!-- แถบแสดงชื่อลิงก์ปลายทางชัดเจน -->
+        <div class="target-link-banner" style="display:flex; align-items:center; justify-content:space-between; background:#f0f7ff; border:1.5px solid #91caff; border-radius:8px; padding:10px 14px;">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <span style="font-size:1.25rem;">🔗</span>
+            <div>
+              <span style="font-size:0.78rem; color:#595959; display:block;">ชื่อลิงก์ปลายทางสำหรับนำไปใส่ในเมนู (Anchor ID):</span>
+              <strong id="centerSecAnchorDisplay" style="font-size:1.05rem; color:#0958d9; letter-spacing:0.5px;">#contact-us</strong>
+            </div>
+          </div>
+          <button type="button" class="button secondary small" id="copyCenterSecAnchorBtn" style="white-space:nowrap; padding:6px 12px; font-weight:600;">📋 คัดลอกลิงก์</button>
+        </div>
+
+        <!-- ตัวเลือกประเภทกล่อง (Template) -->
+        <div style="background:#faf8f5; border:1px solid rgba(203,166,75,0.3); border-radius:8px; padding:12px 14px;">
+          <label style="display:flex; flex-direction:column; gap:6px; font-size:0.88rem; font-weight:600; color:#171329;">
+            <span>เลือกประเภทของกล่องเนื้อหา</span>
+            <select id="centerSecTypeSelect" style="padding:9px 12px; border:1px solid #cba64b; border-radius:6px; background:#fff; font-size:0.92rem; font-weight:600; color:#171329;">
+              <option value="slider">🖼️ กล่องสไลด์ภาพและสื่อ (Slide Showcase — มีปุ่มอัพเดทสไลด์)</option>
+              <option value="cards">🗂️ กล่องการ์ดเนื้อหา (Cards Grid — มีปุ่มอัพเดทการ์ด)</option>
+              <option value="contact">📞 กล่องข้อมูลติดต่อและสื่อสังคม (Contact & Social Media)</option>
+              <option value="standard">📝 กล่องเนื้อหาทั่วไป (Standard Content / Banner)</option>
+            </select>
+          </label>
+          <div id="centerSecTypeHint" style="margin-top:6px; font-size:0.8rem; color:#887d72;">กล่องสไลด์แสดงภาพชุดเลื่อนสไลด์ พร้อมปุ่มอัพเดทสื่อในแถบกลาง</div>
+        </div>
+
+        <!-- ชื่อลิงก์อ้างอิง (Slug) -->
+        <label style="display:flex; flex-direction:column; font-size:0.85rem; gap:4px;">
+          <span>ชื่อลิงก์อ้างอิง (Slug ใช้เป็น #ชื่อลิงก์ เช่น contact-us) *</span>
+          <input type="text" id="centerSecSlugInput" required placeholder="เช่น contact-us, faith-activities, landscape" style="padding:8px 10px; border:1px solid #ccc; border-radius:6px; font-family:monospace; font-weight:600; color:#0958d9;">
+          <small style="color:#887d72;">ระบบจะสร้างลิงก์สำหรับเมนูบนสุด เช่น #contact-us โดยอัตโนมัติ</small>
+        </label>
+
+        <!-- แถบภาษาและแปลภาษา -->
+        <div class="rail-lang-header-row" style="margin-bottom: 4px;">
+          <div class="rail-lang-switcher" role="tablist">
+            <button type="button" class="center-sec-lang-tab rail-lang-tab active" data-tab="th">ภาษาไทย (หลัก)</button>
+            <button type="button" class="center-sec-lang-tab rail-lang-tab" data-tab="lo">ພາສາລາວ (ภาษาลาว)</button>
+            <button type="button" class="center-sec-lang-tab rail-lang-tab" data-tab="en">English (ภาษาอังกฤษ)</button>
+          </div>
+          <button type="button" class="rail-auto-translate-btn" id="centerSecAutoTranslateBtn" title="กดปุ่มนี้เพื่อแปลเป็นภาษาลาวและภาษาอังกฤษ">
+            <span aria-hidden="true">🌐</span> แปลภาษาลาวและอังกฤษ
+          </button>
+        </div>
+        <div class="rail-translate-status" id="centerSecTranslateStatus" hidden>
+          <span id="centerSecTranslateStatusText"></span>
+        </div>
+
+        <!-- ฟิลด์ภาษาไทย -->
+        <div class="center-sec-lang-pane active" id="centerSecPaneTh">
+          <label style="display:flex; flex-direction:column; font-size:0.85rem; gap:4px;">
+            <span>คำโปรย / หัวข้อย่อย (ภาษาไทย)</span>
+            <input type="text" id="centerSecKickerTh" placeholder="เช่น ช่องทางติดต่อ หรือ กิจกรรมร่วมใจ" style="padding:8px 10px; border:1px solid #ccc; border-radius:6px;">
+          </label>
+          <label style="display:flex; flex-direction:column; font-size:0.85rem; gap:4px; margin-top:8px;">
+            <span>หัวข้อหลัก (ภาษาไทย) *</span>
+            <input type="text" id="centerSecTitleTh" required placeholder="เช่น ติดต่อเรา หรือ คลังภาพกิจกรรม" style="padding:8px 10px; border:1px solid #ccc; border-radius:6px; font-weight:600;">
+          </label>
+          <label style="display:flex; flex-direction:column; font-size:0.85rem; gap:4px; margin-top:8px;">
+            <span>เนื้อหารายละเอียด (ภาษาไทย)</span>
+            <textarea id="centerSecContentTh" rows="4" placeholder="พิมพ์รายละเอียดสำหรับแสดงในหัวข้อนี้..." style="padding:10px; border:1px solid #ccc; border-radius:6px; font-family:inherit; line-height:1.6; resize:vertical;"></textarea>
+          </label>
+        </div>
+
+        <!-- ฟิลด์ภาษาลาว -->
+        <div class="center-sec-lang-pane" id="centerSecPaneLo" hidden>
+          <label style="display:flex; flex-direction:column; font-size:0.85rem; gap:4px;">
+            <span>คำโปรย / หัวข้อย่อย (ພາສາລາວ)</span>
+            <input type="text" id="centerSecKickerLo" placeholder="ບໍ່ບັງຄັບ — ຖ້າຫວ່າງຈະສະແດງພາສາໄທ" style="padding:8px 10px; border:1px solid #ccc; border-radius:6px;">
+          </label>
+          <label style="display:flex; flex-direction:column; font-size:0.85rem; gap:4px; margin-top:8px;">
+            <span>หัวข้อหลัก (ພາສາລາວ)</span>
+            <input type="text" id="centerSecTitleLo" placeholder="ບໍ່ບັງຄັບ — ຖ້າຫວ່າງຈະສະແດງພາສາໄທ" style="padding:8px 10px; border:1px solid #ccc; border-radius:6px; font-weight:600;">
+          </label>
+          <label style="display:flex; flex-direction:column; font-size:0.85rem; gap:4px; margin-top:8px;">
+            <span>เนื้อหารายละเอียด (ພາສາລາວ)</span>
+            <textarea id="centerSecContentLo" rows="4" placeholder="ບໍ່ບັງຄັບ — ຖ້າຫວ່າງຈະສະແດງພາສາໄທ" style="padding:10px; border:1px solid #ccc; border-radius:6px; font-family:inherit; line-height:1.6; resize:vertical;"></textarea>
+          </label>
+        </div>
+
+        <!-- ฟิลด์ภาษาอังกฤษ -->
+        <div class="center-sec-lang-pane" id="centerSecPaneEn" hidden>
+          <label style="display:flex; flex-direction:column; font-size:0.85rem; gap:4px;">
+            <span>คำโปรย / หัวข้อย่อย (English)</span>
+            <input type="text" id="centerSecKickerEn" placeholder="Optional" style="padding:8px 10px; border:1px solid #ccc; border-radius:6px;">
+          </label>
+          <label style="display:flex; flex-direction:column; font-size:0.85rem; gap:4px; margin-top:8px;">
+            <span>หัวข้อหลัก (English)</span>
+            <input type="text" id="centerSecTitleEn" placeholder="Optional" style="padding:8px 10px; border:1px solid #ccc; border-radius:6px; font-weight:600;">
+          </label>
+          <label style="display:flex; flex-direction:column; font-size:0.85rem; gap:4px; margin-top:8px;">
+            <span>เนื้อหารายละเอียด (English)</span>
+            <textarea id="centerSecContentEn" rows="4" placeholder="Optional" style="padding:10px; border:1px solid #ccc; border-radius:6px; font-family:inherit; line-height:1.6; resize:vertical;"></textarea>
+          </label>
+        </div>
+
+        <!-- ฟิลด์เฉพาะสำหรับ Contact (กล่องติดต่อ) -->
+        <div id="centerSecContactFields" style="background:#fdfaf3; border:1px solid #f0e6cf; border-radius:8px; padding:12px; display:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <strong style="font-size:0.9rem; color:#875600;">ข้อมูลติดต่อและสื่อสังคมออนไลน์</strong>
+            <button type="button" class="button secondary small" id="pullExistingContactBtn" style="font-size:0.78rem;">🔄 ดึงข้อมูลจาก "ติดต่อเรา" เดิม</button>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <label style="font-size:0.82rem;">
+              <span>เบอร์โทรศัพท์</span>
+              <input type="text" id="centerSecPhone" placeholder="เช่น 098 795 6539" style="width:100%; padding:6px 8px; border:1px solid #ccc; border-radius:4px; margin-top:3px;">
+            </label>
+            <label style="font-size:0.82rem;">
+              <span>ที่ตั้ง / วัด</span>
+              <input type="text" id="centerSecAddress" placeholder="เช่น วัดพระธาตุพนมวรมหาวิหาร กุฏิพระครูศรีพนมวรคุณ" style="width:100%; padding:6px 8px; border:1px solid #ccc; border-radius:4px; margin-top:3px;">
+            </label>
+          </div>
+          <div style="margin-top:8px; display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+            <label style="font-size:0.82rem;">
+              <span>ลิงก์ Facebook</span>
+              <input type="url" id="centerSecFb" placeholder="https://www.facebook.com/..." style="width:100%; padding:6px 8px; border:1px solid #ccc; border-radius:4px; margin-top:3px;">
+            </label>
+            <label style="font-size:0.82rem;">
+              <span>ลิงก์ LINE</span>
+              <input type="text" id="centerSecLine" placeholder="เช่น https://line.me/... หรือ @..." style="width:100%; padding:6px 8px; border:1px solid #ccc; border-radius:4px; margin-top:3px;">
+            </label>
+            <label style="font-size:0.82rem;">
+              <span>ลิงก์ TikTok</span>
+              <input type="url" id="centerSecTiktok" placeholder="https://www.tiktok.com/@..." style="width:100%; padding:6px 8px; border:1px solid #ccc; border-radius:4px; margin-top:3px;">
+            </label>
+            <label style="font-size:0.82rem;">
+              <span>ลิงก์ YouTube</span>
+              <input type="url" id="centerSecYoutube" placeholder="https://youtube.com/..." style="width:100%; padding:6px 8px; border:1px solid #ccc; border-radius:4px; margin-top:3px;">
+            </label>
+          </div>
+        </div>
+
+        <!-- ฟิลด์รูปภาพหลัก / ภาพสไลด์ -->
+        <div id="centerSecMediaFields" style="display:flex; flex-direction:column; gap:8px;">
+          <label style="display:flex; flex-direction:column; font-size:0.85rem; gap:4px;">
+            <span id="centerSecImageLabel">ลิงก์รูปภาพประกอบ (URL ภาพ)</span>
+            <input type="text" id="centerSecImageUrl" placeholder="https://... หรือ assets/..." style="padding:8px 10px; border:1px solid #ccc; border-radius:6px;">
+          </label>
+          <div id="centerSecSlideUrlsGroup" style="display:none;">
+            <span style="font-size:0.85rem; font-weight:600;">รายการรูปภาพในสไลด์ (กดปุ่มอัพเดท เพื่อจัดการเพิ่มเติมได้)</span>
+            <div id="centerSecSlideUrlsList" style="display:flex; flex-direction:column; gap:6px; margin-top:4px;"></div>
+            <button type="button" class="button secondary small" id="addCenterSecSlideUrlBtn" style="margin-top:6px; align-self:flex-start;">＋ เพิ่มรูปสไลด์</button>
+          </div>
+        </div>
+
+        <!-- ลิงก์ปุ่มการดำเนินการ (ถ้ามี) -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <label style="display:flex; flex-direction:column; font-size:0.85rem; gap:4px;">
+            <span>ข้อความบนปุ่ม (ถ้ามี)</span>
+            <input type="text" id="centerSecActionText" placeholder="เช่น ติดต่อสอบถาม, ดูเพิ่มเติม" style="padding:8px 10px; border:1px solid #ccc; border-radius:6px;">
+          </label>
+          <label style="display:flex; flex-direction:column; font-size:0.85rem; gap:4px;">
+            <span>ลิงก์ปลายทางของปุ่ม (Action URL)</span>
+            <input type="text" id="centerSecActionUrl" placeholder="เช่น #donation, https://..." style="padding:8px 10px; border:1px solid #ccc; border-radius:6px;">
+          </label>
+        </div>
+
+        <!-- ลำดับและการแสดงผล -->
+        <div style="display:flex; justify-content:space-between; align-items:center; padding-top:10px; border-top:1px solid #eee;">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <label style="display:inline-flex; align-items:center; gap:6px; font-size:0.88rem; cursor:pointer;">
+              <input type="checkbox" id="centerSecPublished" checked>
+              <span>เปิดแสดงบนเว็บไซต์</span>
+            </label>
+            <label style="display:inline-flex; align-items:center; gap:6px; font-size:0.85rem;">
+              <span>ลำดับ:</span>
+              <input type="number" id="centerSecOrder" value="100" style="width:65px; padding:4px 6px; border:1px solid #ccc; border-radius:4px;">
+            </label>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button type="button" class="button danger" id="centerSecDeleteBtn" style="display:none;">ย้ายไปถังขยะ</button>
+            <button type="button" class="button secondary" id="cancelCenterSecBtn">ยกเลิก</button>
+            <button type="submit" class="button primary" id="saveCenterSecBtn">💾 บันทึกหัวข้อ</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- หน้าต่างถังขยะหัวข้อแถบกลาง (Center Section Trash Bin) -->
+  <dialog class="content-manage-dialog center-trash-dialog" id="centerTrashDialog" aria-labelledby="centerTrashDialogTitle">
+    <div class="content-dialog-shell" style="max-width: 680px;">
+      <header class="dialog-head">
+        <div>
+          <p class="kicker">การกู้คืนข้อมูล</p>
+          <h2 id="centerTrashDialogTitle">ถังขยะหัวข้อแถบกลาง</h2>
+          <span>หัวข้อที่อยู่ในถังขยะจะไม่แสดงบนเว็บไซต์ สามารถกู้คืนกลับมายังแถบกลางได้ตลอดเวลา</span>
+        </div>
+        <button class="icon-button" id="closeCenterTrashDialogBtn" type="button" aria-label="ปิดถังขยะ">×</button>
+      </header>
+      <div class="content-manage-list" id="centerTrashList" style="margin: 14px 0; max-height: 400px; overflow-y: auto;">
+        <p class="resource-empty">ไม่มีรายการในถังขยะ</p>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- หน้าต่างอัพเดทการ์ดย่อยในกล่องการ์ด (Manage Cards for Cards Box) -->
+  <dialog class="manage-dialog" id="centerCardsManageDialog" aria-labelledby="centerCardsManageTitle">
+    <div class="dialog-shell" style="max-width: 680px; max-height: 90vh; overflow-y: auto;">
+      <div class="dialog-head">
+        <div>
+          <p class="eyebrow">อัพเดทการ์ดเนื้อหา</p>
+          <h2 id="centerCardsManageTitle">จัดการการ์ดในกล่องนี้</h2>
+          <span>เพิ่ม ลบ หรือแก้ไขการ์ดย่อยที่แสดงภายในกล่อง</span>
+        </div>
+        <button class="icon-button" id="closeCenterCardsManageBtn" type="button" aria-label="ปิดหน้าต่าง">×</button>
+      </div>
+      <input type="hidden" id="centerCardsTargetSectionId">
+      <div style="margin: 16px 0;">
+        <div id="centerCardsManageList" style="display:flex; flex-direction:column; gap:12px; margin-bottom:14px;"></div>
+        <button type="button" class="button secondary" id="addCenterCardItemBtn">＋ เพิ่มการ์ดใหม่</button>
+      </div>
+      <div class="dialog-actions" style="justify-content:flex-end; gap:8px;">
+        <button type="button" class="button secondary" id="cancelCenterCardsManageBtn">ยกเลิก</button>
+        <button type="button" class="button primary" id="saveCenterCardsManageBtn">💾 บันทึกการ์ดทั้งหมด</button>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- หน้าต่างอัพเดทสไลด์ในกล่องสไลด์ (Manage Slides for Slider Box) -->
+  <dialog class="manage-dialog" id="centerSliderManageDialog" aria-labelledby="centerSliderManageTitle">
+    <div class="dialog-shell" style="max-width: 680px; max-height: 90vh; overflow-y: auto;">
+      <div class="dialog-head">
+        <div>
+          <p class="eyebrow">อัพเดทสไลด์สื่อ</p>
+          <h2 id="centerSliderManageTitle">จัดการรูปภาพในสไลด์</h2>
+          <span>เพิ่ม ลบ หรือแก้ไขรูปภาพและคำบรรยายของสไลด์นี้</span>
+        </div>
+        <button class="icon-button" id="closeCenterSliderManageBtn" type="button" aria-label="ปิดหน้าต่าง">×</button>
+      </div>
+      <input type="hidden" id="centerSliderTargetSectionId">
+      <div style="margin: 16px 0;">
+        <div id="centerSliderManageList" style="display:flex; flex-direction:column; gap:12px; margin-bottom:14px;"></div>
+        <button type="button" class="button secondary" id="addCenterSliderItemBtn">＋ เพิ่มภาพสไลด์ใหม่</button>
+      </div>
+      <div class="dialog-actions" style="justify-content:flex-end; gap:8px;">
+        <button type="button" class="button secondary" id="cancelCenterSliderManageBtn">ยกเลิก</button>
+        <button type="button" class="button primary" id="saveCenterSliderManageBtn">💾 บันทึกสไลด์ทั้งหมด</button>
+      </div>
+    </div>
+  </dialog>
   <div class="maintenance-overlay" id="maintenanceOverlay" hidden>
     <div class="maintenance-box">
       <img class="maintenance-logo" src="/assets/logo-AxQWlNNP.png" alt="ตราพระธาตุพนม สู่มรดกโลก">
@@ -3205,7 +3780,7 @@
     </div>
   </dialog>
 
-  <div id="google_translate_element" style="display:none;"></div>
+  <div id="google_translate_element" style="position: absolute; left: -9999px; top: -9999px; width: 1px; height: 1px; overflow: hidden; opacity: 0; pointer-events: none;"></div>
   <script>
     window.googleTranslateElementInit = function() {
       try {
@@ -3214,11 +3789,29 @@
             pageLanguage: 'th',
             autoDisplay: false
           }, 'google_translate_element');
+
+          var savedGlobal = localStorage.getItem("thatphanom_global_lang");
+          if (savedGlobal) {
+            var attempts = 0;
+            var checkTimer = setInterval(function() {
+              attempts++;
+              var combo = document.querySelector(".goog-te-combo");
+              if (combo && combo.options && combo.options.length > 0) {
+                clearInterval(checkTimer);
+                if (combo.value !== savedGlobal) {
+                  combo.value = savedGlobal;
+                  combo.dispatchEvent(new Event("change"));
+                }
+              }
+              if (attempts >= 40) clearInterval(checkTimer);
+            }, 100);
+          }
         }
       } catch (_) {}
     };
   </script>
+  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-  <script src="/script.js?v=20260925-6"></script>
+  <script src="/script.js?v=20260926-3"></script>
 </body>
 </html>
