@@ -16,6 +16,15 @@
 
   <script>
     // Global resilience & cross-origin error suppressor
+    const _origConsoleError = console.error;
+    console.error = function(...args) {
+      const msg = args.map(a => String(a && a.message || a)).join(" ");
+      if (msg.includes("Could not reach Cloud Firestore backend") || msg.includes("Backend didn't respond within 10 seconds") || msg.includes("client will operate in offline mode")) {
+        console.warn("[Firestore Connectivity Notice]", ...args);
+        return;
+      }
+      _origConsoleError.apply(console, args);
+    };
     window.addEventListener('error', function(event) {
       if (event && (event.message === 'Script error.' || (!event.filename && event.lineno === 0))) {
         event.preventDefault();
@@ -3812,6 +3821,6 @@
   </script>
   <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-  <script src="/script.js?v=20260926-3"></script>
+  <script src="/script.js?v=20260926-8"></script>
 </body>
 </html>

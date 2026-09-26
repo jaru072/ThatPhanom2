@@ -3252,6 +3252,50 @@ if (document.readyState === "loading") {
   // ==========================================
   function _initCustomCenterSections() {
     const container = document.getElementById("customCenterSectionsContainer");
+
+    const standardSectionIds = new Set([
+      "hero", "projects", "status", "history", "storyFeature", "storyArt", "storyPeople",
+      "milestones", "milestoneOne", "milestoneTwo", "milestoneThree", "milestoneFour",
+      "world-heritage", "criteriaOne", "criteriaTwo", "criteriaThree", "criteria",
+      "process", "processOne", "processTwo", "processThree", "processFour",
+      "voices", "videos", "community", "footer",
+      "muchalindaHero", "muchalindaShowcase", "muchalindaHistory", "muchalindaCardHistory",
+      "muchalindaFacts", "muchalindaCardRestoration", "muchalindaObjectives",
+      "objectiveOne", "objectiveTwo", "objectiveThree", "muchalindaProgress",
+      "progressOne", "progressTwo", "progressThree", "progressFour",
+      "muchalindaDonation", "donationOne", "donationTwo", "muchalindaAlbum",
+      "resources", "comments", "support", "unesco", "merit"
+    ]);
+
+        async function directFirestoreDeleteDoc(secId) {
+      if (!secId) return;
+      try {
+        if (typeof window._deleteSiteSectionDoc === "function") {
+          await window._deleteSiteSectionDoc(secId);
+        }
+      } catch (e) {
+        console.warn("bundle delete error:", e);
+      }
+      try {
+        const { getFirestore, doc, deleteDoc } = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js");
+        const { getApp } = await import("https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js");
+        const app = getApp();
+        const db = getFirestore(app);
+        await Promise.allSettled([
+          deleteDoc(doc(db, "siteSections", secId)),
+          deleteDoc(doc(db, "projects", "world-heritage", "siteSections", secId)),
+          deleteDoc(doc(db, "projects", "that-phanom", "siteSections", secId))
+        ]);
+      } catch (err) {
+        console.warn("Direct firestore delete error:", err);
+      }
+    }
+
+function isCustomCenterSec(s) {
+      if (!s || !s.id) return false;
+      if (standardSectionIds.has(s.id)) return false;
+      return Boolean(s.isCustom || (String(s.id).startsWith("sec-") || String(s.id).startsWith("section-")));
+    }
     const adminToolbar = document.getElementById("centerAdminToolbar");
     const addSectionBtn = document.getElementById("centerAddSectionBtn");
     const trashBtn = document.getElementById("centerTrashButton");
@@ -3687,10 +3731,7 @@ if (document.readyState === "loading") {
           content_en: document.getElementById("centerSecContentEn").value.trim(),
           imageUrl: mainImg,
           imageUrls: slideUrls,
-          cards: (existingData && Array.isArray(existingData.cards)) ? existingData.cards : [
-            { title: "เรื่องเด่นที่ 1", desc: "รายละเอียดเนื้อหาของการ์ดใบนี้", imageUrl: mainImg, linkUrl: "" },
-            { title: "เรื่องเด่นที่ 2", desc: "รายละเอียดเนื้อหาของการ์ดใบนี้", imageUrl: "", linkUrl: "" }
-          ],
+          cards: (existingData && Array.isArray(existingData.cards)) ? existingData.cards : [],
           phone: document.getElementById("centerSecPhone").value.trim(),
           address: document.getElementById("centerSecAddress").value.trim(),
           socialLinks: socialLinks,
@@ -3712,8 +3753,27 @@ if (document.readyState === "loading") {
           } else {
             console.warn("window._saveSiteSectionDoc not available");
           }
+
+          // Immediately update window._siteSections and local cache
+          if (!window._siteSections) window._siteSections = [];
+          const curIdx = window._siteSections.findIndex(s => s && (s.id === slug || s.id === origId));
+          if (curIdx >= 0) {
+            window._siteSections[curIdx] = { ...window._siteSections[curIdx], ...payload };
+          } else {
+            window._siteSections.push(payload);
+          }
+          if (window._appState) window._appState.siteSections = window._siteSections;
+          try {
+            localStorage.setItem("thatphanom_site_sections_cache", JSON.stringify(window._siteSections));
+          } catch (_) {}
+
           centerSecDlg.close();
-          _renderCustomCenterSections();
+          if (document.activeElement && typeof document.activeElement.blur === "function") {
+            document.activeElement.blur();
+          }
+          if (container) delete container.dataset.renderedSig;
+          _renderCustomCenterSections(true);
+
           if (typeof window._showPortalToast === "function") {
             window._showPortalToast(`บันทึกหัวข้อ #${slug} ในแถบกลางเรียบร้อยแล้ว`, "success");
           }
@@ -3757,8 +3817,22 @@ if (document.readyState === "loading") {
               deletedAt: new Date().toISOString()
             });
           }
+          if (!window._siteSections) window._siteSections = [];
+          const curIdx = window._siteSections.findIndex(s => s && s.id === origId);
+          if (curIdx >= 0) {
+            window._siteSections[curIdx] = { ...window._siteSections[curIdx], deletedAt: new Date().toISOString() };
+          }
+          if (window._appState) window._appState.siteSections = window._siteSections;
+          try {
+            localStorage.setItem("thatphanom_site_sections_cache", JSON.stringify(window._siteSections));
+          } catch (_) {}
+
           centerSecDlg.close();
-          _renderCustomCenterSections();
+          if (document.activeElement && typeof document.activeElement.blur === "function") {
+            document.activeElement.blur();
+          }
+          if (container) delete container.dataset.renderedSig;
+          _renderCustomCenterSections(true);
           if (typeof window._showPortalToast === "function") {
             window._showPortalToast("ย้ายหัวข้อไปยังถังขยะเรียบร้อยแล้ว", "success");
           }
@@ -3784,18 +3858,73 @@ if (document.readyState === "loading") {
       if (!listEl) return;
       listEl.innerHTML = "";
 
-      let allSecs = (window._siteSections && Array.isArray(window._siteSections)) ? window._siteSections : ((window._appState && Array.isArray(window._appState.siteSections)) ? window._appState.siteSections : []);
-      if (!allSecs.length) {
-        try {
-          const cached = localStorage.getItem("thatphanom_site_sections_cache");
-          if (cached) allSecs = JSON.parse(cached);
-        } catch (_) {}
+      let allSecs = [];
+      if (window._siteSections && Array.isArray(window._siteSections) && window._siteSections.length) {
+        allSecs = [...window._siteSections];
+      } else if (window._appState && Array.isArray(window._appState.siteSections) && window._appState.siteSections.length) {
+        allSecs = [...window._appState.siteSections];
       }
-      const trashed = allSecs.filter(s => s && s.isCustom && s.deletedAt);
+      try {
+        const cached = localStorage.getItem("thatphanom_site_sections_cache");
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed)) {
+            parsed.forEach(p => {
+              if (p && p.id) {
+                const exIdx = allSecs.findIndex(s => s && s.id === p.id);
+                if (exIdx >= 0) allSecs[exIdx] = { ...allSecs[exIdx], ...p };
+                else allSecs.push(p);
+              }
+            });
+          }
+        }
+      } catch (_) {}
+
+      const trashed = allSecs.filter(s => isCustomCenterSec(s) && s.deletedAt);
 
       if (!trashed.length) {
         listEl.innerHTML = '<p class="resource-empty" style="text-align:center; padding:20px; color:#888;">ไม่มีรายการในถังขยะ</p>';
       } else {
+        // Toolbar for clearing all trash
+        const topBar = document.createElement("div");
+        topBar.style.cssText = "display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; padding:10px 14px; background:#fff2f0; border:1px solid #ffccc7; border-radius:8px;";
+        topBar.innerHTML = `
+          <strong style="color:#cf1322; font-size:0.88rem;">พบรายการในถังขยะ ${trashed.length} รายการ</strong>
+          <button type="button" class="button danger small" id="clearAllCenterTrashBtn" style="padding:4px 12px; font-weight:600;">🗑️ ล้างถังขยะทั้งหมด</button>
+        `;
+        listEl.appendChild(topBar);
+
+        const clearAllBtn = topBar.querySelector("#clearAllCenterTrashBtn");
+        if (clearAllBtn) {
+          clearAllBtn.addEventListener("click", async () => {
+            if (!confirm(`ต้องการลบรายการในถังขยะทั้งหมด ${trashed.length} รายการออกจากระบบอย่างถาวรใช่หรือไม่? เมื่อลบแล้วจะไม่สามารถกู้คืนได้อีก`)) return;
+            clearAllBtn.disabled = true;
+            clearAllBtn.textContent = "กำลังล้าง...";
+            try {
+              for (const item of trashed) {
+                await directFirestoreDeleteDoc(item.id);
+              }
+              const trashedIds = new Set(trashed.map(t => t.id));
+              if (window._siteSections) {
+                window._siteSections = window._siteSections.filter(s => !trashedIds.has(s.id));
+              }
+              if (window._appState && window._appState.siteSections) {
+                window._appState.siteSections = window._appState.siteSections.filter(s => !trashedIds.has(s.id));
+              }
+              try {
+                localStorage.setItem("thatphanom_site_sections_cache", JSON.stringify(window._siteSections || []));
+              } catch (_) {}
+              openCenterTrashDialog();
+              if (container) delete container.dataset.renderedSig;
+              _renderCustomCenterSections(true);
+              if (typeof window._showPortalToast === "function") {
+                window._showPortalToast("ล้างถังขยะแถบกลางเรียบร้อยแล้ว", "success");
+              }
+            } catch (err) {
+              alert("ล้างถังขยะไม่สำเร็จ: " + (err.message || err));
+            }
+          });
+        }
         trashed.forEach(item => {
           const row = document.createElement("div");
           row.className = "rail-trash-row";
@@ -3834,8 +3963,21 @@ if (document.readyState === "loading") {
                   deletedAt: null
                 });
               }
+              if (!window._siteSections) window._siteSections = [];
+              const curIdx = window._siteSections.findIndex(s => s && s.id === item.id);
+              if (curIdx >= 0) {
+                window._siteSections[curIdx] = { ...window._siteSections[curIdx], ...item, deletedAt: null };
+              } else {
+                window._siteSections.push({ ...item, deletedAt: null });
+              }
+              if (window._appState) window._appState.siteSections = window._siteSections;
+              try {
+                localStorage.setItem("thatphanom_site_sections_cache", JSON.stringify(window._siteSections));
+              } catch (_) {}
+
               openCenterTrashDialog();
-              _renderCustomCenterSections();
+              if (container) delete container.dataset.renderedSig;
+              _renderCustomCenterSections(true);
               if (typeof window._showPortalToast === "function") {
                 window._showPortalToast(`กู้คืนหัวข้อ “${item.title}” กลับมายังแถบกลางแล้ว`, "success");
               }
@@ -3848,11 +3990,20 @@ if (document.readyState === "loading") {
           row.querySelector(".perm-delete-sec-btn").addEventListener("click", async () => {
             if (!confirm(`ต้องการลบหัวข้อ “${item.title || item.id}” อย่างถาวรใช่หรือไม่? เมื่อลบแล้วจะไม่สามารถกู้คืนได้อีก`)) return;
             try {
-              if (typeof window._deleteSiteSectionDoc === "function") {
-                await window._deleteSiteSectionDoc(item.id);
+              await directFirestoreDeleteDoc(item.id);
+              if (window._siteSections) {
+                window._siteSections = window._siteSections.filter(s => s && s.id !== item.id);
               }
+              if (window._appState) {
+                window._appState.siteSections = (window._appState.siteSections || []).filter(s => s && s.id !== item.id);
+              }
+              try {
+                localStorage.setItem("thatphanom_site_sections_cache", JSON.stringify(window._siteSections));
+              } catch (_) {}
+
               openCenterTrashDialog();
-              _renderCustomCenterSections();
+              if (container) delete container.dataset.renderedSig;
+              _renderCustomCenterSections(true);
               if (typeof window._showPortalToast === "function") {
                 window._showPortalToast(`ลบหัวข้อออกจากระบบอย่างถาวรแล้ว`, "success");
               }
@@ -3883,7 +4034,8 @@ if (document.readyState === "loading") {
     if (refreshBtn && !refreshBtn._bound) {
       refreshBtn._bound = true;
       refreshBtn.addEventListener("click", () => {
-        _renderCustomCenterSections();
+        if (container) delete container.dataset.renderedSig;
+        _renderCustomCenterSections(true);
         if (typeof window.renderSiteSectionsCMS === "function") window.renderSiteSectionsCMS();
         if (typeof window._showPortalToast === "function") window._showPortalToast("รีเฟรชข้อมูลแถบกลางเรียบร้อยแล้ว", "success");
       });
@@ -3948,7 +4100,7 @@ if (document.readyState === "loading") {
       }
 
       if (!cards.length) {
-        renderCardRow({ title: "เรื่องเด่นที่ 1", desc: "รายละเอียดเนื้อหาของการ์ดใบนี้", imageUrl: "", linkUrl: "" }, 0);
+        renderCardRow({ title: "", desc: "", imageUrl: "", linkUrl: "" }, 0);
       } else {
         cards.forEach((c, i) => renderCardRow(c, i));
       }
@@ -4100,29 +4252,74 @@ if (document.readyState === "loading") {
     if (cancelSliderDlgBtn) cancelSliderDlgBtn.addEventListener("click", () => centerSliderDlg && centerSliderDlg.close());
 
     // Main Renderer: Render Custom Center Sections
-    window._renderCustomCenterSections = function _renderCustomCenterSections() {
-      if (!container) return;
-      let allSecs = (window._siteSections && Array.isArray(window._siteSections)) ? window._siteSections : ((window._appState && Array.isArray(window._appState.siteSections)) ? window._appState.siteSections : []);
-      if (!allSecs.length) {
-        try {
-          const cached = localStorage.getItem("thatphanom_site_sections_cache");
-          if (cached) allSecs = JSON.parse(cached);
-        } catch (_) {}
+    window._renderCustomCenterSections = function _renderCustomCenterSections(force = false) {
+      const activeContainer = document.getElementById("customCenterSectionsContainer") || container;
+      if (!activeContainer) return;
+
+      const openSecDlg = document.getElementById("centerSectionDialog");
+      if (!force && openSecDlg && openSecDlg.open) {
+        return;
       }
+      if (force) {
+        delete activeContainer.dataset.renderedSig;
+      }
+
+      let allSecs = [];
+      if (window._siteSections && Array.isArray(window._siteSections) && window._siteSections.length) {
+        allSecs = [...window._siteSections];
+      } else if (window._appState && Array.isArray(window._appState.siteSections) && window._appState.siteSections.length) {
+        allSecs = [...window._appState.siteSections];
+      }
+      try {
+        const cached = localStorage.getItem("thatphanom_site_sections_cache");
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed)) {
+            parsed.forEach(p => {
+              if (p && p.id) {
+                const exIdx = allSecs.findIndex(s => s && s.id === p.id);
+                if (exIdx >= 0) {
+                  allSecs[exIdx] = { ...allSecs[exIdx], ...p };
+                } else {
+                  allSecs.push(p);
+                }
+              }
+            });
+          }
+        }
+      } catch (_) {}
+
       const isAdmin = typeof window._checkIsAdmin === "function" ? window._checkIsAdmin() : (typeof window._isPortalAdmin === "function" ? window._isPortalAdmin() : false);
 
-      // Update trash count
-      const trashed = allSecs.filter(s => s && s.isCustom && s.deletedAt);
+      // Auto-heal: Unmark deletedAt on standard system sections if any were marked in error
+      if (isAdmin && typeof window._saveSiteSectionDoc === "function") {
+        const dirtyStandard = allSecs.filter(s => s && standardSectionIds.has(s.id) && s.deletedAt);
+        if (dirtyStandard.length > 0 && !window._healingStandardSections) {
+          window._healingStandardSections = true;
+          dirtyStandard.forEach(ds => {
+            const healed = { ...ds, deletedAt: null };
+            window._saveSiteSectionDoc(ds.id, healed).catch(() => {});
+          });
+        }
+      }
+
+      // Update trash count (Only real custom center sections)
+      const trashed = allSecs.filter(s => isCustomCenterSec(s) && s.deletedAt);
       if (trashCountEl) trashCountEl.textContent = trashed.length;
 
-      // Filter active custom sections
-      const customSecs = allSecs.filter(s => s && s.isCustom && !s.deletedAt);
+      // Filter active custom sections (Only real custom center sections)
+      const customSecs = allSecs.filter(s => isCustomCenterSec(s) && !s.deletedAt);
       customSecs.sort((a, b) => (Number(a.order) || 100) - (Number(b.order) || 100));
-
-      container.innerHTML = "";
 
       const rawLang = (document.documentElement.lang || "th").toLowerCase();
       const curLang = rawLang.startsWith("lo") ? "lo" : (rawLang.startsWith("en") ? "en" : "th");
+
+      const renderSig = curLang + "_" + (isAdmin ? "admin" : "guest") + "_" + JSON.stringify(customSecs.map(s => [s.id, s.order, s.title, s.title_lo, s.title_en, s.content, s.imageUrl, s.cards, s.slides, s.phone, s.address, s.socialLinks, s.published]));
+      if (!force && activeContainer.dataset.renderedSig === renderSig && activeContainer.children.length === customSecs.length) {
+        return;
+      }
+      activeContainer.dataset.renderedSig = renderSig;
+      activeContainer.innerHTML = "";
 
       customSecs.forEach(sec => {
         const secId = sec.slug || sec.id;
@@ -4144,7 +4341,7 @@ if (document.readyState === "loading") {
               <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-custom-gear-id="${sec.id}" title="แก้ไข/เปิดแสดงหัวข้อนี้">⚙</button>
             </div>
           `;
-          container.appendChild(sectionEl);
+          activeContainer.appendChild(sectionEl);
           return;
         }
 
@@ -4339,7 +4536,7 @@ if (document.readyState === "loading") {
           const socialGrid = document.createElement("div");
           socialGrid.className = "center-social-grid";
 
-          const socialLinks = Array.isArray(sec.socialLinks) ? sec.socialLinks : [];
+          const socialLinks = Array.isArray(sec.socialLinks) ? [...sec.socialLinks] : [];
           if (!socialLinks.length) {
             // Default links if none
             socialLinks.push({ icon: "facebook", url: "https://www.facebook.com/ToWorldHeritage" });
@@ -4378,21 +4575,21 @@ if (document.readyState === "loading") {
           }
         }
 
-        container.appendChild(sectionEl);
+        activeContainer.appendChild(sectionEl);
       });
 
       // Connect gear buttons
-      container.querySelectorAll("[data-custom-gear-id]").forEach(btn => {
+      activeContainer.querySelectorAll("[data-custom-gear-id]").forEach(btn => {
         btn.addEventListener("click", () => openCenterSectionEditor("edit", btn.dataset.customGearId));
       });
 
       // Connect slider update buttons
-      container.querySelectorAll("[data-custom-slider-btn]").forEach(btn => {
+      activeContainer.querySelectorAll("[data-custom-slider-btn]").forEach(btn => {
         btn.addEventListener("click", () => openSliderManager(btn.dataset.customSliderBtn));
       });
 
       // Connect cards update buttons
-      container.querySelectorAll("[data-custom-cards-btn]").forEach(btn => {
+      activeContainer.querySelectorAll("[data-custom-cards-btn]").forEach(btn => {
         btn.addEventListener("click", () => openCardsManager(btn.dataset.customCardsBtn));
       });
 
@@ -4405,9 +4602,22 @@ if (document.readyState === "loading") {
     window._renderCustomCenterSections = _renderCustomCenterSections;
 
     // Hook to render on load and state change
-    _renderCustomCenterSections();
-    document.addEventListener("DOMContentLoaded", _renderCustomCenterSections);
-    window.addEventListener("portal:dataReload", _renderCustomCenterSections);
+    _renderCustomCenterSections(true);
+    document.addEventListener("DOMContentLoaded", () => _renderCustomCenterSections(true));
+    window.addEventListener("portal:dataReload", () => _renderCustomCenterSections(true));
+    window.addEventListener("portal:authChanged", () => _renderCustomCenterSections(true));
+    document.addEventListener("visibilitychange", () => {
+      if (document.visibilityState === "visible") _renderCustomCenterSections(true);
+    });
+
+    let _lastSeenSectionsCount = -1;
+    setInterval(() => {
+      const curCount = (window._siteSections || []).length;
+      if (curCount !== _lastSeenSectionsCount) {
+        _lastSeenSectionsCount = curCount;
+        _renderCustomCenterSections(false);
+      }
+    }, 2000);
   }
 
   if (document.readyState === "loading") {
@@ -4426,4 +4636,107 @@ if (document.readyState === "loading") {
   } else {
     initLinkManager();
   }
+})();
+// ==========================================
+// Session Stability & Interaction Guard System
+// ==========================================
+(function() {
+  window._isUserOrAdminBusy = function() {
+    try {
+      const openDialog = document.querySelector("dialog[open]");
+      if (openDialog) return true;
+
+      const active = document.activeElement;
+      if (active && (active.tagName === "INPUT" || active.tagName === "TEXTAREA" || active.isContentEditable)) {
+        if (active.closest("dialog[open]") || active.closest("#commentForm")) {
+          return true;
+        }
+      }
+
+      const chatPanel = document.getElementById("chatPanel");
+      if (chatPanel && (chatPanel.classList.contains("open") || !chatPanel.hidden)) {
+        return true;
+      }
+
+      const lightbox = document.getElementById("imageLightbox");
+      if (lightbox && lightbox.open) {
+        return true;
+      }
+    } catch (_) {}
+    return false;
+  };
+
+  window._pendingDataReload = false;
+  window._pendingCustomCenterRender = false;
+
+  const nativeDispatchEvent = window.dispatchEvent.bind(window);
+  window.dispatchEvent = function(event) {
+    if (event && event.type === "portal:dataReload") {
+      if (window._isUserOrAdminBusy()) {
+        window._pendingDataReload = true;
+        return true;
+      }
+    }
+    return nativeDispatchEvent(event);
+  };
+
+  function tryFlushPendingUpdates() {
+    if (window._isUserOrAdminBusy()) return;
+    if (window._pendingDataReload) {
+      window._pendingDataReload = false;
+      nativeDispatchEvent(new CustomEvent("portal:dataReload"));
+    }
+    if (window._pendingCustomCenterRender && typeof window._renderCustomCenterSections === "function") {
+      window._pendingCustomCenterRender = false;
+      window._renderCustomCenterSections();
+    }
+  }
+
+  document.addEventListener("close", function(e) {
+    if (e.target && e.target.tagName === "DIALOG") {
+      setTimeout(tryFlushPendingUpdates, 300);
+    }
+  }, true);
+
+  document.addEventListener("focusout", function() {
+    setTimeout(tryFlushPendingUpdates, 500);
+  });
+
+  // (beforeunload removed to ensure clean Chrome reload)
+
+  document.addEventListener("input", function(e) {
+    const el = e.target;
+    if (!el || !el.id) return;
+    const dialog = el.closest("dialog");
+    if (dialog && ["contentEditDialog", "centerSectionDialog", "railCardDialog", "sidebarItemDialog", "mediaDialog", "treeDialog", "sectionEditorDialog"].includes(dialog.id)) {
+      try {
+        localStorage.setItem("thatphanom_draft_" + el.id, el.value);
+      } catch (_) {}
+    }
+  });
+
+  document.addEventListener("submit", function(e) {
+    const form = e.target;
+    if (!form) return;
+    const inputs = form.querySelectorAll("input[id], textarea[id]");
+    inputs.forEach(inp => {
+      try { localStorage.removeItem("thatphanom_draft_" + inp.id); } catch (_) {}
+    });
+  });
+
+  window._restoreDraftIfEmpty = function(fieldId) {
+    try {
+      const el = document.getElementById(fieldId);
+      if (el && !el.value) {
+        const saved = localStorage.getItem("thatphanom_draft_" + fieldId);
+        if (saved) el.value = saved;
+      }
+    } catch (_) {}
+  };
+
+  setInterval(function() {
+    try {
+      fetch("/api/drive-album?folderId=1DmhMAaiazfnXIiOZ5Hu4E_du_oCZZNCU&keepAlive=" + Date.now(), { cache: "no-store" }).catch(function() {});
+    } catch (_) {}
+  }, 180000);
 })();
