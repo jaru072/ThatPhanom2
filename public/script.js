@@ -3213,6 +3213,7 @@ if (document.readyState === "loading") {
     const sel = document.getElementById(selectId);
     if (!sel || sel._valueHandlerAttached) return;
     sel._valueHandlerAttached = true;
+    if (sel.tagName === "INPUT" || sel.tagName === "TEXTAREA") return;
 
     const originalDescriptor = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, "value");
     if (!originalDescriptor || !originalDescriptor.set) return;

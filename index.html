@@ -1848,29 +1848,6 @@
       transform: scale(1.02);
       filter: brightness(0.96);
     }
-    .donation-media-zoom-hint {
-      position: absolute !important;
-      bottom: 12px !important;
-      right: 12px !important;
-      display: inline-flex !important;
-      align-items: center !important;
-      gap: 6px !important;
-      padding: 6px 12px !important;
-      border-radius: 20px !important;
-      background: rgba(23, 19, 41, 0.82) !important;
-      backdrop-filter: blur(8px) !important;
-      color: #ffffff !important;
-      font-size: 0.8rem !important;
-      font-weight: 500 !important;
-      letter-spacing: 0.02em !important;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
-      pointer-events: auto !important;
-      transition: background 0.2s ease, transform 0.2s ease !important;
-    }
-    .portal-content-card.donation-card .donation-card-media-wrap:hover .donation-media-zoom-hint {
-      background: #7c2637 !important;
-      transform: scale(1.05);
-    }
     .portal-content-card.donation-card > div:not(.donation-card-media-wrap) {
       display: flex !important;
       flex-direction: column !important;
@@ -3091,13 +3068,28 @@
       <!-- ปุ่มและลิงก์ปลายทาง -->
       <div class="rail-field-grid">
         <label id="railCardButtonUrlLabel">ลิงก์ปลายทาง (URL หรือ #anchor ภายในเว็บ)
-          <select id="railCardButtonUrl" class="link-quick-select" style="width: 100%; margin-top: 4px; padding: 9px 12px; border: 1.5px solid #d4af37; border-radius: 6px; background-color: #fdfbf7; font-size: 0.92rem; font-family: inherit; color: #222; cursor: pointer;">
-            <option value="">— ไม่ใส่ลิงก์ (ไม่แสดงปุ่มบนการ์ด) —</option>
-            <option value="#muchalinda-history">#muchalinda-history</option>
-            <option value="#muchalinda-donation">#muchalinda-donation</option>
-            <option value="#muchalinda-album">#muchalinda-album</option>
-            <option value="#muchalinda-objectives">#muchalinda-objectives</option>
-          </select>
+          <input id="railCardButtonUrl" type="text" list="railCardButtonUrlList" placeholder="เช่น #muchalinda-donation, #world-heritage หรือ https://..." style="width: 100%; margin-top: 4px; padding: 9px 12px; border: 1.5px solid #d4af37; border-radius: 6px; background-color: #fdfbf7; font-size: 0.92rem; font-family: inherit; color: #222; box-sizing: border-box;">
+          <datalist id="railCardButtonUrlList">
+            <option value="#muchalinda-overview">#muchalinda-overview (ภาพรวมโครงการสระมุจลินท์)</option>
+            <option value="#muchalinda-history">#muchalinda-history (ประวัติความเป็นมา)</option>
+            <option value="#muchalinda-objectives">#muchalinda-objectives (วัตถุประสงค์)</option>
+            <option value="#muchalinda-process">#muchalinda-process (แผนการดำเนินงาน)</option>
+            <option value="#muchalinda-progress">#muchalinda-progress (ความคืบหน้า)</option>
+            <option value="#muchalinda-donation">#muchalinda-donation (ร่วมทำบุญบูรณะ)</option>
+            <option value="#muchalinda-album">#muchalinda-album (อัลบั้มภาพผู้ร่วมบุญ)</option>
+            <option value="#world-heritage">#world-heritage (โครงการสู่มรดกโลก)</option>
+            <option value="#heritage-overview">#heritage-overview (ภาพรวมมรดกโลก)</option>
+            <option value="#heritage-ouv">#heritage-ouv (เกณฑ์คุณค่า OUV)</option>
+            <option value="#heritage-criteria">#heritage-criteria (เกณฑ์การประเมินยูเนสโก)</option>
+            <option value="#heritage-documents">#heritage-documents (เอกสารและแผนแม่บท)</option>
+            <option value="#heritage-buffer">#heritage-buffer (แนวเขตพื้นที่อนุรักษ์)</option>
+            <option value="#hero">#hero (หน้าแรก / ส่วนบนสุด)</option>
+            <option value="#portal-donation">#portal-donation (ช่องทางร่วมบุญหน้าหลัก)</option>
+            <option value="#portal-news">#portal-news (ข่าวสารและกิจกรรม)</option>
+            <option value="#portal-document">#portal-document (เอกสารเผยแพร่)</option>
+            <option value="#community">#community (กระดานศรัทธา)</option>
+            <option value="#footer">#footer (ข้อมูลติดต่อส่วนท้าย)</option>
+          </datalist>
         </label>
         <label>รูปแบบการเปิดลิงก์
           <select id="railCardOpenExternal">
@@ -3343,13 +3335,28 @@
       <!-- ปุ่มและลิงก์ปลายทาง -->
       <div class="rail-field-grid">
         <label id="sidebarItemUrlLabel">ลิงก์ปลายทาง (URL หรือ #anchor ภายในเว็บ)
-          <select id="sidebarItemUrl" class="link-quick-select" style="width: 100%; margin-top: 4px; padding: 9px 12px; border: 1.5px solid #d4af37; border-radius: 6px; background-color: #fdfbf7; font-size: 0.92rem; font-family: inherit; color: #222; cursor: pointer;">
-            <option value="">— ไม่ใส่ลิงก์ (ไม่แสดงปุ่มบนการ์ด) —</option>
-            <option value="#muchalinda-history">#muchalinda-history</option>
-            <option value="#muchalinda-donation">#muchalinda-donation</option>
-            <option value="#muchalinda-album">#muchalinda-album</option>
-            <option value="#muchalinda-objectives">#muchalinda-objectives</option>
-          </select>
+          <input id="sidebarItemUrl" type="text" list="sidebarItemUrlList" placeholder="เช่น #muchalinda-donation, #world-heritage หรือ https://..." style="width: 100%; margin-top: 4px; padding: 9px 12px; border: 1.5px solid #d4af37; border-radius: 6px; background-color: #fdfbf7; font-size: 0.92rem; font-family: inherit; color: #222; box-sizing: border-box;">
+          <datalist id="sidebarItemUrlList">
+            <option value="#muchalinda-overview">#muchalinda-overview (ภาพรวมโครงการสระมุจลินท์)</option>
+            <option value="#muchalinda-history">#muchalinda-history (ประวัติความเป็นมา)</option>
+            <option value="#muchalinda-objectives">#muchalinda-objectives (วัตถุประสงค์)</option>
+            <option value="#muchalinda-process">#muchalinda-process (แผนการดำเนินงาน)</option>
+            <option value="#muchalinda-progress">#muchalinda-progress (ความคืบหน้า)</option>
+            <option value="#muchalinda-donation">#muchalinda-donation (ร่วมทำบุญบูรณะ)</option>
+            <option value="#muchalinda-album">#muchalinda-album (อัลบั้มภาพผู้ร่วมบุญ)</option>
+            <option value="#world-heritage">#world-heritage (โครงการสู่มรดกโลก)</option>
+            <option value="#heritage-overview">#heritage-overview (ภาพรวมมรดกโลก)</option>
+            <option value="#heritage-ouv">#heritage-ouv (เกณฑ์คุณค่า OUV)</option>
+            <option value="#heritage-criteria">#heritage-criteria (เกณฑ์การประเมินยูเนสโก)</option>
+            <option value="#heritage-documents">#heritage-documents (เอกสารและแผนแม่บท)</option>
+            <option value="#heritage-buffer">#heritage-buffer (แนวเขตพื้นที่อนุรักษ์)</option>
+            <option value="#hero">#hero (หน้าแรก / ส่วนบนสุด)</option>
+            <option value="#portal-donation">#portal-donation (ช่องทางร่วมบุญหน้าหลัก)</option>
+            <option value="#portal-news">#portal-news (ข่าวสารและกิจกรรม)</option>
+            <option value="#portal-document">#portal-document (เอกสารเผยแพร่)</option>
+            <option value="#community">#community (กระดานศรัทธา)</option>
+            <option value="#footer">#footer (ข้อมูลติดต่อส่วนท้าย)</option>
+          </datalist>
         </label>
         <label>รูปแบบการเปิดลิงก์
           <select id="sidebarItemOpenExternal">
@@ -4139,6 +4146,6 @@
   </script>
   <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-  <script src="/script.js?v=20260927-4"></script>
+  <script src="/script.js?v=20260927-6"></script>
 </body>
 </html>
