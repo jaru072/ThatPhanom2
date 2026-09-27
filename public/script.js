@@ -4251,6 +4251,106 @@ function isCustomCenterSec(s) {
     if (closeSliderDlgBtn) closeSliderDlgBtn.addEventListener("click", () => centerSliderDlg && centerSliderDlg.close());
     if (cancelSliderDlgBtn) cancelSliderDlgBtn.addEventListener("click", () => centerSliderDlg && centerSliderDlg.close());
 
+    // Helper: Open Image Lightbox / Fullscreen for Center Section Images
+    function openCenterImageFullscreen({ url, title, description }) {
+      if (!url) return;
+      if (typeof window.openImageLightbox === "function") {
+        try {
+          window.openImageLightbox({
+            url: url,
+            title: title || "ภาพพระธาตุพนม",
+            description: description || "",
+            type: "image"
+          });
+          return;
+        } catch (_) {}
+      }
+      const dlg = document.getElementById("imageLightbox");
+      if (!dlg) {
+        window.open(url, "_blank", "noopener");
+        return;
+      }
+      const imgEl = document.getElementById("lightboxImage");
+      const vidBox = document.getElementById("lightboxVideoContainer");
+      const titleEl = document.getElementById("lightboxTitle");
+      const descEl = document.getElementById("lightboxDescription");
+      const origLink = document.getElementById("lightboxOriginalLink");
+
+      if (vidBox) {
+        vidBox.style.display = "none";
+        vidBox.innerHTML = "";
+      }
+      if (imgEl) {
+        imgEl.style.display = "block";
+        imgEl.src = url;
+        imgEl.alt = title || "ภาพพระธาตุพนม";
+      }
+      if (titleEl) {
+        titleEl.textContent = title || "ภาพพระธาตุพนม";
+      }
+      if (descEl) {
+        descEl.textContent = description || "";
+        descEl.hidden = !description;
+      }
+      if (origLink) {
+        origLink.style.display = "";
+        origLink.href = url;
+        origLink.textContent = "เปิดดูภาพต้นฉบับขนาดใหญ่ ↗";
+      }
+      try {
+        if (typeof dlg.showModal === "function") {
+          dlg.showModal();
+        } else {
+          dlg.setAttribute("open", "");
+        }
+      } catch (_) {
+        dlg.setAttribute("open", "");
+      }
+    }
+    window.openCenterImageFullscreen = openCenterImageFullscreen;
+
+    // Fullscreen toggle for Lightbox
+    (function initLightboxFullscreen() {
+      const fsBtn = document.getElementById("lightboxFullscreenButton");
+      const dlg = document.getElementById("imageLightbox");
+      const imgEl = document.getElementById("lightboxImage");
+
+      function toggleFullscreen() {
+        if (!document.fullscreenElement) {
+          if (dlg && dlg.requestFullscreen) {
+            dlg.requestFullscreen().catch(() => {});
+          } else if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen().catch(() => {});
+          }
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen().catch(() => {});
+          }
+        }
+      }
+
+      if (fsBtn) {
+        fsBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          toggleFullscreen();
+        });
+      }
+
+      if (imgEl) {
+        imgEl.addEventListener("dblclick", (e) => {
+          e.stopPropagation();
+          toggleFullscreen();
+        });
+      }
+
+      document.addEventListener("fullscreenchange", () => {
+        if (fsBtn) {
+          fsBtn.innerHTML = document.fullscreenElement ? "🗗" : "⛶";
+          fsBtn.title = document.fullscreenElement ? "ย่อหน้าจอปกติ" : "เปิดโหมดเต็มหน้าจอ";
+        }
+      });
+    })();
+
     // Main Renderer: Render Custom Center Sections
     window._renderCustomCenterSections = function _renderCustomCenterSections(force = false) {
       const activeContainer = document.getElementById("customCenterSectionsContainer") || container;
@@ -4387,10 +4487,20 @@ function isCustomCenterSec(s) {
               const cap = typeof sl === "string" ? "" : (sl.caption || "");
               const item = document.createElement("div");
               item.className = `center-slide-item ${sIdx === 0 ? "active" : ""}`;
+              item.title = "คลิกเพื่อขยายภาพเต็มจอ";
               item.innerHTML = `
                 <img src="${u}" alt="${cap || title || ''}" loading="lazy">
                 ${cap ? `<div class="center-slide-caption">${cap}</div>` : ''}
+                <div class="center-image-expand-badge" title="คลิกเพื่อขยายภาพเต็มจอ"><span aria-hidden="true">🔍</span> ขยายเต็มจอ</div>
               `;
+              item.addEventListener("click", (e) => {
+                if (e.target.closest(".center-slider-nav, .center-slider-dots")) return;
+                openCenterImageFullscreen({
+                  url: u,
+                  title: cap || title || "ภาพสไลด์พระธาตุพนม",
+                  description: cap || ""
+                });
+              });
               stage.appendChild(item);
             });
             sliderWrap.appendChild(stage);
@@ -4476,13 +4586,29 @@ function isCustomCenterSec(s) {
               const cardEl = document.createElement("article");
               cardEl.className = "center-card-item";
               cardEl.innerHTML = `
-                ${card.imageUrl ? `<img class="center-card-media" src="${card.imageUrl}" alt="${card.title || ''}" loading="lazy">` : ''}
+                ${card.imageUrl ? `
+                  <div class="center-card-media-wrap" title="คลิกเพื่อขยายภาพเต็มจอ">
+                    <img class="center-card-media" src="${card.imageUrl}" alt="${card.title || ''}" loading="lazy">
+                    <div class="center-image-expand-badge" title="คลิกเพื่อขยายภาพเต็มจอ"><span aria-hidden="true">🔍</span> ขยายเต็มจอ</div>
+                  </div>
+                ` : ''}
                 <div class="center-card-body">
                   <h3 class="center-card-title">${card.title || ''}</h3>
                   ${card.desc || card.description ? `<p class="center-card-desc">${card.desc || card.description}</p>` : ''}
                   ${card.linkUrl ? `<a class="center-card-btn" href="${card.linkUrl}">${card.linkText || 'ดูรายละเอียด'} ↗</a>` : ''}
                 </div>
               `;
+              const mediaWrap = cardEl.querySelector(".center-card-media-wrap");
+              if (mediaWrap && card.imageUrl) {
+                mediaWrap.addEventListener("click", (e) => {
+                  e.stopPropagation();
+                  openCenterImageFullscreen({
+                    url: card.imageUrl,
+                    title: card.title || title || "ภาพประกอบหัวข้อ",
+                    description: card.desc || card.description || ""
+                  });
+                });
+              }
               grid.appendChild(cardEl);
             });
             sectionEl.appendChild(grid);
@@ -4562,8 +4688,20 @@ function isCustomCenterSec(s) {
           // Standard Content Box
           if (sec.imageUrl) {
             const imgWrap = document.createElement("div");
-            imgWrap.style.cssText = "width:100%; max-height:420px; border-radius:10px; overflow:hidden; margin-top:12px;";
-            imgWrap.innerHTML = `<img src="${sec.imageUrl}" alt="${title || ''}" style="width:100%; height:100%; object-fit:cover;">`;
+            imgWrap.className = "center-standard-media-wrap";
+            imgWrap.style.cssText = "width:100%; max-height:420px; border-radius:10px; overflow:hidden; margin-top:12px; cursor:zoom-in;";
+            imgWrap.title = "คลิกเพื่อขยายภาพเต็มจอ";
+            imgWrap.innerHTML = `
+              <img src="${sec.imageUrl}" alt="${title || ''}" style="width:100%; height:100%; object-fit:cover;">
+              <div class="center-image-expand-badge" title="คลิกเพื่อขยายภาพเต็มจอ"><span aria-hidden="true">🔍</span> ขยายเต็มจอ</div>
+            `;
+            imgWrap.addEventListener("click", () => {
+              openCenterImageFullscreen({
+                url: sec.imageUrl,
+                title: title || "ภาพประกอบพระธาตุพนม",
+                description: content || ""
+              });
+            });
             sectionEl.appendChild(imgWrap);
           }
 
@@ -4592,6 +4730,46 @@ function isCustomCenterSec(s) {
       activeContainer.querySelectorAll("[data-custom-cards-btn]").forEach(btn => {
         btn.addEventListener("click", () => openCardsManager(btn.dataset.customCardsBtn));
       });
+
+      // Delegated click handler on custom center sections images
+      if (!activeContainer._imageLightboxBound) {
+        activeContainer._imageLightboxBound = true;
+        activeContainer.addEventListener("click", (e) => {
+          if (e.target.closest("button, a, input, textarea, select, .center-slider-nav, .center-slider-dots, [data-custom-gear-id], [data-custom-slider-btn], [data-custom-cards-btn]")) return;
+          const img = e.target.closest(".custom-center-section img, .center-slide-item img, .center-card-media, .center-standard-media-wrap img");
+          if (!img) return;
+
+          const targetUrl = img.currentSrc || img.src || img.getAttribute("src") || "";
+          if (!targetUrl) return;
+
+          const secEl = img.closest(".custom-center-section");
+          const cardEl = img.closest(".center-card-item");
+          const slideItem = img.closest(".center-slide-item");
+
+          let imgTitle = img.alt || "";
+          let imgDesc = "";
+
+          if (cardEl) {
+            const tEl = cardEl.querySelector(".center-card-title");
+            const dEl = cardEl.querySelector(".center-card-desc");
+            if (tEl) imgTitle = tEl.textContent.trim() || imgTitle;
+            if (dEl) imgDesc = dEl.textContent.trim();
+          } else if (slideItem) {
+            const capEl = slideItem.querySelector(".center-slide-caption");
+            if (capEl) imgDesc = capEl.textContent.trim();
+          }
+          if (!imgTitle && secEl) {
+            const h2 = secEl.querySelector("h2");
+            if (h2) imgTitle = h2.textContent.trim();
+          }
+
+          openCenterImageFullscreen({
+            url: targetUrl,
+            title: imgTitle || "ภาพพระธาตุพนม",
+            description: imgDesc || ""
+          });
+        });
+      }
 
       // Update admin state
       if (typeof window._updateAdminDOMState === "function") {

@@ -1581,6 +1581,234 @@
       gap: 8px;
       margin-bottom: 12px;
     }
+
+    /* Custom Center Section Image Lightbox & Zoom effects */
+    .custom-center-section img {
+      cursor: zoom-in;
+      transition: transform 0.25s ease, filter 0.25s ease;
+    }
+    .custom-center-section img:hover {
+      filter: brightness(1.04);
+    }
+    .center-slide-item {
+      cursor: zoom-in;
+    }
+    .center-card-media-wrap {
+      position: relative;
+      overflow: hidden;
+      cursor: zoom-in;
+      background: #000;
+      border-radius: 8px 8px 0 0;
+    }
+    .center-card-media-wrap:hover .center-card-media {
+      transform: scale(1.04);
+    }
+    .center-standard-media-wrap {
+      position: relative;
+      overflow: hidden;
+      cursor: zoom-in;
+    }
+    .center-standard-media-wrap:hover img {
+      transform: scale(1.02);
+    }
+    .center-image-expand-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(23, 19, 41, 0.78);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 4px 10px;
+      border-radius: 20px;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+      z-index: 4;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.35);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .center-card-media-wrap:hover .center-image-expand-badge,
+    .center-slide-item:hover .center-image-expand-badge,
+    .center-standard-media-wrap:hover .center-image-expand-badge {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    @media (max-width: 768px) {
+      .center-image-expand-badge {
+        opacity: 0.9;
+        transform: none;
+        font-size: 0.7rem;
+        padding: 3px 8px;
+        top: 8px;
+        right: 8px;
+      }
+    }
+    .image-lightbox-fs-btn {
+      position: absolute;
+      z-index: 2;
+      top: 14px;
+      right: 68px;
+      width: 46px;
+      height: 46px;
+      border: 1px solid rgba(255,255,255,.4);
+      border-radius: 50%;
+      background: #110d1ec7;
+      color: #fff;
+      font-size: 1.25rem;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+    .image-lightbox-fs-btn:hover {
+      background: #1e1735;
+      transform: scale(1.08);
+    }
+
+    /* Left Sidebar & Rail Cards: Theme styles & Hover stabilization */
+    /* 1. Project Switcher in Left Sidebar */
+    .sidebar-projects-list a {
+      transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+    }
+    .sidebar-projects-list a:hover {
+      background: rgba(255, 255, 255, 0.92) !important;
+      color: var(--social-red, #7c2637) !important;
+      transform: translateX(3px);
+    }
+    .sidebar-projects-list a.active {
+      background: #ffffff !important;
+      color: var(--social-red, #7c2637) !important;
+      box-shadow: 0 2px 8px rgba(23, 19, 41, 0.12);
+    }
+
+    /* 2. Custom Sidebar Items - Base & Card styling */
+    .sidebar-item {
+      border-radius: 12px !important;
+      padding: 12px 14px !important;
+      margin-bottom: 8px !important;
+      box-sizing: border-box !important;
+      border: 1px solid rgba(23, 19, 41, 0.08) !important;
+      transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease !important;
+    }
+
+    /* Standard Theme (การ์ดพื้นขาว) */
+    .sidebar-item:not(.theme-gold):not(.theme-maroon):not(.theme-dark),
+    .sidebar-item.theme-standard {
+      background: #ffffff !important;
+      color: #171329 !important;
+      border-color: rgba(23, 19, 41, 0.12) !important;
+      box-shadow: 0 2px 6px rgba(23, 19, 41, 0.05) !important;
+    }
+    .sidebar-item:not(.theme-gold):not(.theme-maroon):not(.theme-dark) .sidebar-item-title,
+    .sidebar-item.theme-standard .sidebar-item-title {
+      color: #171329 !important;
+      font-weight: 700 !important;
+    }
+    .sidebar-item:not(.theme-gold):not(.theme-maroon):not(.theme-dark) .sidebar-item-desc,
+    .sidebar-item.theme-standard .sidebar-item-desc {
+      color: #555160 !important;
+      font-weight: 400 !important;
+    }
+    .sidebar-item:not(.theme-gold):not(.theme-maroon):not(.theme-dark):hover,
+    .sidebar-item.theme-standard:hover {
+      background: #faf8f5 !important;
+      border-color: #cba64b88 !important;
+      box-shadow: 0 4px 12px rgba(23, 19, 41, 0.1) !important;
+      transform: translateY(-1px);
+    }
+    .sidebar-item:not(.theme-gold):not(.theme-maroon):not(.theme-dark):hover .sidebar-item-title,
+    .sidebar-item.theme-standard:hover .sidebar-item-title {
+      color: #7c2637 !important;
+    }
+
+    /* Gold Theme (สีทองอร่าม) */
+    .sidebar-item.theme-gold {
+      background: linear-gradient(135deg, #fffbf0, #f7eed4) !important;
+      color: #3d2b09 !important;
+      border-color: rgba(203, 166, 75, 0.45) !important;
+      box-shadow: 0 2px 6px rgba(203, 166, 75, 0.12) !important;
+    }
+    .sidebar-item.theme-gold .sidebar-item-title {
+      color: #5a3e0b !important;
+      font-weight: 700 !important;
+    }
+    .sidebar-item.theme-gold .sidebar-item-desc {
+      color: #6d5427 !important;
+    }
+    .sidebar-item.theme-gold:hover {
+      background: linear-gradient(135deg, #fffcf5, #f3e6c4) !important;
+      border-color: rgba(203, 166, 75, 0.75) !important;
+      box-shadow: 0 4px 12px rgba(181, 137, 32, 0.18) !important;
+      transform: translateY(-1px);
+    }
+
+    /* Maroon Theme (สีแดงชาด) */
+    .sidebar-item.theme-maroon {
+      background: linear-gradient(135deg, #fff8f8, #fceded) !important;
+      color: #4a1219 !important;
+      border-color: rgba(124, 38, 55, 0.28) !important;
+      box-shadow: 0 2px 6px rgba(124, 38, 55, 0.08) !important;
+    }
+    .sidebar-item.theme-maroon .sidebar-item-title {
+      color: #7c2637 !important;
+      font-weight: 700 !important;
+    }
+    .sidebar-item.theme-maroon .sidebar-item-desc {
+      color: #632e39 !important;
+    }
+    .sidebar-item.theme-maroon:hover {
+      background: linear-gradient(135deg, #fff3f3, #fae2e2) !important;
+      border-color: rgba(124, 38, 55, 0.5) !important;
+      box-shadow: 0 4px 12px rgba(124, 38, 55, 0.15) !important;
+      transform: translateY(-1px);
+    }
+
+    /* Dark Theme (สีกรมท่าเข้ม) */
+    .sidebar-item.theme-dark {
+      background: linear-gradient(135deg, #1f1a35, #141026) !important;
+      color: #ffffff !important;
+      border-color: rgba(239, 217, 142, 0.3) !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+    }
+    .sidebar-item.theme-dark .sidebar-item-title {
+      color: #efd98e !important;
+      font-weight: 700 !important;
+    }
+    .sidebar-item.theme-dark .sidebar-item-desc {
+      color: #cfcad8 !important;
+    }
+    .sidebar-item.theme-dark:hover {
+      background: linear-gradient(135deg, #272142, #1a1532) !important;
+      border-color: rgba(239, 217, 142, 0.6) !important;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35) !important;
+      transform: translateY(-1px);
+    }
+
+    /* Ensure Right Rail Standard Cards are also crystal clear */
+    .rail-card:not(.theme-gold):not(.theme-maroon):not(.theme-dark):not(.project-card),
+    .rail-card.theme-standard {
+      background: #ffffff !important;
+      color: #171329 !important;
+    }
+    .rail-card:not(.theme-gold):not(.theme-maroon):not(.theme-dark):not(.project-card) h2,
+    .rail-card.theme-standard h2 {
+      color: #171329 !important;
+    }
+    .rail-card:not(.theme-gold):not(.theme-maroon):not(.theme-dark):not(.project-card) p,
+    .rail-card.theme-standard p {
+      color: #555160 !important;
+    }
+    .rail-card:not(.theme-gold):not(.theme-maroon):not(.theme-dark):not(.project-card) .rail-label,
+    .rail-card.theme-standard .rail-label {
+      color: #7c2637 !important;
+    }
   </style>
 </head>
 <body>
@@ -2508,6 +2736,7 @@
   <dialog class="image-lightbox" id="imageLightbox" aria-labelledby="lightboxTitle">
     <div class="image-lightbox-shell">
       <button class="image-lightbox-close" id="closeLightboxButton" type="button" aria-label="ปิดรูปภาพหรือวิดีโอ">×</button>
+      <button class="image-lightbox-fs-btn" id="lightboxFullscreenButton" type="button" aria-label="ขยายเต็มจอ" title="เปิด/ปิดโหมดเต็มหน้าจอ">⛶</button>
       <div id="lightboxMediaWrapper" style="width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;">
         <img id="lightboxImage" src="" alt="">
         <div id="lightboxVideoContainer" style="width:100%; max-width:820px; display:none;"></div>
@@ -3821,6 +4050,6 @@
   </script>
   <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-  <script src="/script.js?v=20260926-8"></script>
+  <script src="/script.js?v=20260927-2"></script>
 </body>
 </html>
