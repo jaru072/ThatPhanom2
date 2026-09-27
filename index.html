@@ -1809,6 +1809,95 @@
     .rail-card.theme-standard .rail-label {
       color: #7c2637 !important;
     }
+
+    /* Feed Column: Donation Cards (ร่วมบุญกับโครงการ) Styling & Non-overlapping Layout */
+    .portal-content-card.donation-card {
+      display: flex !important;
+      flex-direction: column !important;
+      background: #ffffff !important;
+      border-radius: 16px !important;
+      overflow: hidden !important;
+      border: 1px solid rgba(23, 19, 41, 0.1) !important;
+      box-shadow: 0 4px 18px rgba(23, 19, 41, 0.06) !important;
+      height: 100% !important;
+      box-sizing: border-box !important;
+    }
+    .portal-content-card.donation-card .donation-card-media-wrap {
+      position: relative !important;
+      width: 100% !important;
+      background: #1713290a !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      overflow: hidden !important;
+      cursor: pointer !important;
+      border-bottom: 1px solid rgba(23, 19, 41, 0.08) !important;
+    }
+    .portal-content-card.donation-card .donation-card-media-wrap img,
+    .portal-content-card.donation-card > img {
+      width: 100% !important;
+      max-height: 480px !important;
+      height: auto !important;
+      object-fit: contain !important;
+      display: block !important;
+      flex-shrink: 0 !important;
+      margin: 0 auto !important;
+      transition: transform 0.25s ease, filter 0.25s ease !important;
+    }
+    .portal-content-card.donation-card .donation-card-media-wrap:hover img {
+      transform: scale(1.02);
+      filter: brightness(0.96);
+    }
+    .donation-media-zoom-hint {
+      position: absolute !important;
+      bottom: 12px !important;
+      right: 12px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      padding: 6px 12px !important;
+      border-radius: 20px !important;
+      background: rgba(23, 19, 41, 0.82) !important;
+      backdrop-filter: blur(8px) !important;
+      color: #ffffff !important;
+      font-size: 0.8rem !important;
+      font-weight: 500 !important;
+      letter-spacing: 0.02em !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25) !important;
+      pointer-events: auto !important;
+      transition: background 0.2s ease, transform 0.2s ease !important;
+    }
+    .portal-content-card.donation-card .donation-card-media-wrap:hover .donation-media-zoom-hint {
+      background: #7c2637 !important;
+      transform: scale(1.05);
+    }
+    .portal-content-card.donation-card > div:not(.donation-card-media-wrap) {
+      display: flex !important;
+      flex-direction: column !important;
+      flex-grow: 1 !important;
+      padding: 20px 22px !important;
+      box-sizing: border-box !important;
+      background: #ffffff !important;
+    }
+    .portal-content-card.donation-card h4 {
+      margin: 0 0 10px 0 !important;
+      font: 600 1.25rem/1.4 Pridi, Noto Sans Thai, serif !important;
+      color: #171329 !important;
+      word-break: break-word !important;
+    }
+    .portal-content-card.donation-card p {
+      margin: 0 0 16px 0 !important;
+      color: #555160 !important;
+      font-size: 0.92rem !important;
+      line-height: 1.65 !important;
+      white-space: pre-wrap !important;
+      word-break: break-word !important;
+      flex-grow: 1 !important;
+    }
+    .portal-content-card.donation-card .button.primary {
+      align-self: flex-start !important;
+      margin-top: auto !important;
+    }
   </style>
 </head>
 <body>
@@ -2792,11 +2881,11 @@
 
       <!-- กลุ่มข้อมูลภาษาไทย -->
       <div class="content-lang-pane rail-lang-pane active" id="contentPaneTh">
-        <label>ชื่อเรื่อง (ภาษาไทย) *
-          <input id="contentItemTitle" type="text" maxlength="160" required placeholder="ชื่อเรื่องหรือหัวข้อ">
+        <label>ชื่อเรื่อง (ภาษาไทย)
+          <input id="contentItemTitle" type="text" maxlength="160" placeholder="ชื่อเรื่องหรือหัวข้อ (ไม่บังคับ)">
         </label>
-        <label>รายละเอียด (ภาษาไทย) *
-          <textarea id="contentItemDescription" rows="5" maxlength="5000" required placeholder="รายละเอียดเนื้อหา..."></textarea>
+        <label>รายละเอียด (ภาษาไทย)
+          <textarea id="contentItemDescription" rows="5" maxlength="5000" placeholder="รายละเอียดเนื้อหา... (ไม่บังคับ)"></textarea>
         </label>
       </div>
 
@@ -4050,6 +4139,6 @@
   </script>
   <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-  <script src="/script.js?v=20260927-2"></script>
+  <script src="/script.js?v=20260927-4"></script>
 </body>
 </html>
