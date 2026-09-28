@@ -258,7 +258,9 @@ const I18N_TH = {
   "railTrashButtonText": "🗑 ถังพัก",
   "searchPlaceholder": "ค้นหาเรื่องราว โครงการ หรือกิจกรรม",
   "commentPlaceholder": "เข้าสู่ระบบด้วย Google เพื่อร่วมแสดงความคิดเห็น",
-  "generalManageBtn": "จัดการ"
+  "generalManageBtn": "จัดการ",
+  "contactMapTitle": "ติดต่อเรา",
+  "openInMaps": "เปิดใน Maps"
 };
 
 const I18N_LO = {
@@ -477,7 +479,9 @@ const I18N_LO = {
   "railFootnote": "ຂໍ້ມູນສຳລັບການສຶກສາ ແລະຮ່ວມສືບສານຄຸນຄ່າພະທາດພະນົມ ສູ່ມໍລະດົກໂລກ",
   "searchPlaceholder": "ຄົ້ນຫາເລື່ອງລາວ ໂຄງການ ຫຼືກິດຈະກຳ",
   "commentPlaceholder": "ເຂົ້າສູ່ລະບົບດ້ວຍ Google ເພື່ອຮ່ວມສະແດງຄວາມຄິດເຫັນ",
-  "generalManageBtn": "ຈັດການ"
+  "generalManageBtn": "ຈັດການ",
+  "contactMapTitle": "ຕິດຕໍ່ພວກເຮົາ",
+  "openInMaps": "ເປີດໃນ Maps"
 };
 
 const I18N_EN = {
@@ -691,7 +695,9 @@ const I18N_EN = {
   "railFootnote": "Information compiled for educational and heritage appreciation purposes.",
   "searchPlaceholder": "Search stories, projects, or activities",
   "commentPlaceholder": "Sign in with Google to leave a comment",
-  "generalManageBtn": "Manage"
+  "generalManageBtn": "Manage",
+  "contactMapTitle": "Contact Us",
+  "openInMaps": "Open in Maps"
 };
 
 const I18N_LANGS = {
@@ -4966,5 +4972,28 @@ function isCustomCenterSec(s) {
       }
     }, { passive: true });
   })();
+
+  // Contact Map Controls (Print & Buddhist Era Date)
+  (function initContactMap() {
+    try {
+      const printBtn = document.getElementById("contactMapPrintBtn");
+      if (printBtn) {
+        printBtn.addEventListener("click", function() {
+          window.print();
+        });
+      }
+
+      // Set Buddhist Era date
+      const dateEl = document.getElementById("contactMapDate");
+      if (dateEl) {
+        const now = new Date();
+        const d = String(now.getDate()).padStart(2, "0");
+        const m = String(now.getMonth() + 1).padStart(2, "0");
+        const beYear = now.getFullYear() + 543;
+        dateEl.textContent = `${d}/${m}/${beYear}`;
+      }
+    } catch (_) {}
+  })();
 })();
+
 

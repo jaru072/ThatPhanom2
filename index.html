@@ -2202,6 +2202,152 @@
         bottom: calc(16px + env(safe-area-inset-bottom)) !important;
       }
     }
+
+    /* Google Map Section styling based on reference image */
+    .contact-map-section {
+      margin: 28px 0;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #171329;
+      box-shadow: 0 4px 20px rgba(23, 19, 41, 0.12);
+      border: 1px solid rgba(23, 19, 41, 0.15);
+      position: relative;
+    }
+    .contact-map-header {
+      background: #171329;
+      color: #ffffff;
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .contact-map-header h2 {
+      margin: 0;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #ffffff;
+      letter-spacing: 0.3px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .contact-map-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.78);
+    }
+    .contact-map-meta-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .contact-map-meta-item svg {
+      width: 15px;
+      height: 15px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      opacity: 0.85;
+    }
+    .contact-map-divider {
+      color: rgba(255, 255, 255, 0.3);
+    }
+    .contact-map-print-btn {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.78);
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      padding: 4px;
+      border-radius: 4px;
+      transition: color 0.2s ease;
+    }
+    .contact-map-print-btn:hover {
+      color: #ffffff;
+    }
+    .contact-map-print-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .contact-map-frame-wrapper {
+      position: relative;
+      width: 100%;
+      height: 380px;
+      background: #e5e3df;
+    }
+    .contact-map-frame-wrapper iframe {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      display: block;
+    }
+    .contact-map-open-btn {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      z-index: 10;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #171329;
+      color: #ffffff;
+      padding: 7px 14px;
+      border-radius: 6px;
+      font-size: 0.84rem;
+      font-weight: 600;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: background 0.2s ease, transform 0.15s ease;
+    }
+    .contact-map-open-btn:hover {
+      background: #2b2344;
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+    .contact-map-open-btn svg {
+      width: 14px;
+      height: 14px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    @media (max-width: 600px) {
+      .contact-map-header {
+        padding: 12px 14px;
+      }
+      .contact-map-header h2 {
+        font-size: 1.1rem;
+      }
+      .contact-map-meta {
+        font-size: 0.78rem;
+        gap: 10px;
+      }
+      .contact-map-frame-wrapper {
+        height: 300px;
+      }
+      .contact-map-open-btn {
+        top: 10px;
+        left: 10px;
+        padding: 6px 12px;
+        font-size: 0.78rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -2763,6 +2909,44 @@
       <button class="center-trash-button button secondary" id="centerTrashButton" type="button" title="ถังขยะหัวข้อแถบกลาง"><span aria-hidden="true">🗑</span> ถังขยะ (<span class="center-trash-count" id="centerTrashCount">0</span>)</button>
       <button class="center-refresh-btn button secondary" id="centerRefreshBtn" type="button" title="กดเพื่อรีเฟรชข้อมูล"><span aria-hidden="true">🔄</span> รีเฟรช</button>
     </div>
+
+    <!-- ส่วนแผนที่การเดินทาง วัดพระธาตุพนมวรมหาวิหาร ตามแบบอ้างอิง -->
+    <section class="contact-map-section has-admin-gear" id="contact-map" aria-labelledby="contactMapTitle">
+      <header class="contact-map-header">
+        <h2 id="contactMapTitle" data-i18n="contactMapTitle">ติดต่อเรา</h2>
+        <div class="contact-map-meta">
+          <span class="contact-map-meta-item">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            <span id="contactMapDate">28/09/2569</span>
+          </span>
+          <span class="contact-map-divider" aria-hidden="true">|</span>
+          <span class="contact-map-meta-item">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+            <span id="contactMapViewCount">4,909</span>
+          </span>
+          <span class="contact-map-divider" aria-hidden="true">|</span>
+          <button class="contact-map-print-btn" id="contactMapPrintBtn" type="button" aria-label="พิมพ์หน้านี้" title="พิมพ์หน้านี้">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+          </button>
+        </div>
+      </header>
+      <div class="contact-map-frame-wrapper">
+        <a class="contact-map-open-btn" href="https://maps.app.goo.gl/dzZ7zyA2LBDxaob2A" target="_blank" rel="noopener noreferrer" title="เปิดแผนที่นำทางใน Google Maps">
+          <span data-i18n="openInMaps">เปิดใน Maps</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+        </a>
+        <iframe
+          title="แผนที่ วัดพระธาตุพนมวรมหาวิหาร"
+          src="https://maps.google.com/maps?q=16.9426557,104.7239887&hl=th&z=17&output=embed"
+          width="100%"
+          height="100%"
+          style="border:0;"
+          allowfullscreen=""
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade">
+        </iframe>
+      </div>
+    </section>
 
     <section class="callout">
       <img src="/assets/logo-AxQWlNNP.png" alt="" aria-hidden="true">
@@ -4473,6 +4657,6 @@
   </script>
   <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-  <script src="/script.js?v=20260927-12"></script>
+  <script src="/script.js?v=20260928-1"></script>
 </body>
 </html>
