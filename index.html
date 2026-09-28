@@ -1875,6 +1875,333 @@
       align-self: flex-start !important;
       margin-top: auto !important;
     }
+
+    /* Top Nav Drag-and-Drop for Admin */
+    .top-nav {
+      position: relative;
+    }
+    .top-nav a {
+      -webkit-user-drag: none !important;
+      user-drag: none !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+      transition: transform 0.18s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.18s ease, background 0.15s ease !important;
+    }
+    .top-nav a.topnav-admin-draggable {
+      cursor: grab !important;
+      touch-action: none !important;
+    }
+    .top-nav-drag-placeholder {
+      display: inline-flex !important;
+      border: 2px dashed #cba64b !important;
+      background: rgba(203, 166, 75, 0.18) !important;
+      border-radius: 11px !important;
+      margin: 0 2px !important;
+      box-sizing: border-box !important;
+      flex-shrink: 0 !important;
+      pointer-events: none !important;
+      animation: pulseNavPlaceholder 1.2s infinite ease-in-out !important;
+    }
+    @keyframes pulseNavPlaceholder {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 0.95; }
+    }
+    .top-nav a.topnav-item-floating {
+      position: fixed !important;
+      z-index: 999999 !important;
+      pointer-events: none !important;
+      opacity: 0.96 !important;
+      transform: scale(1.08) !important;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35), 0 0 0 2px #cba64b !important;
+      background: #ffffff !important;
+      color: #8b231f !important;
+      cursor: grabbing !important;
+      transition: none !important;
+      border-radius: 11px !important;
+      margin: 0 !important;
+    }
+    body.topnav-is-reordering {
+      user-select: none !important;
+      -webkit-user-select: none !important;
+      cursor: grabbing !important;
+    }
+    body.topnav-is-reordering * {
+      cursor: grabbing !important;
+      user-select: none !important;
+      -webkit-user-select: none !important;
+    }
+
+    /* Mobile Top Nav & Topbar Structure */
+    @media (max-width: 1023px) {
+      .site-header.social-topbar {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) auto !important;
+        grid-template-rows: auto auto !important;
+        row-gap: 6px !important;
+        column-gap: 8px !important;
+        align-items: center !important;
+        padding: 6px 10px 7px !important;
+      }
+      .site-header.social-topbar .header-left {
+        grid-column: 1 / 2 !important;
+        grid-row: 1 / 2 !important;
+        min-width: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+      }
+      .site-header.social-topbar .header-left .brand {
+        min-width: 0 !important;
+        overflow: hidden !important;
+      }
+      .site-header.social-topbar .header-left .brand span {
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        font-size: 0.86rem !important;
+      }
+      .site-header.social-topbar .site-search {
+        display: none !important;
+      }
+      .site-header.social-topbar .header-actions {
+        grid-column: 2 / 3 !important;
+        grid-row: 1 / 2 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        margin-left: auto !important;
+        flex-shrink: 0 !important;
+      }
+      .site-header.social-topbar .language-dropdown {
+        display: block !important;
+        position: relative !important;
+      }
+      .site-header.social-topbar .language-dropdown-button {
+        min-height: 32px !important;
+        padding: 4px 8px !important;
+        font-size: 0.74rem !important;
+        white-space: nowrap !important;
+      }
+
+      /* Row 2: Scrollable Top Nav Bar */
+      .site-header.social-topbar .top-nav,
+      .social-topbar .top-nav,
+      .top-nav {
+        grid-column: 1 / -1 !important;
+        grid-row: 2 / 3 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        white-space: nowrap !important;
+        gap: 3px !important;
+        padding: 2px 2px 5px !important;
+        scrollbar-width: thin !important;
+        scrollbar-color: rgba(203, 166, 75, 0.65) rgba(23, 19, 41, 0.06) !important;
+      }
+      .social-topbar .top-nav::-webkit-scrollbar,
+      .top-nav::-webkit-scrollbar {
+        height: 4px !important;
+        display: block !important;
+      }
+      .social-topbar .top-nav::-webkit-scrollbar-track,
+      .top-nav::-webkit-scrollbar-track {
+        background: rgba(23, 19, 41, 0.06) !important;
+        border-radius: 999px !important;
+      }
+      .social-topbar .top-nav::-webkit-scrollbar-thumb,
+      .top-nav::-webkit-scrollbar-thumb {
+        background: rgba(203, 166, 75, 0.75) !important;
+        border-radius: 999px !important;
+      }
+
+      .social-topbar .top-nav a,
+      .top-nav a {
+        min-width: 48px !important;
+        max-width: 68px !important;
+        padding: 4px 4px !important;
+        gap: 1px !important;
+        flex: 0 0 auto !important;
+      }
+      .social-topbar .top-nav a svg,
+      .top-nav a svg {
+        width: 19px !important;
+        height: 19px !important;
+      }
+      .social-topbar .top-nav a span,
+      .top-nav a span {
+        display: block !important;
+        font-size: 0.62rem !important;
+        letter-spacing: -0.2px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        max-width: 60px !important;
+      }
+
+      /* Hide portal refresh button on mobile completely */
+      #portalRefreshBtn,
+      .portal-refresh-btn {
+        display: none !important;
+      }
+
+      /* Admin Management Gear Buttons: Scaled down on Mobile */
+      body.is-admin .admin-gear-btn:not([hidden]),
+      body.is-admin .rail-card-gear:not([hidden]),
+      body.is-admin .sidebar-item-gear:not([hidden]),
+      body.is-admin .section-gear-btn:not([hidden]),
+      body.is-admin .topnav-gear-btn:not([hidden]),
+      .admin-gear-btn,
+      .rail-card-gear,
+      .sidebar-item-gear,
+      .section-gear-btn,
+      .topnav-gear-btn {
+        font-size: 1.05rem !important;
+        min-width: 22px !important;
+        min-height: 22px !important;
+        width: 24px !important;
+        height: 24px !important;
+        top: 8px !important;
+        right: 8px !important;
+      }
+      .topnav-gear-btn,
+      body.is-admin .topnav-gear-btn:not([hidden]) {
+        font-size: 1rem !important;
+        width: 22px !important;
+        height: 22px !important;
+        min-width: 22px !important;
+        min-height: 22px !important;
+        position: static !important;
+        flex: 0 0 auto !important;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .site-header.social-topbar {
+        padding: 5px 8px 6px !important;
+        row-gap: 4px !important;
+      }
+      .site-header.social-topbar .header-left .brand span strong {
+        font-size: 0.78rem !important;
+      }
+      .site-header.social-topbar .language-dropdown-button {
+        min-height: 28px !important;
+        padding: 3px 6px !important;
+        font-size: 0.7rem !important;
+      }
+      .social-topbar .top-nav,
+      .top-nav {
+        gap: 2px !important;
+        padding: 2px 1px 4px !important;
+      }
+      .social-topbar .top-nav a,
+      .top-nav a {
+        min-width: 44px !important;
+        max-width: 60px !important;
+        padding: 3px 3px !important;
+      }
+      .social-topbar .top-nav a svg,
+      .top-nav a svg {
+        width: 17px !important;
+        height: 17px !important;
+      }
+      .social-topbar .top-nav a span,
+      .top-nav a span {
+        font-size: 0.58rem !important;
+        max-width: 54px !important;
+      }
+
+      /* Admin Management Gear Buttons on smaller phones */
+      body.is-admin .admin-gear-btn:not([hidden]),
+      body.is-admin .rail-card-gear:not([hidden]),
+      body.is-admin .sidebar-item-gear:not([hidden]),
+      body.is-admin .section-gear-btn:not([hidden]),
+      body.is-admin .topnav-gear-btn:not([hidden]),
+      .admin-gear-btn,
+      .rail-card-gear,
+      .sidebar-item-gear,
+      .section-gear-btn,
+      .topnav-gear-btn {
+        font-size: 0.95rem !important;
+        min-width: 20px !important;
+        min-height: 20px !important;
+        width: 20px !important;
+        height: 20px !important;
+        top: 6px !important;
+        right: 6px !important;
+      }
+    }
+
+    /* Cancel Chat Button and Panel Everywhere */
+    #floatingChatButton,
+    .floating-chat,
+    #chatPanel,
+    .chat-panel {
+      display: none !important;
+      visibility: hidden !important;
+      pointer-events: none !important;
+    }
+
+    /* Floating Navigation Tools: Scaled down buttons and circular frames */
+    .floating-tools {
+      right: clamp(10px, 1.8vw, 20px) !important;
+      bottom: clamp(14px, 2.5vh, 24px) !important;
+      gap: 7px !important;
+    }
+    .floating-tools .floating-tool {
+      width: 38px !important;
+      height: 38px !important;
+      min-width: 38px !important;
+      min-height: 38px !important;
+      box-shadow: 0 4px 14px rgba(23, 19, 41, 0.28) !important;
+    }
+    .floating-tools .floating-tool svg {
+      width: 19px !important;
+      height: 19px !important;
+      stroke-width: 2.2 !important;
+    }
+
+    /* Mobile specific sizing for scroll to top/bottom buttons */
+    @media (max-width: 768px) {
+      .floating-tools {
+        right: 10px !important;
+        bottom: calc(76px + env(safe-area-inset-bottom)) !important;
+        gap: 6px !important;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+      }
+      .floating-tools .floating-tool {
+        width: 34px !important;
+        height: 34px !important;
+        min-width: 34px !important;
+        min-height: 34px !important;
+        border-width: 1px !important;
+        box-shadow: 0 3px 10px rgba(23, 19, 41, 0.25) !important;
+      }
+      .floating-tools .floating-tool svg {
+        width: 17px !important;
+        height: 17px !important;
+        stroke-width: 2.4 !important;
+      }
+
+      /* Smart Hide / Show on Scroll for Mobile Bottom Nav */
+      .mobile-bottom-nav {
+        transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.28s ease !important;
+        will-change: transform, opacity;
+      }
+      body.mobile-nav-hidden .mobile-bottom-nav {
+        transform: translateY(115%) !important;
+        opacity: 0 !important;
+        pointer-events: none !important;
+      }
+      body.mobile-nav-hidden .floating-tools {
+        bottom: calc(16px + env(safe-area-inset-bottom)) !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -4146,6 +4473,6 @@
   </script>
   <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-  <script src="/script.js?v=20260927-6"></script>
+  <script src="/script.js?v=20260927-12"></script>
 </body>
 </html>

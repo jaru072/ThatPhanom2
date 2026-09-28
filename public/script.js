@@ -4918,4 +4918,53 @@ function isCustomCenterSec(s) {
       fetch("/api/drive-album?folderId=1DmhMAaiazfnXIiOZ5Hu4E_du_oCZZNCU&keepAlive=" + Date.now(), { cache: "no-store" }).catch(function() {});
     } catch (_) {}
   }, 180000);
+
+  // Smart Hide / Show on Scroll for Mobile Bottom Nav
+  (function initMobileScrollNav() {
+    let lastScrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+    let ticking = false;
+    let scrollDeltaAccumulator = 0;
+    const SCROLL_THRESHOLD = 15; // Minimum scroll delta before toggling
+
+    function onScrollUpdate() {
+      const currentScrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+      const scrollDelta = currentScrollY - lastScrollY;
+
+      // Always show when close to the top of page
+      if (currentScrollY <= 60) {
+        document.body.classList.remove("mobile-nav-hidden");
+        scrollDeltaAccumulator = 0;
+        lastScrollY = currentScrollY;
+        ticking = false;
+        return;
+      }
+
+      // Check if user is scrolling down
+      if (scrollDelta > 0) {
+        if (scrollDeltaAccumulator < 0) scrollDeltaAccumulator = 0;
+        scrollDeltaAccumulator += scrollDelta;
+        if (scrollDeltaAccumulator > SCROLL_THRESHOLD) {
+          document.body.classList.add("mobile-nav-hidden");
+        }
+      } else if (scrollDelta < 0) {
+        // User scrolling up
+        if (scrollDeltaAccumulator > 0) scrollDeltaAccumulator = 0;
+        scrollDeltaAccumulator += scrollDelta;
+        if (Math.abs(scrollDeltaAccumulator) > SCROLL_THRESHOLD) {
+          document.body.classList.remove("mobile-nav-hidden");
+        }
+      }
+
+      lastScrollY = currentScrollY;
+      ticking = false;
+    }
+
+    window.addEventListener("scroll", function() {
+      if (!ticking) {
+        window.requestAnimationFrame(onScrollUpdate);
+        ticking = true;
+      }
+    }, { passive: true });
+  })();
 })();
+

@@ -1907,6 +1907,13 @@ function _renderTopNavItems() {
       a.href = item.targetUrl || "#";
       const targetId = (item.targetUrl || "").replace(/^#/, "");
       a.dataset.navTarget = targetId;
+      a.dataset.navId = item.id;
+      a.setAttribute("draggable", "false");
+      a.ondragstart = () => false;
+      if (_checkIsAdmin()) {
+        a.title = "กดแช่ค้างไว้หรือลากเพื่อสลับตำแหน่ง (Admin)";
+        a.classList.add("topnav-admin-draggable");
+      }
       const label = (lang === "en" && item.titleEn) ? item.titleEn : (lang === "lo" && (item.titleLo || item.title_lo)) ? (item.titleLo || item.title_lo) : (item.titleTh || item.title || "");
       a.innerHTML = `${_getTopNavSvgIcon(item.icon)}<span>${label}</span>`;
 
@@ -1931,6 +1938,9 @@ function _renderTopNavItems() {
 
     if (gearBtn) {
       gearBtn.hidden = !_checkIsAdmin();
+    }
+    if (_checkIsAdmin()) {
+      _initTopNavDragAndDrop(topNav);
     }
   }
 
@@ -1964,6 +1974,227 @@ function _renderTopNavItems() {
   _updateTopNavActiveState(currentTarget);
 }
 
+async function _saveTopNavOrder(newOrderedIds) {
+  if (!_checkIsAdmin()) return;
+  if (!Array.isArray(newOrderedIds) || newOrderedIds.length === 0) return;
+  const currentMerged = _getMergedTopNavItems();
+  const oldIds = currentMerged.map(x => x.id);
+  if (newOrderedIds.join(",") === oldIds.join(",")) return;
+
+  const idToItemMap = new Map();
+  currentMerged.forEach(item => idToItemMap.set(item.id, item));
+
+  try {
+    const promises = [];
+    newOrderedIds.forEach((id, index) => {
+      const item = idToItemMap.get(id);
+      if (!item) return;
+      const newOrder = (index + 1) * 10;
+      item.order = newOrder;
+
+      if (!L.topNav) L.topNav = [];
+      const exIdx = L.topNav.findIndex(x => x.id === id);
+      if (exIdx >= 0) {
+        L.topNav[exIdx] = { ...L.topNav[exIdx], order: newOrder };
+      } else {
+        L.topNav.push({ ...item, order: newOrder });
+      }
+
+      const docRef = j(_topNavCol, id);
+      const payload = {
+        titleTh: item.titleTh || item.title || "",
+        titleLo: item.titleLo || item.title_lo || "",
+        title_lo: item.titleLo || item.title_lo || "",
+        titleEn: item.titleEn || item.title_en || "",
+        title_en: item.titleEn || item.title_en || "",
+        targetUrl: item.targetUrl || "#",
+        icon: item.icon || "home",
+        order: newOrder,
+        published: item.published !== false,
+        isDefault: !!item.isDefault,
+        updatedAt: I()
+      };
+      promises.push(V(docRef, payload, { merge: true }));
+    });
+
+    await Promise.all(promises);
+    _renderTopNavItems();
+    if (typeof _renderTopNavManagerList === "function") _renderTopNavManagerList();
+    A("จัดเรียงลำดับเมนูแถบนำทางเรียบร้อยแล้ว", "success");
+  } catch (err) {
+    console.error("Save topNav order error:", err);
+    A("ไม่สามารถบันทึกลำดับเมนูได้: " + (err.message || err), "error");
+  }
+}
+
+function _initTopNavDragAndDrop(topNav) {
+  if (!topNav || !_checkIsAdmin()) return;
+  if (topNav._dragInitialized) return;
+  topNav._dragInitialized = true;
+
+  topNav.setAttribute("draggable", "false");
+  topNav.ondragstart = e => { e.preventDefault(); return false; };
+  topNav.addEventListener("dragstart", e => { e.preventDefault(); return false; });
+  window.addEventListener("dragstart", e => {
+    if (isDragging || dragTarget) {
+      e.preventDefault();
+      return false;
+    }
+  }, { capture: true });
+
+  let dragTarget = null;
+  let placeholder = null;
+  let holdTimer = null;
+  let isDragging = false;
+  let startX = 0;
+  let startY = 0;
+  let dragOffset = { x: 0, y: 0 };
+  let suppressClick = false;
+
+  function startDragging(e) {
+    if (isDragging || !dragTarget) return;
+    clearTimeout(holdTimer);
+    holdTimer = null;
+    isDragging = true;
+    suppressClick = true;
+
+    const rect = dragTarget.getBoundingClientRect();
+    const curX = e ? e.clientX : startX;
+    const curY = e ? e.clientY : startY;
+    dragOffset.x = curX - rect.left;
+    dragOffset.y = curY - rect.top;
+
+    placeholder = document.createElement("div");
+    placeholder.className = "top-nav-drag-placeholder";
+    placeholder.style.width = rect.width + "px";
+    placeholder.style.height = rect.height + "px";
+    placeholder.style.flexShrink = "0";
+
+    dragTarget.before(placeholder);
+
+    dragTarget.classList.add("topnav-item-floating");
+    dragTarget.style.width = rect.width + "px";
+    dragTarget.style.height = rect.height + "px";
+    dragTarget.style.left = (curX - dragOffset.x) + "px";
+    dragTarget.style.top = (curY - dragOffset.y) + "px";
+
+    document.body.classList.add("topnav-is-reordering");
+
+    try {
+      if (navigator.vibrate) navigator.vibrate(35);
+    } catch (_) {}
+  }
+
+  topNav.addEventListener("pointerdown", e => {
+    if (!_checkIsAdmin()) return;
+    const a = e.target.closest("a[data-nav-id]");
+    if (!a || !topNav.contains(a)) return;
+    if (e.button !== undefined && e.button !== 0) return;
+
+    dragTarget = a;
+    startX = e.clientX;
+    startY = e.clientY;
+    suppressClick = false;
+    isDragging = false;
+
+    clearTimeout(holdTimer);
+    holdTimer = setTimeout(() => {
+      startDragging(e);
+    }, 180);
+  });
+
+  const onPointerMove = e => {
+    if (!dragTarget) return;
+
+    const dist = Math.hypot(e.clientX - startX, e.clientY - startY);
+
+    if (!isDragging) {
+      if (dist > 4) {
+        startDragging(e);
+      }
+      return;
+    }
+
+    e.preventDefault();
+
+    dragTarget.style.left = (e.clientX - dragOffset.x) + "px";
+    dragTarget.style.top = (e.clientY - dragOffset.y) + "px";
+
+    if (!placeholder) return;
+
+    const siblings = Array.from(topNav.querySelectorAll("a[data-nav-id]")).filter(el => el !== dragTarget);
+    for (const sibling of siblings) {
+      const sRect = sibling.getBoundingClientRect();
+      const midX = sRect.left + sRect.width / 2;
+      if (e.clientX >= sRect.left - 6 && e.clientX <= sRect.right + 6) {
+        if (e.clientX < midX) {
+          if (sibling.previousElementSibling !== placeholder) {
+            sibling.before(placeholder);
+          }
+        } else {
+          if (sibling.nextElementSibling !== placeholder) {
+            sibling.after(placeholder);
+          }
+        }
+        break;
+      }
+    }
+  };
+
+  const onPointerUp = async e => {
+    clearTimeout(holdTimer);
+    holdTimer = null;
+
+    if (!dragTarget) return;
+
+    const targetA = dragTarget;
+    const wasDragging = isDragging;
+
+    if (wasDragging && placeholder && placeholder.parentNode) {
+      placeholder.replaceWith(targetA);
+    }
+
+    targetA.classList.remove("topnav-item-floating");
+    targetA.style.width = "";
+    targetA.style.height = "";
+    targetA.style.left = "";
+    targetA.style.top = "";
+    targetA.style.position = "";
+    document.body.classList.remove("topnav-is-reordering");
+
+    if (placeholder && placeholder.parentNode) {
+      placeholder.remove();
+    }
+    placeholder = null;
+    dragTarget = null;
+    isDragging = false;
+
+    if (wasDragging) {
+      const gearBtn = i("#topNavGearBtn");
+      if (gearBtn) topNav.appendChild(gearBtn);
+
+      const newIds = Array.from(topNav.querySelectorAll("a[data-nav-id]")).map(el => el.dataset.navId);
+      await _saveTopNavOrder(newIds);
+
+      setTimeout(() => {
+        suppressClick = false;
+      }, 250);
+    }
+  };
+
+  window.addEventListener("pointermove", onPointerMove, { passive: false });
+  window.addEventListener("pointerup", onPointerUp);
+  window.addEventListener("pointercancel", onPointerUp);
+
+  topNav.addEventListener("click", e => {
+    if (suppressClick) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      return false;
+    }
+  }, true);
+}
 document.addEventListener("click", (e) => {
   // 1. Check if user clicked any link returning to main portal or navigating away from Muchalinda
   const anyLink = e.target.closest("a");
