@@ -1001,9 +1001,7 @@ window.applyGlobalTranslate = function(langCode, langName, isAutoDetected) {
       }
       if (attempts >= 30) {
         clearInterval(pollInterval);
-        if (!isAutoDetected) {
-          window.location.reload();
-        }
+        // Do not reload page automatically to ensure seamless user experience
       }
     }, 100);
   }
@@ -1334,67 +1332,13 @@ function _initVisitorDefaultLanguage() {
     return;
   }
 
-  // First time visitor: Detect country/locale immediately
-  const detected = _detectVisitorLocale();
-  if (detected.type === "core") {
-    setLanguage(detected.lang);
-  } else if (detected.type === "global") {
-    setTimeout(() => {
-      if (typeof window.applyGlobalTranslate === "function") {
-        window.applyGlobalTranslate(detected.lang, detected.name, true);
-      }
-    }, 450);
+  // Optional initial visitor locale detection (only if user has never selected a language)
+  if (!localStorage.getItem("thatphanom_user_selected_lang") && !localStorage.getItem("thatphanom_lang")) {
+    const detected = _detectVisitorLocale();
+    if (detected.type === "core" && detected.lang !== "th") {
+      setLanguage(detected.lang);
+    }
   }
-
-  // Fast asynchronous IP Geolocation fallback
-  try {
-    fetch("https://freeipapi.com/api/json")
-      .then((res) => (res.ok ? res.json() : null))
-      .then((data) => {
-        if (!data || !data.countryCode) return;
-        if (localStorage.getItem("thatphanom_user_selected_lang") === "true") return;
-
-        const cCode = data.countryCode.toUpperCase();
-        const countryMapping = {
-          TH: { type: "core", lang: "th" },
-          LA: { type: "core", lang: "lo" },
-          US: { type: "core", lang: "en" },
-          GB: { type: "core", lang: "en" },
-          AU: { type: "core", lang: "en" },
-          CA: { type: "core", lang: "en" },
-          NZ: { type: "core", lang: "en" },
-          CN: { type: "global", lang: "zh-CN", name: "จีน (ตัวย่อ)" },
-          TW: { type: "global", lang: "zh-TW", name: "จีน (ตัวเต็ม)" },
-          HK: { type: "global", lang: "zh-TW", name: "จีน (ตัวเต็ม)" },
-          JP: { type: "global", lang: "ja", name: "ญี่ปุ่น" },
-          KR: { type: "global", lang: "ko", name: "เกาหลี" },
-          VN: { type: "global", lang: "vi", name: "เวียดนาม" },
-          FR: { type: "global", lang: "fr", name: "ฝรั่งเศส" },
-          DE: { type: "global", lang: "de", name: "เยอรมัน" },
-          ES: { type: "global", lang: "es", name: "สเปน" },
-          RU: { type: "global", lang: "ru", name: "รัสเซีย" },
-          MM: { type: "global", lang: "my", name: "พม่า" },
-          KH: { type: "global", lang: "km", name: "กัมพูชา / เขมร" },
-          ID: { type: "global", lang: "id", name: "อินโดนีเซีย" },
-          IN: { type: "global", lang: "hi", name: "ฮินดี" },
-          IT: { type: "global", lang: "it", name: "อิตาลี" },
-          SA: { type: "global", lang: "ar", name: "อาหรับ" },
-          AE: { type: "global", lang: "ar", name: "อาหรับ" }
-        };
-
-        const target = countryMapping[cCode];
-        if (target) {
-          if (target.type === "core" && target.lang !== (localStorage.getItem("thatphanom_lang") || "th")) {
-            setLanguage(target.lang);
-          } else if (target.type === "global" && target.lang !== localStorage.getItem("thatphanom_global_lang")) {
-            if (typeof window.applyGlobalTranslate === "function") {
-              window.applyGlobalTranslate(target.lang, target.name, true);
-            }
-          }
-        }
-      })
-      .catch(() => {});
-  } catch (_) {}
 }
 
 if (document.readyState === "loading") {
@@ -4792,7 +4736,9 @@ function isCustomCenterSec(s) {
     window.addEventListener("portal:dataReload", () => _renderCustomCenterSections(true));
     window.addEventListener("portal:authChanged", () => _renderCustomCenterSections(true));
     document.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "visible") _renderCustomCenterSections(true);
+      if (document.visibilityState === "visible" && !window._isUserOrAdminBusy()) {
+        _renderCustomCenterSections(false);
+      }
     });
 
     let _lastSeenSectionsCount = -1;
