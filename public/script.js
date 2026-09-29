@@ -4996,6 +4996,52 @@ function isCustomCenterSec(s) {
       }
     } catch (_) {}
   })();
+
+  // Enable smooth horizontal swipe & mouse drag-to-scroll on Top Nav
+  (function initTopNavSmoothSwipe() {
+    const topNav = document.getElementById("mainTopNav");
+    if (!topNav) return;
+
+    let isDown = false;
+    let startX = 0;
+    let scrollStart = 0;
+    let hasMoved = false;
+
+    topNav.addEventListener("mousedown", function(e) {
+      // Allow drag-to-scroll on desktop when not in reorder mode
+      if (document.body.classList.contains("topnav-is-reordering")) return;
+      if (e.button !== 0) return;
+      isDown = true;
+      startX = e.pageX - topNav.offsetLeft;
+      scrollStart = topNav.scrollLeft;
+      hasMoved = false;
+    });
+
+    window.addEventListener("mousemove", function(e) {
+      if (!isDown || document.body.classList.contains("topnav-is-reordering")) return;
+      const x = e.pageX - topNav.offsetLeft;
+      const walk = (x - startX);
+      if (Math.abs(walk) > 4) {
+        hasMoved = true;
+        topNav.scrollLeft = scrollStart - walk;
+      }
+    });
+
+    const stopMouseScroll = function() {
+      if (!isDown) return;
+      isDown = false;
+    };
+
+    window.addEventListener("mouseup", stopMouseScroll);
+    window.addEventListener("mouseleave", stopMouseScroll);
+
+    topNav.addEventListener("click", function(e) {
+      if (hasMoved) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    }, true);
+  })();
 })();
 
 

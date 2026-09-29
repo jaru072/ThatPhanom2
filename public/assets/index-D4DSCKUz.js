@@ -2100,7 +2100,7 @@ function _initTopNavDragAndDrop(topNav) {
     clearTimeout(holdTimer);
     holdTimer = setTimeout(() => {
       startDragging(e);
-    }, 180);
+    }, 1500);
   });
 
   const onPointerMove = e => {
@@ -2109,8 +2109,9 @@ function _initTopNavDragAndDrop(topNav) {
     const dist = Math.hypot(e.clientX - startX, e.clientY - startY);
 
     if (!isDragging) {
-      if (dist > 4) {
-        startDragging(e);
+      if (dist > 15) {
+        clearTimeout(holdTimer);
+        holdTimer = null;
       }
       return;
     }
@@ -2119,6 +2120,13 @@ function _initTopNavDragAndDrop(topNav) {
 
     dragTarget.style.left = (e.clientX - dragOffset.x) + "px";
     dragTarget.style.top = (e.clientY - dragOffset.y) + "px";
+
+    const topNavRect = topNav.getBoundingClientRect();
+    if (e.clientX < topNavRect.left + 50) {
+      topNav.scrollLeft -= 9;
+    } else if (e.clientX > topNavRect.right - 50) {
+      topNav.scrollLeft += 9;
+    }
 
     if (!placeholder) return;
 
