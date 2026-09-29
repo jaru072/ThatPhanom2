@@ -4853,6 +4853,62 @@ function isCustomCenterSec(s) {
     inputs.forEach(inp => {
       try { localStorage.removeItem("thatphanom_draft_" + inp.id); } catch (_) {}
     });
+
+    // Instant UI reactive patch for sectionEditorForm, railCardDialog, and sidebarItemDialog
+    if (form.id === "sectionEditorForm") {
+      setTimeout(() => {
+        try {
+          const targetId = (document.getElementById("sectionEditorTargetId")?.value || "").trim();
+          const imgUrl = (document.getElementById("sectionEditorImageUrl")?.value || "").trim();
+          const actionUrl = (document.getElementById("sectionEditorActionUrl")?.value || "").trim();
+
+          // Sync donation cards image links & footer action buttons immediately
+          if (targetId === "donationOne" || targetId === "donationTwo") {
+            const cardEl = document.getElementById(targetId + "Card");
+            if (cardEl) {
+              if (imgUrl) {
+                const img = cardEl.querySelector(".donation-card-img");
+                if (img) img.src = imgUrl;
+                const link = cardEl.querySelector(".donation-card-media-link");
+                if (link) link.href = imgUrl;
+              }
+              const footer = cardEl.querySelector(".donation-card-footer");
+              const actionBtn = cardEl.querySelector(".donation-card-action-btn");
+              if (!actionUrl) {
+                cardEl.classList.add("no-action-btn");
+                cardEl.setAttribute("data-has-action", "false");
+                if (footer) footer.style.setProperty("display", "none", "important");
+                if (actionBtn) actionBtn.style.setProperty("display", "none", "important");
+              } else {
+                cardEl.classList.remove("no-action-btn");
+                cardEl.setAttribute("data-has-action", "true");
+                if (footer) footer.style.removeProperty("display");
+                if (actionBtn) {
+                  actionBtn.href = actionUrl;
+                  actionBtn.style.removeProperty("display");
+                }
+              }
+            }
+          }
+        } catch (_) {}
+      }, 50);
+    } else if (form.closest("#railCardDialog")) {
+      setTimeout(() => {
+        try {
+          const rc = document.getElementById("railCardsContainer");
+          if (rc) delete rc.dataset.renderedSig;
+          if (typeof window.renderRailCards === "function") window.renderRailCards(true);
+        } catch (_) {}
+      }, 80);
+    } else if (form.closest("#sidebarItemDialog")) {
+      setTimeout(() => {
+        try {
+          const sc = document.getElementById("sidebarItemsContainer");
+          if (sc) delete sc.dataset.renderedSig;
+          if (typeof window.renderSidebarItems === "function") window.renderSidebarItems(true);
+        } catch (_) {}
+      }, 80);
+    }
   });
 
   window._restoreDraftIfEmpty = function(fieldId) {
