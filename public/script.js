@@ -4406,7 +4406,7 @@ function isCustomCenterSec(s) {
         header.innerHTML = `
           ${kicker ? `<p class="kicker">${kicker}</p>` : ''}
           <h2>${title || ''}</h2>
-          ${content ? `<p>${content}</p>` : ''}
+          ${content ? `<p class="cms-section-content-scroll" style="white-space: pre-line; max-height: 250px; overflow-y: auto;">${content}</p>` : ''}
           <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-custom-gear-id="${sec.id}" title="จัดการหัวข้อนี้">⚙</button>
         `;
         sectionEl.appendChild(header);

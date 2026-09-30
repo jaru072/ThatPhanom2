@@ -2348,6 +2348,162 @@
         font-size: 0.78rem;
       }
     }
+
+    /* Support pre-line and scrollbar for Project Hero, Story, History and all Section Descriptions in both projects */
+    .cms-section-content-scroll,
+    .hero-copy .lead,
+    .support-project-hero-copy .support-project-lead,
+    .support-project-lead,
+    #muchalinda-history .media-caption p,
+    .milestones-overview-media .media-caption p,
+    .selected-project-detail p#selectedProjectDescription,
+    #history .section-heading > p:not(.kicker),
+    #history p[data-i18n="storyIntro"],
+    .story .section-heading > p:not(.kicker),
+    .section-heading > p:not(.kicker):not(.eyebrow),
+    .section-description,
+    .world-head .section-description,
+    .timeline-head p:not(.kicker),
+    .story-feature-copy p,
+    .story-mini-copy p,
+    .criteria-card-copy p,
+    .milestone-card-copy p,
+    .process-step-copy p,
+    .custom-center-section .section-heading p:not(.kicker),
+    [data-i18n="storyIntro"],
+    [data-i18n="muchalindaLead"],
+    [data-i18n="heritageIntro"],
+    [data-i18n="heritageDesc"],
+    [data-i18n="timelineIntro"],
+    [data-i18n="statusText"],
+    [data-i18n="faithText"],
+    [data-i18n="artText"],
+    [data-i18n="peopleText"] {
+      white-space: pre-line !important;
+      word-break: break-word !important;
+      overflow-wrap: break-word !important;
+      max-height: 250px !important;
+      overflow-y: auto !important;
+      overflow-x: hidden !important;
+      padding-right: 6px !important;
+      -webkit-overflow-scrolling: touch !important;
+      scrollbar-width: thin !important;
+      scrollbar-color: rgba(203, 166, 75, 0.7) rgba(23, 19, 41, 0.08) !important;
+    }
+
+    .cms-section-content-scroll::-webkit-scrollbar,
+    .hero-copy .lead::-webkit-scrollbar,
+    .support-project-hero-copy .support-project-lead::-webkit-scrollbar,
+    .support-project-lead::-webkit-scrollbar,
+    #muchalinda-history .media-caption p::-webkit-scrollbar,
+    .milestones-overview-media .media-caption p::-webkit-scrollbar,
+    .selected-project-detail p#selectedProjectDescription::-webkit-scrollbar,
+    #history .section-heading > p:not(.kicker)::-webkit-scrollbar,
+    #history p[data-i18n="storyIntro"]::-webkit-scrollbar,
+    .story .section-heading > p:not(.kicker)::-webkit-scrollbar,
+    .section-heading > p:not(.kicker):not(.eyebrow)::-webkit-scrollbar,
+    .section-description::-webkit-scrollbar,
+    .world-head .section-description::-webkit-scrollbar,
+    .timeline-head p:not(.kicker)::-webkit-scrollbar,
+    .story-feature-copy p::-webkit-scrollbar,
+    .story-mini-copy p::-webkit-scrollbar,
+    .criteria-card-copy p::-webkit-scrollbar,
+    .milestone-card-copy p::-webkit-scrollbar,
+    .process-step-copy p::-webkit-scrollbar,
+    .custom-center-section .section-heading p:not(.kicker)::-webkit-scrollbar,
+    [data-i18n="storyIntro"]::-webkit-scrollbar,
+    [data-i18n="muchalindaLead"]::-webkit-scrollbar,
+    [data-i18n="heritageIntro"]::-webkit-scrollbar,
+    [data-i18n="heritageDesc"]::-webkit-scrollbar,
+    [data-i18n="timelineIntro"]::-webkit-scrollbar,
+    [data-i18n="statusText"]::-webkit-scrollbar {
+      width: 6px !important;
+      height: 6px !important;
+    }
+
+    .cms-section-content-scroll::-webkit-scrollbar-track,
+    .hero-copy .lead::-webkit-scrollbar-track,
+    .support-project-hero-copy .support-project-lead::-webkit-scrollbar-track,
+    .support-project-lead::-webkit-scrollbar-track,
+    #muchalinda-history .media-caption p::-webkit-scrollbar-track,
+    .milestones-overview-media .media-caption p::-webkit-scrollbar-track,
+    .selected-project-detail p#selectedProjectDescription::-webkit-scrollbar-track,
+    #history .section-heading > p:not(.kicker)::-webkit-scrollbar-track,
+    #history p[data-i18n="storyIntro"]::-webkit-scrollbar-track,
+    .story .section-heading > p:not(.kicker)::-webkit-scrollbar-track,
+    .section-heading > p:not(.kicker):not(.eyebrow)::-webkit-scrollbar-track,
+    .section-description::-webkit-scrollbar-track,
+    .world-head .section-description::-webkit-scrollbar-track,
+    .timeline-head p:not(.kicker)::-webkit-scrollbar-track,
+    .story-feature-copy p::-webkit-scrollbar-track,
+    .story-mini-copy p::-webkit-scrollbar-track,
+    .criteria-card-copy p::-webkit-scrollbar-track,
+    .milestone-card-copy p::-webkit-scrollbar-track,
+    .process-step-copy p::-webkit-scrollbar-track,
+    .custom-center-section .section-heading p:not(.kicker)::-webkit-scrollbar-track,
+    [data-i18n="storyIntro"]::-webkit-scrollbar-track,
+    [data-i18n="muchalindaLead"]::-webkit-scrollbar-track,
+    [data-i18n="heritageIntro"]::-webkit-scrollbar-track,
+    [data-i18n="heritageDesc"]::-webkit-scrollbar-track,
+    [data-i18n="timelineIntro"]::-webkit-scrollbar-track,
+    [data-i18n="statusText"]::-webkit-scrollbar-track {
+      background: rgba(23, 19, 41, 0.08) !important;
+      border-radius: 999px !important;
+    }
+
+    .cms-section-content-scroll::-webkit-scrollbar-thumb,
+    .hero-copy .lead::-webkit-scrollbar-thumb,
+    .support-project-hero-copy .support-project-lead::-webkit-scrollbar-thumb,
+    .support-project-lead::-webkit-scrollbar-thumb,
+    #muchalinda-history .media-caption p::-webkit-scrollbar-thumb,
+    .milestones-overview-media .media-caption p::-webkit-scrollbar-thumb,
+    .selected-project-detail p#selectedProjectDescription::-webkit-scrollbar-thumb,
+    #history .section-heading > p:not(.kicker)::-webkit-scrollbar-thumb,
+    #history p[data-i18n="storyIntro"]::-webkit-scrollbar-thumb,
+    .story .section-heading > p:not(.kicker)::-webkit-scrollbar-thumb,
+    .section-heading > p:not(.kicker):not(.eyebrow)::-webkit-scrollbar-thumb,
+    .section-description::-webkit-scrollbar-thumb,
+    .world-head .section-description::-webkit-scrollbar-thumb,
+    .timeline-head p:not(.kicker)::-webkit-scrollbar-thumb,
+    .story-feature-copy p::-webkit-scrollbar-thumb,
+    .story-mini-copy p::-webkit-scrollbar-thumb,
+    .criteria-card-copy p::-webkit-scrollbar-thumb,
+    .milestone-card-copy p::-webkit-scrollbar-thumb,
+    .process-step-copy p::-webkit-scrollbar-thumb,
+    .custom-center-section .section-heading p:not(.kicker)::-webkit-scrollbar-thumb,
+    [data-i18n="storyIntro"]::-webkit-scrollbar-thumb,
+    [data-i18n="muchalindaLead"]::-webkit-scrollbar-thumb,
+    [data-i18n="heritageIntro"]::-webkit-scrollbar-thumb,
+    [data-i18n="heritageDesc"]::-webkit-scrollbar-thumb,
+    [data-i18n="timelineIntro"]::-webkit-scrollbar-thumb,
+    [data-i18n="statusText"]::-webkit-scrollbar-thumb {
+      background: rgba(203, 166, 75, 0.8) !important;
+      border-radius: 999px !important;
+    }
+
+    .milestones-overview-media .section-gear-btn {
+      position: absolute !important;
+      top: 14px !important;
+      right: 14px !important;
+      z-index: 40 !important;
+      font-size: 1.4rem !important;
+      cursor: pointer !important;
+      color: #cba64b !important;
+      background: rgba(16, 13, 29, 0.7) !important;
+      border-radius: 8px !important;
+      width: 38px !important;
+      height: 38px !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      border: 1px solid rgba(203, 166, 75, 0.4) !important;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35) !important;
+      transition: transform 0.2s ease, background 0.2s ease !important;
+    }
+    .milestones-overview-media .section-gear-btn:hover {
+      background: rgba(16, 13, 29, 0.9) !important;
+      transform: scale(1.08) !important;
+    }
   </style>
 </head>
 <body>
@@ -2660,7 +2816,7 @@
       <div class="section-heading">
         <p class="kicker" data-i18n="storyKicker">เรื่องราวแห่งศรัทธา</p>
         <h2 data-i18n="storyTitle">พระธาตุที่มีชีวิตของคนสองฝั่งโขง</h2>
-        <p data-i18n="storyIntro">พระธาตุพนมมิใช่เพียงโบราณสถาน หากเป็นพื้นที่ศักดิ์สิทธิ์ที่ศรัทธา ประวัติศาสตร์ ศิลปกรรม และวิถีชุมชนดำเนินต่อเนื่องร่วมกันมาอย่างยาวนาน</p>
+        <p data-i18n="storyIntro" class="cms-section-content-scroll">พระธาตุพนมมิใช่เพียงโบราณสถาน หากเป็นพื้นที่ศักดิ์สิทธิ์ที่ศรัทธา ประวัติศาสตร์ ศิลปกรรม และวิถีชุมชนดำเนินต่อเนื่องร่วมกันมาอย่างยาวนาน</p>
       </div>
       <div class="story-grid">
         <article class="feature feature-large story-feature-card" id="storyFeatureCard">
@@ -2698,8 +2854,11 @@
       <div class="section-heading compact">
         <p class="kicker" data-i18n="timelineKicker">หมุดหมายสำคัญ</p>
         <h2 id="timeline-title" data-i18n="timelineTitle">อดีตที่หล่อหลอมอนาคต</h2>
+        <p data-i18n="timelineIntro" class="cms-section-content-scroll" style="display: none;"></p>
       </div>
-      <div class="milestones-overview-media" id="milestonesOverviewMedia"></div>
+      <div class="milestones-overview-media has-admin-gear" id="milestonesOverviewMedia">
+        <button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="milestones" title="จัดการข้อความหมุดหมายสำคัญ" aria-label="จัดการข้อความหมุดหมายสำคัญ" hidden>⚙</button>
+      </div>
       <ol class="timeline">
         <li class="milestone-media-card" id="milestoneOneCard"><button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="milestoneOne" title="จัดการหมุดหมายข้อ 1" aria-label="จัดการหมุดหมายข้อ 1" hidden>⚙</button><div class="milestone-card-media" id="milestoneOneMedia"></div><b class="milestone-number">1</b><div class="milestone-card-copy"><time data-i18n="t1time">ราวพุทธศตวรรษที่ 12–13</time><strong data-i18n="t1title">โครงสร้างยุคแรก</strong><span data-i18n="t1text">หลักฐานจากการขุดค้นระบุอายุห้องอิฐชั้นในราวคริสต์ศตวรรษที่ 7–8</span></div></li>
         <li class="milestone-media-card" id="milestoneTwoCard"><button class="section-gear-btn admin-gear-btn portal-admin-only" type="button" data-section-target="milestoneTwo" title="จัดการหมุดหมายข้อ 2" aria-label="จัดการหมุดหมายข้อ 2" hidden>⚙</button><div class="milestone-card-media" id="milestoneTwoMedia"></div><b class="milestone-number">2</b><div class="milestone-card-copy"><time>พ.ศ. 2478</time><strong data-i18n="t2title">โบราณสถานของชาติ</strong><span data-i18n="t2text">กรมศิลปากรประกาศขึ้นทะเบียนเพื่อการอนุรักษ์และคุ้มครอง</span></div></li>
