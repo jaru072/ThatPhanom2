@@ -2883,6 +2883,115 @@
       box-shadow: 0 0 0 4px rgba(239, 217, 142, 0.08) !important;
     }
 
+    /* ปุ่มถ่ายภาพด้วยกล้อง (Camera Upload Button) */
+    .upload-btn-row {
+      display: flex !important;
+      align-items: center !important;
+      gap: 10px !important;
+      flex-wrap: wrap !important;
+      margin-top: 6px !important;
+      margin-bottom: 6px !important;
+    }
+    .camera-upload-btn {
+      position: relative !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 6px !important;
+      padding: 6px 14px !important;
+      font-size: 0.88rem !important;
+      font-weight: 600 !important;
+      color: #171329 !important;
+      background: #f1dd96 !important;
+      border: 1px solid #cb9b2c !important;
+      border-radius: 8px !important;
+      cursor: pointer !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12) !important;
+      transition: all 0.2s ease !important;
+      white-space: nowrap !important;
+      user-select: none !important;
+      overflow: hidden !important;
+    }
+    .camera-upload-btn:hover {
+      background: #faeab5 !important;
+      transform: translateY(-1px) !important;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.18) !important;
+    }
+    .camera-upload-btn input[type="file"] {
+      position: absolute !important;
+      left: 0 !important;
+      top: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      opacity: 0 !important;
+      cursor: pointer !important;
+      z-index: 2 !important;
+    }
+    .camera-upload-btn span {
+      position: relative !important;
+      z-index: 1 !important;
+      pointer-events: none !important;
+    }
+
+    /* ปุ่มเลือกไฟล์จากเครื่องภาษาไทย (Thai Custom File Upload Button) */
+    .custom-file-upload-btn {
+      position: relative !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      cursor: pointer !important;
+      background: rgba(23, 19, 41, 0.04) !important;
+      border: 1px dashed rgba(203, 155, 44, 0.6) !important;
+      border-radius: 8px !important;
+      padding: 4px 10px 4px 4px !important;
+      transition: all 0.2s ease !important;
+      user-select: none !important;
+      overflow: hidden !important;
+      max-width: 100% !important;
+      box-sizing: border-box !important;
+    }
+    .custom-file-upload-btn:hover {
+      background: rgba(239, 217, 142, 0.15) !important;
+      border-color: #cb9b2c !important;
+    }
+    .custom-file-upload-btn input[type="file"] {
+      position: absolute !important;
+      left: 0 !important;
+      top: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      opacity: 0 !important;
+      cursor: pointer !important;
+      z-index: 2 !important;
+    }
+    .custom-file-btn-text {
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 5px !important;
+      padding: 5px 12px !important;
+      font-size: 0.86rem !important;
+      font-weight: 600 !important;
+      color: #171329 !important;
+      background: #f1dd96 !important;
+      border: 1px solid #cb9b2c !important;
+      border-radius: 6px !important;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1) !important;
+      pointer-events: none !important;
+      white-space: nowrap !important;
+    }
+    .custom-file-status-text {
+      font-size: 0.84rem !important;
+      color: #666 !important;
+      pointer-events: none !important;
+      white-space: nowrap !important;
+      overflow: hidden !important;
+      text-overflow: ellipsis !important;
+      max-width: 220px !important;
+    }
+    .custom-file-upload-btn.has-file .custom-file-status-text {
+      color: #15803d !important;
+      font-weight: 600 !important;
+    }
+
     /* หน้าต่างอ่านข้อความแบบเต็มจอ (Text Reader Modal Dialog) */
     dialog.text-reader-modal {
       position: fixed !important;
@@ -3970,9 +4079,19 @@
         <small>รองรับ YouTube, Facebook Videos/Reels, TikTok, Google Drive และลิงก์วิดีโอทั่วไป (วางลิงก์เดียวกันในหลายหัวข้อได้)</small>
       </label>
       <div class="or-line"><span>หรือ</span></div>
-      <label>อัปโหลดไฟล์
-        <input id="mediaFile" type="file" accept="image/jpeg,image/png,image/webp,video/mp4,video/webm">
-        <small>รูปภาพต้นฉบับไม่เกิน 30 MB ระบบจะปรับเป็นภาพคุณภาพสูงไฟล์เดียวสำหรับสไลด์และหน้าขยาย · วิดีโอไม่เกิน 100 MB</small>
+      <label id="mediaFileLabel">อัปโหลดรูปภาพ
+        <div class="upload-btn-row">
+          <label class="camera-upload-btn" title="กดเพื่อเปิดกล้องถ่ายภาพทันที">
+            <input id="mediaCameraInput" type="file" accept="image/*" capture="environment">
+            <span>📷 ถ่ายภาพด้วยกล้อง</span>
+          </label>
+          <label class="custom-file-upload-btn" title="กดเพื่อเลือกไฟล์รูปภาพจากเครื่อง">
+            <input id="mediaFile" type="file" accept="image/jpeg,image/png,image/webp">
+            <span class="custom-file-btn-text">📁 เลือกไฟล์จากเครื่อง</span>
+            <span class="custom-file-status-text" id="mediaFileStatusText">ยังไม่ได้เลือกไฟล์</span>
+          </label>
+        </div>
+        <small>รูปภาพต้นฉบับไม่เกิน 30 MB ระบบจะปรับเป็นภาพคุณภาพสูง เจเพ็ก (JPG) ขนาดไม่เกิน 1 MB อัตโนมัติ (รองรับเฉพาะไฟล์รูปภาพเท่านั้น)</small>
       </label>
       <p class="media-form-status" id="mediaFormStatus" role="alert" hidden></p>
       <div class="dialog-actions">
@@ -4080,8 +4199,18 @@
       </label>
       <div class="or-line"><span>หรืออัปโหลดไฟล์</span></div>
       <label><span id="contentFileLabel">รูปภาพประกอบ</span>
-        <input id="contentItemFile" type="file">
-        <small id="contentFileHelp">รองรับ JPG, PNG และ WebP ไม่เกิน 10 MB</small>
+        <div class="upload-btn-row">
+          <label class="camera-upload-btn" title="กดเพื่อเปิดกล้องถ่ายภาพทันที">
+            <input id="contentItemCameraInput" type="file" accept="image/*" capture="environment">
+            <span>📷 ถ่ายภาพด้วยกล้อง</span>
+          </label>
+          <label class="custom-file-upload-btn" title="กดเพื่อเลือกไฟล์รูปภาพจากเครื่อง">
+            <input id="contentItemFile" type="file" accept="image/jpeg,image/png,image/webp">
+            <span class="custom-file-btn-text">📁 เลือกไฟล์จากเครื่อง</span>
+            <span class="custom-file-status-text" id="contentItemFileStatusText">ยังไม่ได้เลือกไฟล์</span>
+          </label>
+        </div>
+        <small id="contentFileHelp">รองรับเฉพาะไฟล์ภาพ (JPG, PNG, WebP) ขนาดเกิน 1 MB จะถูกปรับบีบอัดเป็น JPG ไม่เกิน 1 MB อัตโนมัติ</small>
       </label>
       <label class="content-publish-control"><input id="contentItemPublished" type="checkbox"><span>พร้อมเผยแพร่ต่อผู้ชม</span></label>
       <p class="media-form-status" id="contentEditorStatus" role="alert" hidden></p>
@@ -4243,9 +4372,19 @@
         </label>
       </div>
       <div class="or-line" style="margin: 12px 0 8px;"><span>หรืออัปโหลดไฟล์</span></div>
-      <label><span id="railCardFileLabel">รูปภาพหรือวิดีโอประกอบ</span>
-        <input id="railCardFile" type="file" accept="image/*,video/*">
-        <small id="railCardFileHelp">รองรับไฟล์ภาพ (JPG, PNG, WebP ไม่เกิน 10 MB) และวิดีโอ (MP4, WebM ไม่เกิน 100 MB)</small>
+      <label><span id="railCardFileLabel">รูปภาพประกอบ</span>
+        <div class="upload-btn-row">
+          <label class="camera-upload-btn" title="กดเพื่อเปิดกล้องถ่ายภาพทันที">
+            <input id="railCardCameraInput" type="file" accept="image/*" capture="environment">
+            <span>📷 ถ่ายภาพด้วยกล้อง</span>
+          </label>
+          <label class="custom-file-upload-btn" title="กดเพื่อเลือกไฟล์รูปภาพจากเครื่อง">
+            <input id="railCardFile" type="file" accept="image/jpeg,image/png,image/webp">
+            <span class="custom-file-btn-text">📁 เลือกไฟล์จากเครื่อง</span>
+            <span class="custom-file-status-text" id="railCardFileStatusText">ยังไม่ได้เลือกไฟล์</span>
+          </label>
+        </div>
+        <small id="railCardFileHelp">รองรับเฉพาะไฟล์ภาพ (JPG, PNG, WebP) ขนาดเกิน 1 MB จะถูกปรับบีบอัดเป็น JPG ไม่เกิน 1 MB อัตโนมัติ</small>
       </label>
 
       <!-- ปุ่มและลิงก์ปลายทาง -->
@@ -4508,9 +4647,19 @@
         <input id="sidebarItemMediaUrl" type="url" placeholder="https://... (ลิงก์รูปภาพ หรือ YouTube / Facebook / วิดีโอ)">
       </label>
       <div class="or-line" style="margin: 12px 0 8px;"><span>หรืออัปโหลดไฟล์</span></div>
-      <label><span id="sidebarItemFileLabel">รูปภาพหรือวิดีโอประกอบ</span>
-        <input id="sidebarItemFile" type="file" accept="image/*,video/*">
-        <small id="sidebarItemFileHelp">รองรับไฟล์ภาพ (JPG, PNG, WebP ไม่เกิน 10 MB) และวิดีโอ (MP4, WebM ไม่เกิน 100 MB)</small>
+      <label><span id="sidebarItemFileLabel">รูปภาพประกอบ</span>
+        <div class="upload-btn-row">
+          <label class="camera-upload-btn" title="กดเพื่อเปิดกล้องถ่ายภาพทันที">
+            <input id="sidebarItemCameraInput" type="file" accept="image/*" capture="environment">
+            <span>📷 ถ่ายภาพด้วยกล้อง</span>
+          </label>
+          <label class="custom-file-upload-btn" title="กดเพื่อเลือกไฟล์รูปภาพจากเครื่อง">
+            <input id="sidebarItemFile" type="file" accept="image/jpeg,image/png,image/webp">
+            <span class="custom-file-btn-text">📁 เลือกไฟล์จากเครื่อง</span>
+            <span class="custom-file-status-text" id="sidebarItemFileStatusText">ยังไม่ได้เลือกไฟล์</span>
+          </label>
+        </div>
+        <small id="sidebarItemFileHelp">รองรับเฉพาะไฟล์ภาพ (JPG, PNG, WebP) ขนาดเกิน 1 MB จะถูกปรับบีบอัดเป็น JPG ไม่เกิน 1 MB อัตโนมัติ</small>
       </label>
       <div id="sidebarImageUrlsWrapper" style="display:none;"></div>
       <input id="sidebarItemImageUrl" type="hidden">
