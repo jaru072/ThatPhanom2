@@ -3844,7 +3844,7 @@
     <div class="tree-dialog-shell">
       <div class="tree-popup-toast" id="treeEditorPopup" role="status" aria-live="polite"></div>
       <header class="tree-dialog-head">
-        <div><p class="kicker">รุ่นทดลองสำหรับ Admin</p><h2>ผังโครงการและเนื้อหา</h2><span>รายการฉบับร่างเห็นเฉพาะ Admin ส่วนรายการที่เปิดเผยแพร่จะแสดงบนเว็บไซต์รุ่นทดลอง</span></div>
+        <div><p class="kicker">สำหรับผู้ดูแลระบบ</p><h2>ผังโครงการและเนื้อหา</h2><span>จัดการโครงการและโหนดเนื้อหา</span></div>
         <button class="icon-button" id="closeTreeButton" type="button" aria-label="ปิด">×</button>
       </header>
       <div class="tree-toolbar">
@@ -3969,7 +3969,7 @@
                 <option value="external">เปิดไปยังเว็บไซต์อิสระภายนอก (Open External Link ↗)</option>
               </select>
             </label>
-            <label class="tree-publish-control"><input id="treeNodePublished" type="checkbox"><span>พร้อมเผยแพร่เมื่อเปิดใช้ผังนี้ในเว็บไซต์</span></label>
+            <input id="treeNodePublished" type="hidden" value="true">
             <div class="tree-position-actions">
               <button class="button secondary" id="moveTreeNodeUp" type="button">↑ เลื่อนขึ้น</button>
               <button class="button secondary" id="moveTreeNodeDown" type="button">↓ เลื่อนลง</button>
@@ -4207,7 +4207,7 @@
         </div>
         <small id="contentFileHelp">รองรับเฉพาะไฟล์ภาพ (JPG, PNG, WebP) ขนาดเกิน 1 MB จะถูกปรับบีบอัดเป็น JPG ไม่เกิน 1 MB อัตโนมัติ</small>
       </label>
-      <label class="content-publish-control"><input id="contentItemPublished" type="checkbox"><span>พร้อมเผยแพร่ต่อผู้ชม</span></label>
+      <input id="contentItemPublished" type="hidden" value="true">
       <p class="media-form-status" id="contentEditorStatus" role="alert" hidden></p>
       <div class="dialog-actions">
         <button class="button secondary" id="cancelContentEditButton" type="button">ยกเลิก</button>
@@ -4425,10 +4425,7 @@
             <option value="muchalinda-restoration">เฉพาะโครงการบูรณะสระมุจลินท์</option>
           </select>
         </label>
-        <label class="rail-checkbox-label">
-          <input id="railCardPublished" type="checkbox" checked>
-          <span>เปิดการแสดงผลต่อสาธารณะ (ปิด = ฉบับร่าง)</span>
-        </label>
+        <input id="railCardPublished" type="hidden" value="true">
       </div>
 
       <!-- กำหนดวันเริ่มและวันสิ้นสุดการแสดงผล (Scheduled) -->
@@ -4702,10 +4699,7 @@
             <option value="muchalinda-restoration">เฉพาะโครงการบูรณะสระมุจลินท์</option>
           </select>
         </label>
-        <label class="rail-checkbox-label">
-          <input id="sidebarItemPublished" type="checkbox" checked>
-          <span>เปิดการแสดงผลต่อสาธารณะ (ปิด = ฉบับร่าง)</span>
-        </label>
+        <input id="sidebarItemPublished" type="hidden" value="true">
       </div>
 
       <!-- กำหนดวันเริ่มและวันสิ้นสุดการแสดงผล (Scheduled) -->
