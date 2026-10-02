@@ -2249,15 +2249,16 @@ function _initUiHelpers() {
         return;
       }
 
-      // หาโหนดหลักระดับบนสุด (Top-level projects / folders)
-      // โหนดที่เป็น root หรือโหนดที่มี parentId เป็น "" หรือ "site-root" หรือ type === "project"
-      let rootProjects = allNodes.filter(
-        (n) =>
-          n.type === "project" ||
-          n.parentId === "" ||
-          n.parentId === "site-root" ||
-          !allNodes.some((p) => p.id === n.parentId)
-      );
+      // หาโหนดหลักระดับบนสุด (Top-level projects)
+      let rootProjects = allNodes.filter((n) => n.type === "project");
+      if (!rootProjects.length) {
+        rootProjects = allNodes.filter(
+          (n) =>
+            n.parentId === "" ||
+            n.parentId === "site-root" ||
+            !allNodes.some((p) => p.id === n.parentId)
+        );
+      }
 
       // เรียงลำดับโครงการหลัก
       rootProjects.sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0) || String(a.title).localeCompare(String(b.title), "th"));
@@ -2277,15 +2278,17 @@ function _initUiHelpers() {
       boardEl.innerHTML = "";
 
       let displayedLanesCount = 0;
+      const rootProjectIds = new Set(rootProjects.map((r) => r.id));
 
       rootProjects.forEach((proj, projIdx) => {
         // หาโหนดลูกทั้งหมดภายใต้โครงการนี้
         const directChildren = childrenMap.get(proj.id) || [];
-        // รวมโหนดลูกของลูกด้วยถ้ามี
+        // รวมโหนดลูกของลูกด้วยถ้ามี (ไม่รวมโหนดที่เป็นโครงการหลักอื่น)
         const laneItems = [];
         function collectChildren(parentId) {
           const subs = childrenMap.get(parentId) || [];
           subs.forEach((sub) => {
+            if (rootProjectIds.has(sub.id) || sub.type === "project") return;
             laneItems.push(sub);
             collectChildren(sub.id);
           });
@@ -2437,18 +2440,6 @@ function _initUiHelpers() {
 
             const cardSub = document.createElement("div");
             cardSub.className = "sitemap-card-sub";
-
-            const pubBadge = document.createElement("span");
-            pubBadge.className = `sitemap-badge-pub ${item.published ? "published" : "draft"}`;
-            pubBadge.textContent = item.published ? "เผยแพร่แล้ว" : "ฉบับร่าง";
-            cardSub.append(pubBadge);
-
-            if (item.contentType && item.contentRef) {
-              const linkBadge = document.createElement("span");
-              linkBadge.className = "sitemap-badge-link";
-              linkBadge.textContent = "เชื่อมข้อมูล";
-              cardSub.append(linkBadge);
-            }
 
             cardMeta.append(cardTitle, cardSub);
             cardLeft.append(cardGrip, cardNum, cardIcon, cardMeta);
@@ -2871,15 +2862,20 @@ function _initUiHelpers() {
       if (!appState || !Array.isArray(appState.siteNodes)) return;
 
       let rootProjects = appState.siteNodes
-        .filter(
-          (n) =>
-            !n.deletedAt &&
-            (n.type === "project" ||
-              n.parentId === "" ||
-              n.parentId === "site-root" ||
-              !appState.siteNodes.some((p) => p.id === n.parentId))
-        )
+        .filter((n) => !n.deletedAt && n.type === "project")
         .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+
+      if (!rootProjects.length) {
+        rootProjects = appState.siteNodes
+          .filter(
+            (n) =>
+              !n.deletedAt &&
+              (n.parentId === "" ||
+                n.parentId === "site-root" ||
+                !appState.siteNodes.some((p) => p.id === n.parentId))
+          )
+          .sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+      }
 
       const sourceIdx = rootProjects.findIndex((p) => p.id === sourceLaneId);
       const targetIdx = rootProjects.findIndex((p) => p.id === targetLaneId);
