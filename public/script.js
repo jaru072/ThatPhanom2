@@ -4256,9 +4256,8 @@ function isCustomCenterSec(s) {
     }
     window.openCenterImageFullscreen = openCenterImageFullscreen;
 
-    // Fullscreen toggle for Lightbox
+    // Double click image to toggle fullscreen if desired
     (function initLightboxFullscreen() {
-      const fsBtn = document.getElementById("lightboxFullscreenButton");
       const dlg = document.getElementById("imageLightbox");
       const imgEl = document.getElementById("lightboxImage");
 
@@ -4276,26 +4275,12 @@ function isCustomCenterSec(s) {
         }
       }
 
-      if (fsBtn) {
-        fsBtn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          toggleFullscreen();
-        });
-      }
-
       if (imgEl) {
         imgEl.addEventListener("dblclick", (e) => {
           e.stopPropagation();
           toggleFullscreen();
         });
       }
-
-      document.addEventListener("fullscreenchange", () => {
-        if (fsBtn) {
-          fsBtn.innerHTML = document.fullscreenElement ? "🗗" : "⛶";
-          fsBtn.title = document.fullscreenElement ? "ย่อหน้าจอปกติ" : "เปิดโหมดเต็มหน้าจอ";
-        }
-      });
     })();
 
     // Main Renderer: Render Custom Center Sections

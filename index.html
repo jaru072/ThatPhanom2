@@ -88,9 +88,58 @@
       };
     })();
   </script>
-  <script type="module" crossorigin src="/assets/index-D4DSCKUz.js?v=20261002-v2"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-dX7NzDAm.css?v=20260926-1">
+  <script type="module" crossorigin src="/assets/index-D4DSCKUz.js?v=20261002-v3"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-dX7NzDAm.css?v=20261002-v1">
   <style id="interactive-sitemap-styles">
+    /* Harmonized Close Buttons: Compact Circle, Bigger & Bolder Close Icon (X) */
+    .icon-button,
+    button.icon-button,
+    .image-lightbox-close,
+    .selected-project-close,
+    .text-reader-close {
+      width: 34px !important;
+      height: 34px !important;
+      min-width: 34px !important;
+      min-height: 34px !important;
+      max-width: 34px !important;
+      max-height: 34px !important;
+      border-radius: 50% !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      font-size: 1.6rem !important;
+      font-weight: 500 !important;
+      line-height: 1 !important;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+      text-align: center !important;
+      padding: 0 !important;
+      box-sizing: border-box !important;
+      cursor: pointer !important;
+      transition: transform 0.16s ease, background 0.16s ease !important;
+    }
+    .icon-button:hover,
+    button.icon-button:hover,
+    .image-lightbox-close:hover,
+    .selected-project-close:hover,
+    .text-reader-close:hover {
+      transform: scale(1.08) !important;
+    }
+    .image-lightbox-close {
+      width: 36px !important;
+      height: 36px !important;
+      min-width: 36px !important;
+      min-height: 36px !important;
+      font-size: 1.7rem !important;
+      top: 14px !important;
+      right: 14px !important;
+      background: #110d1ecc !important;
+      border: 1px solid rgba(255, 255, 255, 0.4) !important;
+      color: #ffffff !important;
+    }
+    .text-reader-close {
+      font-size: 1.35rem !important;
+    }
+
     /* Admin Link Dropdown Menu */
     .admin-link-dropdown-menu {
       position: fixed;
@@ -1631,28 +1680,6 @@
         right: 8px;
       }
     }
-    .image-lightbox-fs-btn {
-      position: absolute;
-      z-index: 2;
-      top: 14px;
-      right: 68px;
-      width: 46px;
-      height: 46px;
-      border: 1px solid rgba(255,255,255,.4);
-      border-radius: 50%;
-      background: #110d1ec7;
-      color: #fff;
-      font-size: 1.25rem;
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-      transition: background 0.15s ease, transform 0.15s ease;
-    }
-    .image-lightbox-fs-btn:hover {
-      background: #1e1735;
-      transform: scale(1.08);
-    }
-
     /* Left Sidebar & Rail Cards: Theme styles & Hover stabilization */
     /* 1. Project Switcher in Left Sidebar */
     .sidebar-projects-list a {
@@ -4039,7 +4066,6 @@
   <dialog class="image-lightbox" id="imageLightbox" aria-labelledby="lightboxTitle">
     <div class="image-lightbox-shell">
       <button class="image-lightbox-close" id="closeLightboxButton" type="button" aria-label="ปิดรูปภาพหรือวิดีโอ">×</button>
-      <button class="image-lightbox-fs-btn" id="lightboxFullscreenButton" type="button" aria-label="ขยายเต็มจอ" title="เปิด/ปิดโหมดเต็มหน้าจอ">⛶</button>
       <div id="lightboxMediaWrapper" style="width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;">
         <img id="lightboxImage" src="" alt="">
         <div id="lightboxVideoContainer" style="width:100%; max-width:820px; display:none;"></div>
@@ -5461,6 +5487,6 @@
   </script>
   <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
-  <script src="/script.js?v=20261002-v2"></script>
+  <script src="/script.js?v=20261002-v3"></script>
 </body>
 </html>
