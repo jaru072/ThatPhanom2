@@ -5023,6 +5023,22 @@ function isCustomCenterSec(s) {
       }
     }, true);
   })();
+
+  // Handle #donate alias to smoothly scroll to #donation section
+  (function initDonateScrollAlias() {
+    function scrollToDonateSection() {
+      if (window.location.hash === "#donate" || window.location.hash === "#donation") {
+        const sec = document.getElementById("donation") || document.getElementById("donate");
+        if (sec) {
+          sec.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+    }
+    window.addEventListener("hashchange", scrollToDonateSection);
+    if (window.location.hash === "#donate" || window.location.hash === "#donation") {
+      setTimeout(scrollToDonateSection, 350);
+    }
+  })();
 })();
 
 
